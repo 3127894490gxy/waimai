@@ -4,42 +4,42 @@ import com.waimai.entity.User;
 import com.waimai.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.List;  
 import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
-
+    //构造函数
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
+    //用户注册
     public User register(User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("用户名已存在");
         }
         return userRepository.save(user);
     }
-
+    //用户登录
     public Optional<User> login(String username, String password) {
         return userRepository.findByUsername(username)
                 .filter(u -> u.getPassword().equals(password));
     }
-
+    //查找ID
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
-
+    //查询所有用户
     public List<User> findAll() {
         return userRepository.findAll();
     }
-
+    //更新用户信息
     public User update(User user) {
         return userRepository.save(user);
     }
-
+    //删除用户
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
