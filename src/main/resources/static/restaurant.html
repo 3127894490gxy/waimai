@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>餐厅菜单 - 外卖配送系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+        .navbar a { color: rgba(255,255,255,0.9); text-decoration: none; }
+        .navbar .logo { font-size: 20px; font-weight: bold; color: #fff; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+        .restaurant-header { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; gap: 20px; }
+        .restaurant-header .avatar { width: 80px; height: 80px; border-radius: 12px; background: linear-gradient(135deg, #ff6b35, #ff9a56); display: flex; align-items: center; justify-content: center; font-size: 36px; color: #fff; flex-shrink: 0; }
+        .restaurant-header .info { flex: 1; }
+        .restaurant-header .info h1 { font-size: 22px; color: #333; margin-bottom: 6px; }
+        .restaurant-header .info .desc { color: #999; font-size: 14px; margin-bottom: 8px; }
+        .restaurant-header .info .meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; color: #888; }
+        .restaurant-header .info .meta .rating { color: #ff6b35; font-weight: bold; }
+        .menu-layout { display: flex; gap: 20px; }
+        .category-side { width: 160px; flex-shrink: 0; }
+        .category-side .cat-item { padding: 12px 16px; background: #fff; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-size: 14px; color: #666; transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .category-side .cat-item:hover, .category-side .cat-item.active { background: #fff6f0; color: #ff6b35; font-weight: bold; }
+        .dish-area { flex: 1; }
+        .dish-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); display: flex; gap: 16px; align-items: center; }
+        .dish-card .dish-icon { width: 64px; height: 64px; border-radius: 8px; background: #fff0e8; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+        .dish-card .dish-info { flex: 1; }
+        .dish-card .dish-info h4 { font-size: 16px; color: #333; margin-bottom: 4px; }
+        .dish-card .dish-info .desc { font-size: 12px; color: #aaa; margin-bottom: 6px; }
+        .dish-card .dish-info .price { font-size: 18px; color: #ff6b35; font-weight: bold; }
+        .dish-card .dish-info .price small { font-size: 12px; font-weight: normal; }
+        .dish-card .actions { display: flex; align-items: center; gap: 8px; }
+        .dish-card .actions .qty-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #ddd; background: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .dish-card .actions .qty-btn:hover { border-color: #ff6b35; color: #ff6b35; }
+        .dish-card .actions .qty { font-size: 16px; min-width: 24px; text-align: center; font-weight: bold; }
+        .dish-card .actions .add-btn { padding: 8px 20px; background: #ff6b35; color: #fff; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .dish-card .actions .add-btn:hover { background: #e55a2b; }
+        .cart-float { position: fixed; bottom: 30px; right: 30px; background: #ff6b35; color: #fff; border: none; border-radius: 50px; padding: 16px 28px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(255,107,53,0.4); display: flex; align-items: center; gap: 8px; z-index: 50; transition: transform 0.2s; }
+        .cart-float:hover { transform: scale(1.05); }
+        .cart-float .badge { background: #fff; color: #ff6b35; border-radius: 50%; padding: 2px 8px; font-size: 12px; font-weight: bold; }
+        .loading { text-align: center; padding: 40px; color: #999; }
+        .empty-dish { text-align: center; padding: 40px; color: #999; }
+        @media (max-width: 640px) { .menu-layout { flex-direction: column; } .category-side { width: 100%; display: flex; gap: 8px; overflow-x: auto; } .category-side .cat-item { flex-shrink: 0; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">← 返回首页</a>
+        <a href="/cart.html" style="color:#fff;">🛒 购物车</a>
+    </nav>
+    <div class="container">
+        <div id="restaurantHeader" class="restaurant-header"></div>
+        <div class="menu-layout">
+            <div class="category-side" id="categorySide"></div>
+            <div class="dish-area" id="dishArea"></div>
+        </div>
+    </div>
+    <button class="cart-float" onclick="location.href='/cart.html'">
+        🛒 购物车 <span class="badge" id="cartBadge">0</span>
+    </button>
+
+    <script>
+        const params = new URLSearchParams(location.search);
+        const restaurantId = params.get('id');
+
+        let currentCategoryId = null;
+
+        function getCurrentUser() {
+            const u = localStorage.getItem('waimai_user');
+            return u ? JSON.parse(u) : null;
+        }
+
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            const total = cart.reduce((s, i) => s + i.quantity, 0);
+            document.getElementById('cartBadge').textContent = total;
+        }
+
+        function addToCart(dish) {
+            const user = getCurrentUser();
+            if (!user) { alert('请先登录'); location.href = '/login.html?redirect=' + encodeURIComponent(location.href); return; }
+            let cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            // 检查是否来自同一餐厅
+            if (cart.length > 0 && cart[0].restaurantId !== restaurantId) {
+                if (!confirm('切换餐厅将清空购物车，确定吗？')) return;
+                cart = [];
+            }
+            const existing = cart.find(i => i.dishId === dish.id);
+            if (existing) { existing.quantity++; }
+            else { cart.push({ dishId: dish.id, dishName: dish.name, price: dish.price, quantity: 1, restaurantId: parseInt(restaurantId), userId: user.id }); }
+            localStorage.setItem('waimai_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function changeQty(dishId, delta) {
+            const user = getCurrentUser();
+            if (!user) return;
+            let cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            const item = cart.find(i => i.dishId === dishId);
+            if (item) { item.quantity += delta; if (item.quantity <= 0) cart = cart.filter(i => i.dishId !== dishId); }
+            localStorage.setItem('waimai_cart', JSON.stringify(cart));
+            updateCartBadge();
+            renderDishes(currentCategoryId);
+        }
+
+        function getCartQty(dishId) {
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            const item = cart.find(i => i.dishId === dishId);
+            return item ? item.quantity : 0;
+        }
+
+        function loadRestaurant() {
+            fetch(`/api/restaurants/${restaurantId}`).then(r => r.json()).then(resp => {
+                if (resp.code !== 200) { document.getElementById('restaurantHeader').innerHTML = '<p>餐厅不存在</p>'; return; }
+                const r = resp.data;
+                document.getElementById('restaurantHeader').innerHTML = `
+                    <div class="avatar">${r.name.charAt(0)}</div>
+                    <div class="info">
+                        <h1>${r.name}</h1>
+                        <div class="desc">${r.description || '暂无介绍'}</div>
+                        <div class="meta">
+                            <span class="rating">⭐ ${r.rating || '5.0'}</span>
+                            <span>配送费 ¥${r.deliveryFee || '0'}</span>
+                            <span>📞 ${r.phone || '-'}</span>
+                            <span>📍 ${r.address || '-'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function loadCategories() {
+            fetch(`/api/categories/restaurant/${restaurantId}`).then(r => r.json()).then(resp => {
+                const side = document.getElementById('categorySide');
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    side.innerHTML = '<div class="cat-item active">全部</div>';
+                    currentCategoryId = null;
+                    loadDishes(null);
+                    return;
+                }
+                let html = '<div class="cat-item" onclick="selectCategory(null)">🍽️ 全部</div>';
+                resp.data.forEach(c => {
+                    html += `<div class="cat-item" data-id="${c.id}" onclick="selectCategory(${c.id})">${c.name}</div>`;
+                });
+                side.innerHTML = html;
+                selectCategory(null);
+            });
+        }
+
+        function selectCategory(id) {
+            currentCategoryId = id;
+            document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('active'));
+            if (id) { const el = document.querySelector(`.cat-item[data-id="${id}"]`); if (el) el.classList.add('active'); }
+            else { document.querySelector('.cat-item:first-child')?.classList.add('active'); }
+            loadDishes(id);
+        }
+
+        function loadDishes(categoryId) {
+            const url = categoryId ? `/api/dishes/category/${categoryId}` : `/api/dishes/restaurant/${restaurantId}`;
+            fetch(url).then(r => r.json()).then(resp => {
+                const area = document.getElementById('dishArea');
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    area.innerHTML = '<div class="empty-dish">🥘 暂无菜品</div>'; return;
+                }
+                area.innerHTML = resp.data.map(d => {
+                    const qty = getCartQty(d.id);
+                    return `
+                        <div class="dish-card">
+                            <div class="dish-icon">${getDishIcon(d.name)}</div>
+                            <div class="dish-info">
+                                <h4>${d.name}</h4>
+                                <div class="desc">${d.description || ''}</div>
+                                <div class="price">¥${d.price} <small>/${d.stock > 0 ? '有货' : '售罄'}</small></div>
+                            </div>
+                            <div class="actions">
+                                ${qty > 0 ? `
+                                    <button class="qty-btn" onclick="changeQty(${d.id}, -1)">−</button>
+                                    <span class="qty">${qty}</span>
+                                    <button class="qty-btn" onclick="changeQty(${d.id}, 1)">+</button>
+                                ` : `<button class="add-btn" onclick="addToCart({id:${d.id},name:'${d.name}',price:${d.price}})">加入</button>`}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        function getDishIcon(name) {
+            if (name.includes('鸡') || name.includes('鸭')) return '🍗';
+            if (name.includes('鱼') || name.includes('虾') || name.includes('蟹')) return '🐟';
+            if (name.includes('肉') || name.includes('猪') || name.includes('牛') || name.includes('羊')) return '🥩';
+            if (name.includes('饭') || name.includes('面') || name.includes('粉')) return '🍜';
+            if (name.includes('汤')) return '🍲';
+            if (name.includes('菜') || name.includes('蔬')) return '🥬';
+            if (name.includes('蛋')) return '🥚';
+            if (name.includes('豆')) return '🫘';
+            return '🍽️';
+        }
+
+        loadRestaurant();
+        loadCategories();
+        updateCartBadge();
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结算 - 外卖配送系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; height: 60px; }
+        .navbar a { color: #fff; text-decoration: none; font-size: 18px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 24px; }
+        .page-title { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 20px; }
+        .section { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        .section h3 { font-size: 16px; color: #333; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #ff6b35; }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .order-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid #f5f5f5; }
+        .order-item:last-child { border: none; }
+        .order-item .name { color: #333; }
+        .order-item .price { color: #888; }
+        .total-line { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-top: 12px; padding-top: 12px; border-top: 2px solid #ff6b35; }
+        .total-line .price { color: #ff6b35; }
+        .pay-options { display: flex; gap: 12px; margin: 12px 0; }
+        .pay-options label { flex: 1; border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 14px; }
+        .pay-options label:hover { border-color: #ff9a56; }
+        .pay-options input[type="radio"]:checked + span { color: #ff6b35; }
+        .pay-options input { display: none; }
+        .pay-options input:checked + span { color: #ff6b35; font-weight: bold; }
+        .pay-options label:has(input:checked) { border-color: #ff6b35; background: #fff6f0; }
+        .submit-btn { width: 100%; padding: 14px; background: #ff6b35; color: #fff; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #e55a2b; }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .loading { text-align: center; padding: 40px; color: #999; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/cart.html">← 返回购物车</a>
+    </nav>
+    <div class="container">
+        <div class="page-title">📋 确认订单</div>
+        <div id="checkoutContent"></div>
+    </div>
+    <script>
+        function getCurrentUser() {
+            const u = localStorage.getItem('waimai_user');
+            return u ? JSON.parse(u) : null;
+        }
+
+        function loadCheckout() {
+            const user = getCurrentUser();
+            if (!user) { location.href = '/login.html?redirect=/checkout.html'; return; }
+
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            if (cart.length === 0) { document.getElementById('checkoutContent').innerHTML = '<div class="section"><p style="text-align:center;color:#999;">购物车是空的</p></div>'; return; }
+
+            const restaurantId = cart[0].restaurantId;
+            let subtotal = 0;
+            let itemsHtml = '';
+            cart.forEach(item => {
+                const total = item.price * item.quantity;
+                subtotal += total;
+                itemsHtml += `<div class="order-item"><span class="name">${item.dishName} × ${item.quantity}</span><span class="price">¥${total.toFixed(2)}</span></div>`;
+            });
+
+            // 获取餐厅信息（配送费）
+            fetch(`/api/restaurants/${restaurantId}`).then(r => r.json()).then(resp => {
+                const deliveryFee = (resp.data && resp.data.deliveryFee) ? parseFloat(resp.data.deliveryFee) : 0;
+                const total = subtotal + deliveryFee;
+                document.getElementById('checkoutContent').innerHTML = `
+                    <div class="section">
+                        <h3>📍 配送信息</h3>
+                        <div class="form-group">
+                            <label>联系人</label>
+                            <input type="text" id="contactName" value="${user.nickname || user.username}">
+                        </div>
+                        <div class="form-group">
+                            <label>联系电话</label>
+                            <input type="text" id="contactPhone" value="${user.phone || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>配送地址</label>
+                            <textarea id="deliveryAddress">${user.address || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>备注</label>
+                            <textarea id="remark" placeholder="如：少辣、多放醋..."></textarea>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h3>🍜 订单商品</h3>
+                        ${itemsHtml}
+                        <div class="order-item"><span>配送费</span><span>¥${deliveryFee.toFixed(2)}</span></div>
+                        <div class="total-line"><span>合计</span><span class="price">¥${total.toFixed(2)}</span></div>
+                    </div>
+                    <div class="section">
+                        <h3>💳 支付方式</h3>
+                        <div class="pay-options">
+                            <label><input type="radio" name="payment" value="微信支付" checked><span>💚 微信支付</span></label>
+                            <label><input type="radio" name="payment" value="支付宝"><span>💙 支付宝</span></label>
+                            <label><input type="radio" name="payment" value="货到付款"><span>💵 货到付款</span></label>
+                        </div>
+                    </div>
+                    <button class="submit-btn" onclick="submitOrder(${restaurantId}, ${deliveryFee}, ${total})">提交订单 · ¥${total.toFixed(2)}</button>
+                `;
+            });
+        }
+
+        function submitOrder(restaurantId, deliveryFee, totalAmount) {
+            const user = getCurrentUser();
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            if (cart.length === 0) { alert('购物车为空'); return; }
+
+            const btn = document.querySelector('.submit-btn');
+            btn.disabled = true; btn.textContent = '提交中...';
+
+            const items = cart.map(item => ({
+                dishId: item.dishId,
+                dishName: item.dishName,
+                quantity: item.quantity,
+                price: item.price
+            }));
+
+            fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    userId: user.id,
+                    restaurantId: restaurantId,
+                    deliveryFee: deliveryFee,
+                    deliveryAddress: document.getElementById('deliveryAddress').value.trim(),
+                    contactPhone: document.getElementById('contactPhone').value.trim(),
+                    contactName: document.getElementById('contactName').value.trim(),
+                    remark: document.getElementById('remark').value.trim(),
+                    items: items
+                })
+            }).then(r => r.json()).then(resp => {
+                if (resp.code === 200 && resp.data) {
+                    // 支付
+                    return fetch('/api/orders/pay', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderId: resp.data.id, paymentMethod: '微信支付' })
+                    }).then(r => r.json());
+                } else {
+                    throw new Error(resp.message || '下单失败');
+                }
+            }).then(payResp => {
+                if (payResp.code === 200) {
+                    localStorage.removeItem('waimai_cart');
+                    alert('🎉 支付成功！订单已提交');
+                    location.href = '/orders.html';
+                } else {
+                    alert('支付失败，请重试');
+                    btn.disabled = false; btn.textContent = '重新支付';
+                }
+            }).catch(err => {
+                alert('操作失败: ' + err.message);
+                btn.disabled = false; btn.textContent = '重试';
+            });
+        }
+
+        loadCheckout();
+    </script>
+</body>
+</html>
