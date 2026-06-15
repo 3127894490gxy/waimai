@@ -10,4 +10,3 @@ class WaimaiApplicationTests {
     void contextLoads() {
     }
 }
-11111

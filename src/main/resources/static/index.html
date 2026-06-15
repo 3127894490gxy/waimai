@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外卖配送系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        .header { background: #ff6b35; color: white; padding: 20px; text-align: center; font-size: 24px; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .btn { display: inline-block; background: #ff6b35; color: white; padding: 10px 24px; border-radius: 4px; text-decoration: none; }
+        .btn:hover { background: #e55a2b; }
+    </style>
+</head>
+<body>
+    <div class="header">🍜 外卖配送系统</div>
+    <div class="container">
+        <div class="card">
+            <h2>欢迎使用外卖配送系统</h2>
+            <p style="margin: 10px 0 20px; color: #666;">基于 Spring Boot + JPA + MySQL 的外卖平台</p>
+            <a class="btn" href="/api/restaurants">查看餐厅列表 (API)</a>
+        </div>
+    </div>
+</body>
+</html>
