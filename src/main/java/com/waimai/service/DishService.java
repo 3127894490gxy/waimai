@@ -16,6 +16,10 @@ public class DishService {
         this.dishRepository = dishRepository;
     }
 
+    public List<Dish> findAll() {
+        return dishRepository.findAll();
+    }
+
     public Dish create(Dish dish) {
         return dishRepository.save(dish);
     }

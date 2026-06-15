@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 外卖配送系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        .navbar { background: #333; color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+        .navbar .logo { color: #fff; text-decoration: none; font-size: 20px; font-weight: bold; }
+        .navbar .logo span { color: #ff6b35; }
+        .navbar .nav-right a { color: #ccc; text-decoration: none; margin-left: 16px; font-size: 14px; }
+        .navbar .nav-right a:hover { color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .page-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; }
+        .page-title small { font-size: 14px; font-weight: normal; color: #999; }
+        .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #fff; border-radius: 10px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .tabs .tab { flex: 1; padding: 12px; text-align: center; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: 15px; color: #666; transition: all 0.2s; }
+        .tabs .tab:hover { background: #f5f5f5; }
+        .tabs .tab.active { background: #ff6b35; color: #fff; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+        .toolbar .left { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .toolbar select, .toolbar input { padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
+        .toolbar select:focus, .toolbar input:focus { border-color: #ff6b35; }
+        .btn { padding: 8px 20px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
+        .btn-primary { background: #ff6b35; color: #fff; }
+        .btn-primary:hover { background: #e55a2b; }
+        .btn-danger { background: #e74c3c; color: #fff; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-success { background: #27ae60; color: #fff; }
+        .btn-success:hover { background: #219a52; }
+        .btn-secondary { background: #95a5a6; color: #fff; }
+        .btn-secondary:hover { background: #7f8c8d; }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        thead { background: #fafafa; }
+        th { text-align: left; padding: 14px 16px; font-size: 13px; color: #888; font-weight: 600; border-bottom: 1px solid #eee; }
+        td { padding: 12px 16px; font-size: 14px; color: #333; border-bottom: 1px solid #f5f5f5; }
+        tr:hover td { background: #fafafa; }
+        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; }
+        .status-badge.active { background: #e8f5e9; color: #27ae60; }
+        .status-badge.inactive { background: #fce4ec; color: #e74c3c; }
+        .action-btns { display: flex; gap: 6px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: #fff; border-radius: 12px; padding: 24px; width: 480px; max-width: 90vw; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .modal h3 { font-size: 18px; color: #333; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #eee; }
+        .modal .form-group { margin-bottom: 14px; }
+        .modal .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+        .modal .form-group input, .modal .form-group textarea, .modal .form-group select { width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
+        .modal .form-group input:focus, .modal .form-group textarea:focus, .modal .form-group select:focus { border-color: #ff6b35; }
+        .modal .form-row { display: flex; gap: 12px; }
+        .modal .form-row .form-group { flex: 1; }
+        .modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee; }
+        .empty-msg { text-align: center; padding: 60px; color: #999; }
+        .loading { text-align: center; padding: 40px; color: #999; }
+        .toast { position: fixed; top: 20px; right: 20px; padding: 14px 24px; border-radius: 8px; color: #fff; font-size: 14px; z-index: 300; display: none; animation: slideIn 0.3s; }
+        .toast.success { background: #27ae60; }
+        .toast.error { background: #e74c3c; }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">← <span>外卖配送</span> 管理后台</a>
+        <div class="nav-right"><a href="/">返回前台</a></div>
+    </nav>
+    <div class="container">
+        <div class="page-title">⚙️ 系统管理 <small id="adminInfo"></small></div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('restaurants')">🏪 餐厅管理</button>
+            <button class="tab" onclick="switchTab('dishes')">🍽️ 菜品管理</button>
+            <button class="tab" onclick="switchTab('categories')">📂 分类管理</button>
+        </div>
+
+        <!-- ===== 餐厅管理 ===== -->
+        <div class="tab-content active" id="tab-restaurants">
+            <div class="toolbar">
+                <div class="left">
+                    <input type="text" id="restSearch" placeholder="搜索餐厅..." onkeyup="if(event.key==='Enter') loadRestaurants()">
+                    <button class="btn btn-primary" onclick="loadRestaurants()">🔍 搜索</button>
+                </div>
+                <button class="btn btn-success" onclick="showRestModal()">＋ 新增餐厅</button>
+            </div>
+            <table>
+                <thead><tr>
+                    <th>ID</th><th>餐厅名称</th><th>评分</th><th>配送费</th><th>电话</th><th>地址</th><th>状态</th><th>操作</th>
+                </tr></thead>
+                <tbody id="restTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- ===== 菜品管理 ===== -->
+        <div class="tab-content" id="tab-dishes">
+            <div class="toolbar">
+                <div class="left">
+                    <select id="dishRestFilter" onchange="loadDishes()"><option value="">全部餐厅</option></select>
+                </div>
+                <button class="btn btn-success" onclick="showDishModal()">＋ 新增菜品</button>
+            </div>
+            <table>
+                <thead><tr>
+                    <th>ID</th><th>菜品名称</th><th>所属餐厅</th><th>分类</th><th>价格</th><th>库存</th><th>状态</th><th>操作</th>
+                </tr></thead>
+                <tbody id="dishTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- ===== 分类管理 ===== -->
+        <div class="tab-content" id="tab-categories">
+            <div class="toolbar">
+                <div class="left">
+                    <select id="catRestFilter" onchange="loadCategories()"><option value="">选择餐厅</option></select>
+                </div>
+                <button class="btn btn-success" onclick="showCatModal()">＋ 新增分类</button>
+            </div>
+            <table>
+                <thead><tr>
+                    <th>ID</th><th>分类名称</th><th>所属餐厅</th><th>排序</th><th>操作</th>
+                </tr></thead>
+                <tbody id="catTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===== 弹窗 ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h3 id="modalTitle">新增</h3>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ===== 工具函数 =====
+        function getCurrentUser() {
+            const u = localStorage.getItem('waimai_user');
+            return u ? JSON.parse(u) : null;
+        }
+
+        function checkAdmin() {
+            const user = getCurrentUser();
+            if (!user || user.role !== 'ADMIN') {
+                alert('请用管理员账号登录！\n默认管理员: admin / admin123');
+                location.href = '/login.html?redirect=/admin.html';
+                return null;
+            }
+            document.getElementById('adminInfo').textContent = '管理员: ' + user.nickname;
+            return user;
+        }
+
+        function toast(msg, type) {
+            const el = document.getElementById('toast');
+            el.textContent = msg; el.className = 'toast ' + type; el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 2500);
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.tab[onclick*="'${name}'"]`).classList.add('active');
+            document.getElementById('tab-' + name).classList.add('active');
+            if (name === 'restaurants') loadRestaurants();
+            if (name === 'dishes') { loadRestFilter(); loadDishes(); }
+            if (name === 'categories') { loadCatFilter(); loadCategories(); }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+        }
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ===== 餐厅管理 =====
+        function loadRestaurants() {
+            const kw = document.getElementById('restSearch').value.trim();
+            const url = kw ? `/api/restaurants/search?name=${encodeURIComponent(kw)}` : '/api/restaurants?mode=all';
+            fetch(url).then(r => r.json()).then(resp => {
+                const tbody = document.getElementById('restTableBody');
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">暂无餐厅数据</td></tr>'; return;
+                }
+                tbody.innerHTML = resp.data.map(r => `
+                    <tr>
+                        <td>${r.id}</td>
+                        <td><strong>${r.name}</strong></td>
+                        <td>⭐ ${r.rating || '5.0'}</td>
+                        <td>¥${r.deliveryFee || '0'}</td>
+                        <td>${r.phone || '-'}</td>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.address || '-'}</td>
+                        <td><span class="status-badge ${r.active ? 'active' : 'inactive'}">${r.active ? '营业中' : '已关闭'}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-primary btn-sm" onclick="showRestModal(${r.id})">✏️ 编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRest(${r.id})">🗑️ 删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        function showRestModal(id) {
+            const overlay = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            if (id) {
+                title.textContent = '✏️ 编辑餐厅';
+                fetch(`/api/restaurants/${id}`).then(r => r.json()).then(resp => {
+                    if (resp.code !== 200) { toast('加载失败', 'error'); return; }
+                    const r = resp.data;
+                    body.innerHTML = restFormHtml(r);
+                    overlay.classList.add('show');
+                });
+            } else {
+                title.textContent = '＋ 新增餐厅';
+                body.innerHTML = restFormHtml(null);
+                // 从登录用户获取 merchantId
+                const user = getCurrentUser();
+                if (user) document.getElementById('rest_merchantId').value = user.id;
+                overlay.classList.add('show');
+            }
+        }
+
+        function restFormHtml(r) {
+            return `
+                <div class="form-group"><label>餐厅名称 *</label><input type="text" id="rest_name" value="${r ? r.name : ''}"></div>
+                <div class="form-group"><label>描述</label><textarea id="rest_desc" rows="2">${r ? (r.description || '') : ''}</textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label>电话</label><input type="text" id="rest_phone" value="${r ? (r.phone || '') : ''}"></div>
+                    <div class="form-group"><label>配送费 (¥)</label><input type="number" step="0.01" id="rest_fee" value="${r ? (r.deliveryFee || 0) : 0}"></div>
+                </div>
+                <div class="form-group"><label>地址</label><input type="text" id="rest_addr" value="${r ? (r.address || '') : ''}"></div>
+                <div class="form-group"><label>评分</label><input type="number" step="0.1" id="rest_rating" value="${r ? (r.rating || 5.0) : 5.0}"></div>
+                <div class="form-group"><label>商家用户ID *</label><input type="number" id="rest_merchantId" value="${r ? r.merchantId : ''}"></div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select id="rest_active">
+                        <option value="true" ${r && r.active ? 'selected' : ''}>营业中</option>
+                        <option value="false" ${r && !r.active ? 'selected' : ''}>已关闭</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveRest(${r ? r.id : ''})">保存</button>
+                </div>
+            `;
+        }
+
+        function saveRest(id) {
+            const data = {
+                name: document.getElementById('rest_name').value.trim(),
+                description: document.getElementById('rest_desc').value.trim(),
+                phone: document.getElementById('rest_phone').value.trim(),
+                deliveryFee: parseFloat(document.getElementById('rest_fee').value) || 0,
+                address: document.getElementById('rest_addr').value.trim(),
+                rating: parseFloat(document.getElementById('rest_rating').value) || 5.0,
+                merchantId: parseInt(document.getElementById('rest_merchantId').value),
+                active: document.getElementById('rest_active').value === 'true'
+            };
+            if (!data.name) { toast('餐厅名称不能为空', 'error'); return; }
+            const url = id ? `/api/restaurants/${id}` : '/api/restaurants';
+            const method = id ? 'PUT' : 'POST';
+            fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+                .then(r => r.json()).then(resp => {
+                    if (resp.code === 200) { toast(id ? '更新成功' : '创建成功', 'success'); closeModal(); loadRestaurants(); }
+                    else { toast(resp.message || '操作失败', 'error'); }
+                });
+        }
+
+        function deleteRest(id) {
+            if (!confirm('确定要删除该餐厅吗？')) return;
+            fetch(`/api/restaurants/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) { toast('删除成功', 'success'); loadRestaurants(); }
+                else { toast('删除失败', 'error'); }
+            });
+        }
+
+        // ===== 菜品管理 =====
+        function loadRestFilter() {
+            fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
+                const sel = document.getElementById('dishRestFilter');
+                if (resp.code === 200 && resp.data) {
+                    sel.innerHTML = '<option value="">全部餐厅</option>' + resp.data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                }
+            });
+        }
+
+        function loadDishes() {
+            const restId = document.getElementById('dishRestFilter').value;
+            const url = restId ? `/api/dishes/restaurant/${restId}?mode=all` : '/api/dishes/admin/all';
+            Promise.all([
+                fetch(url).then(r => r.json()),
+                fetch('/api/restaurants?mode=all').then(r => r.json())
+            ]).then(([dishResp, restResp]) => {
+                const tbody = document.getElementById('dishTableBody');
+                const restMap = {};
+                if (restResp.code === 200 && restResp.data) restResp.data.forEach(r => restMap[r.id] = r.name);
+                if (dishResp.code !== 200 || !dishResp.data || dishResp.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">暂无菜品数据</td></tr>'; return;
+                }
+                tbody.innerHTML = dishResp.data.map(d => `
+                    <tr>
+                        <td>${d.id}</td>
+                        <td><strong>${d.name}</strong></td>
+                        <td>${restMap[d.restaurantId] || '#' + d.restaurantId}</td>
+                        <td>#${d.categoryId}</td>
+                        <td style="color:#ff6b35;font-weight:bold;">¥${d.price}</td>
+                        <td>${d.stock}</td>
+                        <td><span class="status-badge ${d.active ? 'active' : 'inactive'}">${d.active ? '在售' : '下架'}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-primary btn-sm" onclick="showDishModal(${d.id})">✏️ 编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteDish(${d.id})">🗑️ 删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        function showDishModal(id) {
+            const overlay = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            // 先加载餐厅列表供选择
+            fetch('/api/restaurants?mode=all').then(r => r.json()).then(restResp => {
+                const restOpts = (restResp.data || []).map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                if (id) {
+                    title.textContent = '✏️ 编辑菜品';
+                    fetch(`/api/dishes/${id}`).then(r => r.json()).then(resp => {
+                        if (resp.code !== 200) { toast('加载失败', 'error'); return; }
+                        const d = resp.data;
+                        body.innerHTML = dishFormHtml(d, restOpts);
+                        overlay.classList.add('show');
+                        loadCatOptionsForDish(d.restaurantId, d.categoryId);
+                    });
+                } else {
+                    title.textContent = '＋ 新增菜品';
+                    body.innerHTML = dishFormHtml(null, restOpts);
+                    overlay.classList.add('show');
+                }
+            });
+        }
+
+        function dishFormHtml(d, restOpts) {
+            const restId = d ? d.restaurantId : '';
+            return `
+                <div class="form-group"><label>菜品名称 *</label><input type="text" id="dish_name" value="${d ? d.name : ''}"></div>
+                <div class="form-group"><label>描述</label><textarea id="dish_desc" rows="2">${d ? (d.description || '') : ''}</textarea></div>
+                <div class="form-row">
+                    <div class="form-group"><label>所属餐厅 *</label>
+                        <select id="dish_restaurantId" onchange="loadCatOptionsForDish(this.value)">
+                            <option value="">请选择</option>${restOpts.replace(`value="${restId}"`, `value="${restId}" selected`)}
+                        </select>
+                    </div>
+                    <div class="form-group"><label>分类</label>
+                        <select id="dish_categoryId"><option value="">无分类</option></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>价格 (¥) *</label><input type="number" step="0.01" id="dish_price" value="${d ? d.price : ''}"></div>
+                    <div class="form-group"><label>库存</label><input type="number" id="dish_stock" value="${d ? d.stock : 999}"></div>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select id="dish_active">
+                        <option value="true" ${d && d.active !== false ? 'selected' : ''}>在售</option>
+                        <option value="false" ${d && d.active === false ? 'selected' : ''}>下架</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveDish(${d ? d.id : ''})">保存</button>
+                </div>
+            `;
+        }
+
+        function loadCatOptionsForDish(restaurantId, selectedId) {
+            if (!restaurantId) return;
+            fetch(`/api/categories/restaurant/${restaurantId}`).then(r => r.json()).then(resp => {
+                const sel = document.getElementById('dish_categoryId');
+                if (resp.code === 200 && resp.data) {
+                    sel.innerHTML = '<option value="">无分类</option>' + resp.data.map(c =>
+                        `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`
+                    ).join('');
+                }
+            });
+        }
+
+        function saveDish(id) {
+            const restId = parseInt(document.getElementById('dish_restaurantId').value);
+            const price = parseFloat(document.getElementById('dish_price').value);
+            if (!document.getElementById('dish_name').value.trim()) { toast('菜品名称不能为空', 'error'); return; }
+            if (!restId) { toast('请选择所属餐厅', 'error'); return; }
+            if (!price || price <= 0) { toast('请输入有效价格', 'error'); return; }
+            const data = {
+                name: document.getElementById('dish_name').value.trim(),
+                description: document.getElementById('dish_desc').value.trim(),
+                restaurantId: restId,
+                categoryId: parseInt(document.getElementById('dish_categoryId').value) || null,
+                price: price,
+                stock: parseInt(document.getElementById('dish_stock').value) || 0,
+                active: document.getElementById('dish_active').value === 'true'
+            };
+            const url = id ? `/api/dishes/${id}` : '/api/dishes';
+            const method = id ? 'PUT' : 'POST';
+            fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+                .then(r => r.json()).then(resp => {
+                    if (resp.code === 200) { toast(id ? '更新成功' : '创建成功', 'success'); closeModal(); loadDishes(); }
+                    else { toast(resp.message || '操作失败', 'error'); }
+                });
+        }
+
+        function deleteDish(id) {
+            if (!confirm('确定要删除该菜品吗？')) return;
+            fetch(`/api/dishes/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) { toast('删除成功', 'success'); loadDishes(); }
+                else { toast('删除失败', 'error'); }
+            });
+        }
+
+        // ===== 分类管理 =====
+        function loadCatFilter() {
+            fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
+                const sel = document.getElementById('catRestFilter');
+                if (resp.code === 200 && resp.data) {
+                    sel.innerHTML = '<option value="">选择餐厅</option>' + resp.data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                }
+            });
+        }
+
+        function loadCategories() {
+            const restId = document.getElementById('catRestFilter').value;
+            if (!restId) {
+                document.getElementById('catTableBody').innerHTML = '<tr><td colspan="5" class="empty-msg">请先选择餐厅</td></tr>';
+                return;
+            }
+            Promise.all([
+                fetch(`/api/categories/restaurant/${restId}`).then(r => r.json()),
+                fetch('/api/restaurants?mode=all').then(r => r.json())
+            ]).then(([catResp, restResp]) => {
+                const tbody = document.getElementById('catTableBody');
+                const restMap = {};
+                if (restResp.code === 200 && restResp.data) restResp.data.forEach(r => restMap[r.id] = r.name);
+                if (catResp.code !== 200 || !catResp.data || catResp.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">暂无分类，点击右上角新增</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = catResp.data.map(c => `
+                    <tr>
+                        <td>${c.id}</td>
+                        <td><strong>${c.name}</strong></td>
+                        <td>${restMap[restId] || '#' + restId}</td>
+                        <td>${c.sortOrder || 0}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-primary btn-sm" onclick="showCatModal(${c.id}, ${restId})">✏️ 编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCat(${c.id})">🗑️ 删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        function showCatModal(id, restId) {
+            const overlay = document.getElementById('modalOverlay');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            if (id) {
+                title.textContent = '✏️ 编辑分类';
+                fetch(`/api/categories/restaurant/${restId}`).then(r => r.json()).then(resp => {
+                    const c = (resp.data || []).find(x => x.id === id);
+                    if (!c) { toast('分类不存在', 'error'); return; }
+                    body.innerHTML = catFormHtml(c, restId);
+                    overlay.classList.add('show');
+                });
+            } else {
+                title.textContent = '＋ 新增分类';
+                const selectedRest = document.getElementById('catRestFilter').value;
+                body.innerHTML = catFormHtml(null, selectedRest);
+                overlay.classList.add('show');
+            }
+        }
+
+        function catFormHtml(c, restId) {
+            return `
+                <div class="form-group"><label>分类名称 *</label><input type="text" id="cat_name" value="${c ? c.name : ''}"></div>
+                <div class="form-group"><label>所属餐厅</label>
+                    <select id="cat_restaurantId">
+                        ${document.getElementById('catRestFilter').innerHTML.replace(/<option value="(\d+)"(.*?)>/, (m, id, rest) => {
+                            const sel = (id == (c ? c.restaurantId : restId)) ? 'selected' : '';
+                            return `<option value="${id}" ${sel}>`;
+                        })}
+                    </select>
+                </div>
+                <div class="form-group"><label>排序 (数字越小越靠前)</label><input type="number" id="cat_sort" value="${c ? (c.sortOrder || 0) : 0}"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveCat(${c ? c.id : ''})">保存</button>
+                </div>
+            `;
+        }
+
+        function saveCat(id) {
+            const name = document.getElementById('cat_name').value.trim();
+            if (!name) { toast('分类名称不能为空', 'error'); return; }
+            const data = {
+                name: name,
+                restaurantId: parseInt(document.getElementById('cat_restaurantId').value),
+                sortOrder: parseInt(document.getElementById('cat_sort').value) || 0
+            };
+            const url = id ? `/api/categories/${id}` : '/api/categories';
+            const method = id ? 'PUT' : 'POST';
+            fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+                .then(r => r.json()).then(resp => {
+                    if (resp.code === 200) { toast(id ? '更新成功' : '创建成功', 'success'); closeModal(); loadCategories(); }
+                    else { toast(resp.message || '操作失败', 'error'); }
+                });
+        }
+
+        function deleteCat(id) {
+            if (!confirm('确定要删除该分类吗？')) return;
+            fetch(`/api/categories/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) { toast('删除成功', 'success'); loadCategories(); }
+                else { toast('删除失败', 'error'); }
+            });
+        }
+
+        // ===== 初始化 =====
+        const user = checkAdmin();
+        if (user) { loadRestaurants(); loadRestFilter(); loadCatFilter(); }
+    </script>
+</body>
+</html>

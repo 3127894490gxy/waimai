@@ -23,8 +23,19 @@ public class DishController {
     }
 
     @GetMapping("/restaurant/{restaurantId}")
-    public ApiResponse<List<Dish>> listByRestaurant(@PathVariable Long restaurantId) {
+    public ApiResponse<List<Dish>> listByRestaurant(@PathVariable Long restaurantId,
+                                                     @RequestParam(required = false) String mode) {
+        if ("all".equals(mode)) {
+            return ApiResponse.success(dishService.findAll().stream()
+                    .filter(d -> d.getRestaurantId().equals(restaurantId))
+                    .collect(java.util.stream.Collectors.toList()));
+        }
         return ApiResponse.success(dishService.findByRestaurantId(restaurantId));
+    }
+
+    @GetMapping("/admin/all")
+    public ApiResponse<List<Dish>> listAll() {
+        return ApiResponse.success(dishService.findAll());
     }
 
     @GetMapping("/category/{categoryId}")

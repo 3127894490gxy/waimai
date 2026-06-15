@@ -23,7 +23,10 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public ApiResponse<List<Restaurant>> list() {
+    public ApiResponse<List<Restaurant>> list(@RequestParam(required = false) String mode) {
+        if ("all".equals(mode)) {
+            return ApiResponse.success(restaurantService.findAll());
+        }
         return ApiResponse.success(restaurantService.findAllActive());
     }
 

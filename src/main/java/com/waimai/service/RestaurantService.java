@@ -24,6 +24,10 @@ public class RestaurantService {
         return restaurantRepository.findById(id);
     }
 
+    public List<Restaurant> findAll() {
+        return restaurantRepository.findAll();
+    }
+
     public List<Restaurant> findAllActive() {
         return restaurantRepository.findByActiveTrue();
     }
