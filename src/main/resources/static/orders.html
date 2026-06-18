@@ -113,19 +113,60 @@
                                     `).join('')}
                                 </div>
                                 ` : ''}
+                                ${order.deliveryId ? `
+                                <div id="deliveryInfo_${order.id}" style="margin-top:10px;padding:10px 14px;background:#f0f8ff;border-radius:8px;border-left:3px solid #4a90d9;font-size:13px;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;">
+                                        <span style="font-weight:bold;color:#4a90d9;">🚚 配送员信息</span>
+                                        <span id="delPhone_${order.id}" style="color:#999;">加载中...</span>
+                                    </div>
+                                    <div style="margin-top:4px;display:flex;align-items:center;gap:10px;">
+                                        <span style="color:#333;" id="delName_${order.id}">${order.deliveryName || '配送员'}</span>
+                                        <a id="delCallBtn_${order.id}" style="display:none;padding:4px 14px;background:#4a90d9;color:#fff;border-radius:20px;text-decoration:none;font-size:12px;" href="tel:">📞 联系配送员</a>
+                                    </div>
+                                </div>
+                                ` : ''}
                                 <div class="total">合计 ¥${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</div>
                             </div>
                             <div class="footer">
                                 <span class="rest-name">🏪 ${restName}</span>
-                                ${order.deliveryName ? `<span style="color:#4a90d9;">🚚 ${order.deliveryName}</span>` : ''}
                                 <span>${new Date(order.createTime).toLocaleString('zh-CN')}</span>
                             </div>
                         </div>
                     `).join('');
+
+                // 为每个有配送员的订单加载配送员电话
+                results.forEach(({ order }) => {
+                    if (order.deliveryId) {
+                        loadDeliveryPhone(order.id, order.deliveryId, order.deliveryName);
+                    }
+                });
                 });
             }).catch(() => {
                 el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败，请确认后端已启动</p></div>';
             });
+        }
+
+        // ===== 加载配送员电话 =====
+        function loadDeliveryPhone(orderId, deliveryId, deliveryName) {
+            if (!deliveryId) return;
+            fetch(`/api/users/${deliveryId}`).then(r => r.json()).then(resp => {
+                if (resp.code === 200 && resp.data) {
+                    const phone = resp.data.phone;
+                    const nameEl = document.getElementById('delName_' + orderId);
+                    const phoneEl = document.getElementById('delPhone_' + orderId);
+                    const callBtn = document.getElementById('delCallBtn_' + orderId);
+                    if (nameEl) nameEl.textContent = deliveryName || resp.data.nickname || '配送员';
+                    if (phone && phoneEl) {
+                        phoneEl.textContent = '📞 ' + phone;
+                        if (callBtn) {
+                            callBtn.href = 'tel:' + phone;
+                            callBtn.style.display = 'inline-block';
+                        }
+                    } else if (phoneEl) {
+                        phoneEl.textContent = '暂无电话';
+                    }
+                }
+            }).catch(() => {});
         }
 
         loadOrders();
