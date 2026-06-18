@@ -140,9 +140,24 @@
             }).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
                     const roleNames = { CUSTOMER: '普通用户', MERCHANT: '商家', DELIVERY: '配送员' };
-                    sucEl.textContent = '🎉 ' + (roleNames[selectedRole] || '用户') + '注册成功！正在跳转到登录...';
+                    sucEl.textContent = '🎉 ' + (roleNames[selectedRole] || '用户') + '注册成功！正在自动登录...';
                     sucEl.style.display = 'block';
-                    setTimeout(() => location.href = '/login.html', 1500);
+                    // 注册成功自动登录
+                    fetch('/api/users/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    }).then(r => r.json()).then(loginResp => {
+                        if (loginResp.code === 200 && loginResp.data) {
+                            localStorage.setItem('waimai_user', JSON.stringify(loginResp.data));
+                            const role = loginResp.data.role;
+                            if (role === 'MERCHANT') location.href = '/merchant.html';
+                            else if (role === 'DELIVERY') location.href = '/delivery.html';
+                            else location.href = '/';
+                        } else {
+                            location.href = '/login.html';
+                        }
+                    }).catch(() => { location.href = '/login.html'; });
                 } else {
                     errEl.textContent = resp.message || '注册失败，用户名可能已存在';
                     errEl.style.display = 'block';
