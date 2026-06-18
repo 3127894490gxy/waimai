@@ -82,6 +82,7 @@
 
         function syncNickname() {
             if (!nicknameSynced) return;
+            if (selectedRole !== 'CUSTOMER') return; // 仅普通用户自动同步
             const username = document.getElementById('username').value.trim();
             document.getElementById('nickname').value = username;
         }
@@ -101,9 +102,9 @@
             document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             selectedRole = el.dataset.role;
-            // 切换角色后重新同步昵称
+            // 切换角色后重新同步昵称（仅普通用户）
             nicknameSynced = true;
-            syncNickname();
+            if (selectedRole === 'CUSTOMER') syncNickname();
             // 根据角色调整昵称字段
             const label = document.getElementById('nicknameLabel');
             const input = document.getElementById('nickname');
