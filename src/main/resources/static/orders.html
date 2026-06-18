@@ -12,14 +12,16 @@
         .navbar a { color: #fff; text-decoration: none; }
         .navbar .logo { font-size: 20px; font-weight: bold; }
         .container { max-width: 800px; margin: 0 auto; padding: 24px; }
-        .page-title { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 20px; }
-        .order-card { background: #fff; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+        .page-title { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 20px; display:flex;align-items:center;justify-content:space-between; }
+        .page-title .live-badge { font-size:12px;background:#4caf50;color:#fff;padding:2px 10px;border-radius:20px;animation:pulse 2s infinite; }
+        .order-card { background: #fff; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; transition:all 0.3s; }
+        .order-card.status-changed { animation: statusFlash 0.8s ease; }
         .order-card .header { padding: 16px 20px 8px; display: flex; justify-content: space-between; align-items: center; }
         .order-card .header .order-no { font-size: 13px; color: #999; }
-        .order-card .header .status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .order-card .header .status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; transition:all 0.5s; }
         .order-card .header .status.pending { background: #fff3e0; color: #ff8c00; }
         .order-card .header .status.paid { background: #e8f5e9; color: #43a047; }
-        .order-card .header .status.delivering { background: #e3f2fd; color: #1976d2; }
+        .order-card .header .status.delivering { background: #e3f2fd; color: #1976d2; animation:pulse 1.5s infinite; }
         .order-card .header .status.completed { background: #e8f5e9; color: #2e7d32; }
         .order-card .header .status.cancelled { background: #fce4ec; color: #c62828; }
         .order-card .body { padding: 8px 20px 16px; }
@@ -27,11 +29,33 @@
         .order-card .body .total { text-align: right; font-size: 18px; font-weight: bold; color: #ff6b35; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
         .order-card .footer { background: #fafafa; padding: 10px 20px; display: flex; justify-content: space-between; font-size: 13px; color: #999; }
         .order-card .footer .rest-name { color: #ff6b35; }
+        .order-card .footer .rider-name { color: #4a90d9; font-weight:bold; }
         .empty { text-align: center; padding: 80px 20px; color: #999; }
         .empty .icon { font-size: 64px; margin-bottom: 16px; }
         .empty a { display: inline-block; margin-top: 16px; padding: 10px 24px; background: #ff6b35; color: #fff; text-decoration: none; border-radius: 6px; }
         .loading { text-align: center; padding: 40px; color: #999; }
-        .status-translate { 'PENDING_PAYMENT': '待支付', 'PAID': '已支付', 'ACCEPTED': '已接单', 'PREPARING': '准备中', 'DELIVERING': '配送中', 'DELIVERED': '已送达', 'COMPLETED': '已完成', 'CANCELLED': '已取消' }
+        /* 进度条动画 */
+        .progress-bar { display:flex;align-items:center;justify-content:center;gap:0;padding:16px 0 8px;border-top:1px solid #f5f5f5;margin-top:8px; }
+        .progress-step { display:flex;flex-direction:column;align-items:center;gap:4px;position:relative; }
+        .progress-step .icon { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.6s; }
+        .progress-step .icon.active { background:#ff6b35;transform:scale(1.15);box-shadow:0 2px 12px rgba(255,107,53,0.4); }
+        .progress-step .icon.done { background:#4caf50; }
+        .progress-step .icon.pending { background:#f0f0f0;opacity:0.5; }
+        .progress-step .label { font-size:11px;color:#999;white-space:nowrap; }
+        .progress-step .label.active { color:#ff6b35;font-weight:bold; }
+        .progress-step .label.done { color:#4caf50; }
+        .progress-line { width:50px;height:3px;margin:0 4px;margin-bottom:20px;border-radius:2px;transition:all 0.6s; }
+        .progress-line.done { background:#4caf50; }
+        .progress-line.active { background:linear-gradient(90deg,#4caf50,#ff6b35);animation:progressPulse 1s infinite; }
+        .progress-line.pending { background:#eee; }
+        .progress-line.cancelled { background:#e74c3c; }
+        @keyframes statusFlash { 0%{box-shadow:0 0 0 0 rgba(255,107,53,0.4)} 100%{box-shadow:0 0 0 20px rgba(255,107,53,0)} }
+        @keyframes progressPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        /* 支付倒计时 */
+        .pay-countdown { text-align:center;padding:8px;background:#fff8f5;border-radius:8px;margin:8px 0 0;font-size:13px;color:#ff6b35; }
+        .pay-countdown .timer { font-weight:bold;font-size:16px; }
+        /* 新订单提示 */
+        .new-order-toast { position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#4caf50;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;z-index:999;animation:slideDown 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:none; }
     </style>
 </head>
 <body>
@@ -44,8 +68,12 @@
         <a href="/cart.html" id="orderCartLink">🛒 购物车</a>
         <a href="/rider.html" id="orderRiderLink" style="display:none;">🏍️ 骑手工作台</a>
     </nav>
+    <div class="new-order-toast" id="newOrderToast"></div>
     <div class="container">
-        <div class="page-title">📋 我的订单</div>
+        <div class="page-title">
+            <span>📋 我的订单</span>
+            <span class="live-badge" id="liveBadge" style="display:none;">● 实时</span>
+        </div>
         <div id="orderList">
             <div class="loading">加载中...</div>
         </div>
@@ -56,22 +84,58 @@
             return u ? JSON.parse(u) : null;
         }
 
-        const statusMap = {
-            'PENDING_PAYMENT': { text: '待支付', cls: 'pending', step: 0 },
-            'PAID': { text: '已支付', cls: 'paid', step: 1 },
-            'ACCEPTED': { text: '商家已接单', cls: 'paid', step: 2 },
-            'PREPARING': { text: '准备中', cls: 'delivering', step: 2 },
-            'DELIVERING': { text: '配送中', cls: 'delivering', step: 3 },
-            'DELIVERED': { text: '已送达', cls: 'completed', step: 4 },
-            'COMPLETED': { text: '已完成', cls: 'completed', step: 5 },
-            'CANCELLED': { text: '已取消', cls: 'cancelled', step: -1 }
-        };
+        const statusSteps = [
+            { status: 'PENDING_PAYMENT', icon: '💳', label: '待支付', step: 0 },
+            { status: 'PAID', icon: '👨‍🍳', label: '已支付', step: 1 },
+            { status: 'PREPARING', icon: '👨‍🍳', label: '准备中', step: 2 },
+            { status: 'DELIVERING', icon: '🚚', label: '配送中', step: 3 },
+            { status: 'DELIVERED', icon: '✅', label: '已送达', step: 4 },
+            { status: 'COMPLETED', icon: '✅', label: '已完成', step: 5 }
+        ];
+
+        const statusMap = {};
+        statusSteps.forEach(s => { statusMap[s.status] = { text: s.label, cls: s.cls || '', step: s.step }; });
+        statusMap.PAID.cls = 'paid';
+        statusMap.PREPARING.cls = 'delivering';
+        statusMap.DELIVERING.cls = 'delivering';
+        statusMap.DELIVERED.cls = 'completed';
+        statusMap.COMPLETED.cls = 'completed';
+        statusMap.PENDING_PAYMENT.cls = 'pending';
+        statusMap.CANCELLED = { text: '已取消', cls: 'cancelled', step: -1 };
+
+        // 获取当前进度步骤索引（0-5）
+        function getStep(status) {
+            const s = statusSteps.findIndex(s => s.status === status);
+            return s >= 0 ? s : -1;
+        }
+
+        // 渲染进度条
+        function renderProgress(currentStatus, cancelled) {
+            if (cancelled) return '<div class="progress-bar"><span style="color:#e74c3c;font-size:14px;">❌ 订单已取消</span></div>';
+            const currentStep = getStep(currentStatus);
+            if (currentStep < 0) return '';
+            return '<div class="progress-bar">' +
+                statusSteps.map((s, i) => {
+                    const state = i < currentStep ? 'done' : (i === currentStep ? 'active' : 'pending');
+                    const lineState = i < currentStep ? 'done' : (i === currentStep ? 'active' : 'pending');
+                    return `
+                        <div class="progress-step">
+                            <div class="icon ${state}">${s.icon}</div>
+                            <span class="label ${state}">${s.label}</span>
+                        </div>
+                        ${i < statusSteps.length - 1 ? `<div class="progress-line ${lineState}"></div>` : ''}
+                    `;
+                }).join('') +
+            '</div>';
+        }
+
+        // 保存上一次的订单状态，用于检测变化
+        let prevOrderStatus = {};
 
         function loadOrders() {
             const user = getCurrentUser();
             const el = document.getElementById('orderList');
             if (!user) { el.innerHTML = '<div class="empty"><div class="icon">🔐</div><p>请先登录查看订单</p><a href="/login.html">去登录</a></div>'; return; }
-            // 骑手重定向到骑手工作台
             if (user.role === 'DELIVERY') {
                 location.href = '/rider.html';
                 return;
@@ -80,16 +144,20 @@
             fetch(`/api/orders/user/${user.id}`).then(r => r.json()).then(resp => {
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
                     el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>暂无订单</p><a href="/">去点餐</a></div>';
+                    document.getElementById('liveBadge').style.display = 'none';
                     return;
                 }
 
-                // 为每个订单加载餐厅名称和订单项
+                // 显示实时标记
+                const hasActive = resp.data.some(o => 
+                    ['PENDING_PAYMENT','PAID','ACCEPTED','PREPARING','DELIVERING'].includes(o.status)
+                );
+                document.getElementById('liveBadge').style.display = hasActive ? 'inline' : 'none';
+
                 const promises = resp.data.map(order => {
                     const st = statusMap[order.status] || { text: order.status, cls: '' };
-                    // 获取餐厅名
                     return fetch(`/api/restaurants/${order.restaurantId}`).then(r => r.json()).then(resp2 => {
                         const restName = resp2.data ? resp2.data.name : '餐厅#' + order.restaurantId;
-                        // 获取订单项
                         return fetch(`/api/orders/${order.id}/items`).then(r => r.json()).then(resp3 => {
                             const items = resp3.data || [];
                             const itemsHtml = items.map(item => 
@@ -101,40 +169,108 @@
                 });
 
                 Promise.all(promises).then(results => {
-                    el.innerHTML = results.map(({ order, restName, itemsHtml, st }) => `
-                        <div class="order-card card-enter">
+                    const now = Date.now();
+                    let hasChanges = false;
+
+                    el.innerHTML = results.map(({ order, restName, itemsHtml, st }) => {
+                        const isCancelled = order.status === 'CANCELLED';
+                        const isNew = !prevOrderStatus[order.id];
+                        const statusChanged = prevOrderStatus[order.id] && prevOrderStatus[order.id] !== order.status;
+
+                        // 检测到状态变化
+                        if (statusChanged) {
+                            hasChanges = true;
+                            showStatusToast(order, prevOrderStatus[order.id], order.status, restName);
+                        }
+
+                        // 更新记录
+                        prevOrderStatus[order.id] = order.status;
+
+                        // 待支付显示倒计时
+                        let countdownHtml = '';
+                        if (order.status === 'PENDING_PAYMENT') {
+                            countdownHtml = '<div class="pay-countdown">⏳ 等待支付，请尽快完成付款</div>';
+                        }
+
+                        const orderStep = getStep(order.status);
+
+                        return `
+                        <div class="order-card card-enter ${statusChanged ? 'status-changed' : ''}" id="orderCard_${order.id}">
                             <div class="header">
                                 <span class="order-no">🆔 ${order.orderNo}</span>
                                 <span class="status ${st.cls}">${st.text}</span>
                             </div>
                             <div class="body">
                                 ${itemsHtml}
-                                ${st.step > 0 && st.step < 5 ? `
-                                <div style="display:flex;gap:8px;justify-content:center;padding:12px 0 4px;border-top:1px solid #f5f5f5;margin-top:8px;">
-                                    ${['💳','👨‍🍳','🚚','✅'].map((icon,i) => `
-                                        <div style="display:flex;align-items:center;gap:4px;">
-                                            <span style="font-size:18px;opacity:${i+1 <= st.step ? 1 : 0.3};">${icon}</span>
-                                            ${i < 3 ? '<span style="color:'+(i+1 < st.step ? '#ff6b35' : '#eee')+';">━━</span>' : ''}
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                ` : ''}
+                                ${renderProgress(order.status, isCancelled)}
+                                ${countdownHtml}
                                 <div class="total">合计 ¥${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</div>
                             </div>
                             <div class="footer">
                                 <span class="rest-name">🏪 ${restName}</span>
-                                ${order.deliveryName ? `<span style="color:#4a90d9;">🚚 ${order.deliveryName}</span>` : ''}
+                                ${order.deliveryName ? `<span class="rider-name">🚚 ${order.deliveryName}</span>` : ''}
                                 <span>${new Date(order.createTime).toLocaleString('zh-CN')}</span>
                             </div>
-                        </div>
-                    `).join('');
+                        </div>`;
+                    }).join('');
+
+                    // 自动滚动到有变化的订单
+                    if (hasChanges) {
+                        const changedCard = document.querySelector('.status-changed');
+                        if (changedCard) changedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 });
             }).catch(() => {
                 el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败，请确认后端已启动</p></div>';
             });
         }
 
+        // 状态变化通知
+        function showStatusToast(order, oldStatus, newStatus, restName) {
+            const statusLabels = { 'PENDING_PAYMENT':'待支付','PAID':'已支付','ACCEPTED':'已接单','PREPARING':'准备中','DELIVERING':'配送中','DELIVERED':'已送达','COMPLETED':'已完成','CANCELLED':'已取消' };
+            const newLabel = statusLabels[newStatus] || newStatus;
+            const toast = document.getElementById('newOrderToast');
+            let msg = '';
+            if (newStatus === 'DELIVERING') {
+                msg = `🚚 ${restName} 订单开始配送${order.deliveryName ? '（配送员：' + order.deliveryName + '）' : ''}`;
+            } else if (newStatus === 'DELIVERED') {
+                msg = `✅ ${restName} 订单已送达，请取餐！`;
+            } else if (newStatus === 'CANCELLED') {
+                msg = `❌ ${restName} 订单已取消`;
+            } else {
+                msg = `📢 ${restName} 订单状态更新：${newLabel}`;
+            }
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        // 轮询 - 有活跃订单时每5秒刷新
+        let pollTimer = null;
+
+        function startPolling() {
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(function() {
+                // 检查是否有活跃订单来决定是否继续轮询
+                const user = getCurrentUser();
+                if (!user) { clearInterval(pollTimer); pollTimer = null; return; }
+                loadOrders();
+            }, 5000);
+        }
+
+        // 页面可见性变化时调整轮询
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            } else {
+                loadOrders();
+                startPolling();
+            }
+        });
+
+        // ===== 初始化 =====
         loadOrders();
+        startPolling();
     </script>
 </body>
 </html>
