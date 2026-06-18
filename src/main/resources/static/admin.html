@@ -81,6 +81,8 @@
             <button class="tab active" onclick="switchTab('restaurants')">🏪 餐厅管理</button>
             <button class="tab" onclick="switchTab('dishes')">🍽️ 菜品管理</button>
             <button class="tab" onclick="switchTab('categories')">📂 分类管理</button>
+            <button class="tab" onclick="switchTab('delivery')">🚚 外卖员管理</button>
+            <button class="tab" onclick="switchTab('dispatch')">📦 配送调度</button>
         </div>
 
         <!-- ===== 餐厅管理 ===== -->
@@ -131,6 +133,38 @@
                 <tbody id="catTableBody"></tbody>
             </table>
         </div>
+
+        <!-- ===== 外卖员管理 ===== -->
+        <div class="tab-content" id="tab-delivery">
+            <div class="toolbar">
+                <div class="left">
+                    <h3 style="margin:0;font-size:16px;color:#333;">👤 配送人员列表</h3>
+                </div>
+                <button class="btn btn-success" onclick="showDeliveryModal()">＋ 新增外卖员</button>
+            </div>
+            <table>
+                <thead><tr>
+                    <th>ID</th><th>用户名</th><th>姓名</th><th>电话</th><th>地址</th><th>创建时间</th><th>操作</th>
+                </tr></thead>
+                <tbody id="deliveryTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- ===== 配送调度 ===== -->
+        <div class="tab-content" id="tab-dispatch">
+            <div class="toolbar">
+                <div class="left">
+                    <h3 style="margin:0;font-size:16px;color:#333;">📦 待配送订单</h3>
+                </div>
+                <button class="btn btn-primary" onclick="loadPendingOrders()">🔄 刷新</button>
+            </div>
+            <table>
+                <thead><tr>
+                    <th>订单号</th><th>用户ID</th><th>金额</th><th>地址</th><th>状态</th><th>配送员</th><th>操作</th>
+                </tr></thead>
+                <tbody id="pendingOrderBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <!-- ===== 弹窗 ===== -->
@@ -175,6 +209,8 @@
             if (name === 'restaurants') loadRestaurants();
             if (name === 'dishes') { loadRestFilter(); loadDishes(); }
             if (name === 'categories') { loadCatFilter(); loadCategories(); }
+            if (name === 'delivery') loadDeliveryList();
+            if (name === 'dispatch') loadPendingOrders();
         }
 
         function closeModal() {
@@ -538,6 +574,126 @@
             fetch(`/api/categories/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
                 if (resp.code === 200) { toast('删除成功', 'success'); loadCategories(); }
                 else { toast('删除失败', 'error'); }
+            });
+        }
+
+        // ===== 外卖员管理 =====
+        function loadDeliveryList() {
+            fetch('/api/users/role/DELIVERY').then(r => r.json()).then(resp => {
+                const tbody = document.getElementById('deliveryTableBody');
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">暂无外卖员，点击右上角新增</td></tr>'; return;
+                }
+                tbody.innerHTML = resp.data.map(d => `
+                    <tr>
+                        <td>${d.id}</td>
+                        <td>${d.username}</td>
+                        <td><strong>${d.nickname || d.username}</strong></td>
+                        <td>${d.phone || '-'}</td>
+                        <td>${d.address || '-'}</td>
+                        <td>${d.createTime ? new Date(d.createTime).toLocaleString('zh-CN') : '-'}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-danger btn-sm" onclick="deleteDelivery(${d.id})">🗑️ 删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        function showDeliveryModal() {
+            const overlay = document.getElementById('modalOverlay');
+            document.getElementById('modalTitle').textContent = '＋ 新增外卖员';
+            document.getElementById('modalBody').innerHTML = `
+                <div class="form-group"><label>用户名 *</label><input type="text" id="del_username" placeholder="登录用"></div>
+                <div class="form-group"><label>密码 *</label><input type="text" id="del_password" value="123456"></div>
+                <div class="form-group"><label>姓名</label><input type="text" id="del_nickname" placeholder="外卖员姓名"></div>
+                <div class="form-group"><label>电话</label><input type="text" id="del_phone" placeholder="手机号"></div>
+                <div class="form-group"><label>地址</label><input type="text" id="del_address" placeholder="配送站地址"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveDelivery()">保存</button>
+                </div>
+            `;
+            overlay.classList.add('show');
+        }
+
+        function saveDelivery() {
+            const username = document.getElementById('del_username').value.trim();
+            const password = document.getElementById('del_password').value.trim();
+            if (!username || !password) { toast('用户名和密码不能为空', 'error'); return; }
+            fetch('/api/users/admin/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    nickname: document.getElementById('del_nickname').value.trim() || username,
+                    phone: document.getElementById('del_phone').value.trim(),
+                    address: document.getElementById('del_address').value.trim(),
+                    role: 'DELIVERY'
+                })
+            }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) { toast('创建成功', 'success'); closeModal(); loadDeliveryList(); }
+                else { toast(resp.message || '创建失败', 'error'); }
+            });
+        }
+
+        function deleteDelivery(id) {
+            if (!confirm('确定要删除该外卖员吗？')) return;
+            fetch(`/api/users/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) { toast('删除成功', 'success'); loadDeliveryList(); }
+                else { toast('删除失败', 'error'); }
+            });
+        }
+
+        // ===== 配送调度 =====
+        let deliveryUserList = [];
+
+        function loadPendingOrders() {
+            // 加载配送员列表供选择
+            fetch('/api/users/role/DELIVERY').then(r => r.json()).then(resp => {
+                if (resp.code === 200) deliveryUserList = resp.data || [];
+            });
+            // 加载待配送订单
+            fetch('/api/orders/delivery/pending').then(r => r.json()).then(resp => {
+                const tbody = document.getElementById('pendingOrderBody');
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">暂无待配送订单</td></tr>'; return;
+                }
+                tbody.innerHTML = resp.data.map(o => `
+                    <tr>
+                        <td style="font-size:12px;">${o.orderNo}</td>
+                        <td>${o.userId}</td>
+                        <td style="color:#ff6b35;font-weight:bold;">¥${o.totalAmount ? o.totalAmount.toFixed(2) : '0.00'}</td>
+                        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.deliveryAddress || '-'}</td>
+                        <td><span class="status-badge active">待配送</span></td>
+                        <td id="delInfo_${o.id}">${o.deliveryName ? '👤 ' + o.deliveryName : '<span style="color:#999;">未分配</span>'}</td>
+                        <td>
+                            <select id="assignDel_${o.id}" style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
+                                <option value="">选择配送员</option>
+                                ${deliveryUserList.map(d => `<option value="${d.id}|${d.nickname||d.username}">${d.nickname||d.username}</option>`).join('')}
+                            </select>
+                            <button class="btn btn-primary btn-sm" onclick="assignDelivery(${o.id})" style="margin-left:4px;">分配</button>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        function assignDelivery(orderId) {
+            const sel = document.getElementById('assignDel_' + orderId);
+            const val = sel.value;
+            if (!val) { toast('请选择配送员', 'error'); return; }
+            const [deliveryId, deliveryName] = val.split('|');
+            fetch(`/api/orders/${orderId}/assign-delivery`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ deliveryId: parseInt(deliveryId), deliveryName: deliveryName })
+            }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) { toast('✅ 已分配 ' + deliveryName, 'success'); loadPendingOrders(); }
+                else { toast('分配失败', 'error'); }
             });
         }
 

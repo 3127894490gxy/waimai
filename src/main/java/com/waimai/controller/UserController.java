@@ -38,6 +38,24 @@ public class UserController {
         return ApiResponse.success(userService.findAll());
     }
 
+    /** 管理员：按角色查询用户 */
+    @GetMapping("/role/{role}")
+    public ApiResponse<List<User>> listByRole(@PathVariable String role) {
+        try {
+            UserRole userRole = UserRole.valueOf(role.toUpperCase());
+            return ApiResponse.success(userService.findByRole(userRole));
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(400, "无效的角色: " + role);
+        }
+    }
+
+    /** 管理员：创建任意角色的用户 */
+    @PostMapping("/admin/create")
+    public ApiResponse<User> adminCreate(@RequestBody User user) {
+        if (user.getRole() == null) user.setRole(UserRole.CUSTOMER);
+        return ApiResponse.success(userService.adminCreate(user));
+    }
+
     @GetMapping("/{id}")
     public ApiResponse<User> getById(@PathVariable Long id) {
         return userService.findById(id)
@@ -49,5 +67,11 @@ public class UserController {
     public ApiResponse<User> update(@PathVariable Long id, @RequestBody User user) {
         user.setId(id);
         return ApiResponse.success(userService.update(user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
+        return ApiResponse.success(null);
     }
 }

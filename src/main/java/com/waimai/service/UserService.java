@@ -35,6 +35,19 @@ public class UserService {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    //按角色查询
+    public List<User> findByRole(UserRole role) {
+        return userRepository.findByRole(role);
+    }
+
+    //管理员创建用户（可指定角色）
+    public User adminCreate(User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("用户名已存在");
+        }
+        return userRepository.save(user);
+    }
     //更新用户信息
     public User update(User user) {
         return userRepository.save(user);

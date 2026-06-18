@@ -70,6 +70,35 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    /** 分配配送员 */
+    @Transactional
+    public Order assignDelivery(Long orderId, Long deliveryId, String deliveryName) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("订单不存在"));
+        order.setDeliveryId(deliveryId);
+        order.setDeliveryName(deliveryName);
+        // 分配配送员时，将状态更新为"配送中"
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.ACCEPTED) {
+            order.setStatus(OrderStatus.DELIVERING);
+        }
+        return orderRepository.save(order);
+    }
+
+    /** 按配送员查询订单 */
+    public List<Order> findByDeliveryId(Long deliveryId) {
+        return orderRepository.findByDeliveryIdOrderByCreateTimeDesc(deliveryId);
+    }
+
+    /** 按配送员和状态查询订单 */
+    public List<Order> findByDeliveryIdAndStatus(Long deliveryId, OrderStatus status) {
+        return orderRepository.findByDeliveryIdAndStatusOrderByCreateTimeDesc(deliveryId, status);
+    }
+
+    /** 查询待配送的订单（已支付待接单+已接单） */
+    public List<Order> findPendingDelivery() {
+        return orderRepository.findByStatusOrderByCreateTimeDesc(OrderStatus.PAID);
+    }
+
     private String generateOrderNo() {
         LocalDateTime now = LocalDateTime.now();
         String datePart = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
