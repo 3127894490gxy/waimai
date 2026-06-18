@@ -54,6 +54,7 @@
             <a href="/" class="active">首页</a>
             <a href="/orders.html">我的订单</a>
             <a href="/cart.html">购物车</a>
+            <a href="/delivery.html" id="deliveryLink" style="display:none;background:rgba(74,144,217,0.3);">🚚 配送</a>
             <a href="/admin.html" id="adminLink" style="display:none;background:rgba(255,255,255,0.15);">⚙️ 管理</a>
             <div class="user-info" id="userInfo"></div>
         </div>
@@ -78,12 +79,15 @@
             const user = getCurrentUser();
             const el = document.getElementById('userInfo');
             const adminLink = document.getElementById('adminLink');
+            const deliveryLink = document.getElementById('deliveryLink');
             if (user) {
                 el.innerHTML = `<span>👋 ${user.nickname || user.username}</span><a href="#" onclick="logout()">退出</a>`;
-                if (user.role === 'ADMIN' && adminLink) adminLink.style.display = 'inline-block';
+                if (adminLink) adminLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
+                if (deliveryLink) deliveryLink.style.display = user.role === 'DELIVERY' ? 'inline-block' : 'none';
             } else {
                 el.innerHTML = `<a href="/login.html">登录</a><a href="/register.html">注册</a>`;
                 if (adminLink) adminLink.style.display = 'none';
+                if (deliveryLink) deliveryLink.style.display = 'none';
             }
         }
 
