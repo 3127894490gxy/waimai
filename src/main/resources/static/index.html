@@ -53,7 +53,7 @@
         <div class="nav-links">
             <a href="/" class="active">首页</a>
             <a href="/orders.html">我的订单</a>
-            <a href="/cart.html">购物车</a>
+            <a href="/cart.html" id="navCart">🛒 购物车 <span class="badge" id="cartBadge" style="display:none;background:#ff6b35;color:#fff;font-size:11px;padding:1px 6px;border-radius:8px;margin-left:2px;">0</span></a>
             <a href="/admin.html" id="adminLink" style="display:none;background:rgba(255,255,255,0.15);">⚙️ 管理</a>
             <div class="user-info" id="userInfo"></div>
         </div>
@@ -78,13 +78,33 @@
             const user = getCurrentUser();
             const el = document.getElementById('userInfo');
             const adminLink = document.getElementById('adminLink');
+            const riderLink = document.getElementById('riderLink');
+            const navHome = document.getElementById('navHome');
+            const navOrders = document.getElementById('navOrders');
+            const navCart = document.getElementById('navCart');
             if (user) {
                 el.innerHTML = `<span>👋 ${user.nickname || user.username}</span><a href="#" onclick="logout()">退出</a>`;
                 if (user.role === 'ADMIN' && adminLink) adminLink.style.display = 'inline-block';
+                if (user.role === 'DELIVERY') {
+                    if (riderLink) riderLink.style.display = 'inline-block';
+                    if (navOrders) navOrders.style.display = 'none';
+                    if (navCart) navCart.style.display = 'none';
+                }
             } else {
                 el.innerHTML = `<a href="/login.html">登录</a><a href="/register.html">注册</a>`;
                 if (adminLink) adminLink.style.display = 'none';
+                if (riderLink) riderLink.style.display = 'none';
             }
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            if (!badge) return;
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            const total = cart.reduce((s, i) => s + i.quantity, 0);
+            if (total > 0) { badge.textContent = total; badge.style.display = 'inline'; }
+            else { badge.style.display = 'none'; }
         }
 
         function logout() {
@@ -128,6 +148,11 @@
 
         renderUser();
         loadRestaurants();
+
+        // 跨标签同步购物车
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'waimai_cart') updateCartBadge();
+        });
 
         // 骑手访问首页时重定向到骑手工作台
         const currentUser = getCurrentUser();

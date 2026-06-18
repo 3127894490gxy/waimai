@@ -133,6 +133,7 @@
         <div class="right-actions">
             <a href="/orders.html" id="cartOrderLink">📋 订单</a>
             <a href="/rider.html" id="cartRiderLink" style="display:none;">🏍️ 工作台</a>
+            <span style="position:relative;font-size:14px;color:#fff;">🛒 <span id="cartBadge" style="display:none;background:#fff;color:#ff6b35;font-size:11px;padding:1px 5px;border-radius:8px;font-weight:bold;">0</span></span>
         </div>
     </nav>
 
@@ -207,6 +208,7 @@
                 return;
             }
             loadCart();
+            updateBadge();
         }
 
         /* ============================================
@@ -577,6 +579,15 @@
          * ============================================ */
         function saveCart() {
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
+            updateBadge();
+        }
+
+        function updateBadge() {
+            const badge = document.getElementById('cartBadge');
+            if (!badge) return;
+            const total = cart.reduce((s, i) => s + i.quantity, 0);
+            if (total > 0) { badge.textContent = total; badge.style.display = 'inline'; }
+            else { badge.style.display = 'none'; }
         }
 
         function refreshCartDisplay() {
@@ -621,6 +632,11 @@
          *  启动
          * ============================================ */
         init();
+
+        // 跨标签同步购物车
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'waimai_cart') init();
+        });
     </script>
 </body>
 </html>

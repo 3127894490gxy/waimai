@@ -74,6 +74,7 @@
     <script>
         const params = new URLSearchParams(location.search);
         const restaurantId = params.get('id');
+        if (!restaurantId) { alert('餐厅ID不存在'); location.href = '/'; }
 
         let currentCategoryId = null;
 
@@ -91,9 +92,10 @@
         function addToCart(dish) {
             const user = getCurrentUser();
             if (!user) { alert('请先登录'); location.href = '/login.html?redirect=' + encodeURIComponent(location.href); return; }
+            if (!restaurantId) { alert('餐厅信息错误'); return; }
             let cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
             // 检查是否来自同一餐厅
-            if (cart.length > 0 && cart[0].restaurantId !== restaurantId) {
+            if (cart.length > 0 && cart[0].restaurantId !== parseInt(restaurantId)) {
                 if (!confirm('切换餐厅将清空购物车，确定吗？')) return;
                 cart = [];
             }
@@ -102,6 +104,7 @@
             else { cart.push({ dishId: dish.id, dishName: dish.name, price: dish.price, quantity: 1, restaurantId: parseInt(restaurantId), userId: user.id }); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
+            loadDishes(currentCategoryId);
         }
 
         function changeQty(dishId, delta) {
@@ -112,7 +115,7 @@
             if (item) { item.quantity += delta; if (item.quantity <= 0) cart = cart.filter(i => i.dishId !== dishId); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
-            renderDishes(currentCategoryId);
+            loadDishes(currentCategoryId);
         }
 
         function getCartQty(dishId) {
@@ -176,8 +179,10 @@
                 }
                 area.innerHTML = resp.data.map(d => {
                     const qty = getCartQty(d.id);
+                    // 安全转义菜品名中的引号
+                    const safeName = d.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     return `
-                        <div class="dish-card card-enter">
+                        <div class="dish-card card-enter" data-dish-id="${d.id}" data-dish-name="${safeName}" data-dish-price="${d.price}">
                             <div class="dish-icon">${getDishIcon(d.name)}</div>
                             <div class="dish-info">
                                 <h4>${d.name}</h4>
@@ -186,14 +191,25 @@
                             </div>
                             <div class="actions">
                                 ${qty > 0 ? `
-                                    <button class="qty-btn" onclick="changeQty(${d.id}, -1)">−</button>
+                                    <button class="qty-btn" onclick="event.stopPropagation();changeQty(${d.id}, -1)">−</button>
                                     <span class="qty">${qty}</span>
-                                    <button class="qty-btn" onclick="changeQty(${d.id}, 1)">+</button>
-                                ` : `<button class="add-btn" onclick="addToCart({id:${d.id},name:'${d.name}',price:${d.price}})">加入</button>`}
+                                    <button class="qty-btn" onclick="event.stopPropagation();changeQty(${d.id}, 1)">+</button>
+                                ` : `<button class="add-btn" data-add-dish="${d.id}">加入</button>`}
                             </div>
                         </div>
                     `;
                 }).join('');
+                // 通过事件委托监听"加入"按钮点击，避免 inline JS 注入问题
+                area.querySelectorAll('.add-btn').forEach(btn => {
+                    btn.onclick = function(e) {
+                        e.stopPropagation();
+                        const card = this.closest('.dish-card');
+                        const id = parseInt(card.dataset.dishId);
+                        const name = card.dataset.dishName;
+                        const price = parseFloat(card.dataset.dishPrice);
+                        addToCart({ id: id, name: name, price: price });
+                    };
+                });
             });
         }
 
@@ -215,6 +231,15 @@
 
         // 骑手隐藏购物车相关元素
         const user = getCurrentUser();
+
+        // 跨标签同步购物车
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'waimai_cart') {
+                updateCartBadge();
+                loadDishes(currentCategoryId);
+            }
+        });
+
         if (user && user.role === 'DELIVERY') {
             document.getElementById('navCartLink').style.display = 'none';
             document.getElementById('cartFloatBtn').style.display = 'none';
