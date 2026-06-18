@@ -68,9 +68,10 @@
         <a href="/" class="logo"><span>🍜</span>外卖配送</a>
         <div class="nav-links">
             <a href="/" class="active">首页</a>
-            <a href="/orders.html">我的订单</a>
-            <a href="/cart.html">购物车</a>
+            <a href="/orders.html" id="ordersLink">我的订单</a>
+            <a href="/cart.html" id="cartLink">购物车</a>
             <a href="/delivery.html" id="deliveryLink" style="display:none;background:rgba(74,144,217,0.3);">🚚 配送</a>
+            <a href="/merchant.html" id="merchantLink" style="display:none;background:rgba(39,174,96,0.3);">🏪 商家</a>
             <a href="/admin.html" id="adminLink" style="display:none;background:rgba(255,255,255,0.15);">⚙️ 管理</a>
             <div class="user-info" id="userInfo"></div>
         </div>
@@ -142,6 +143,9 @@
             const el = document.getElementById('userInfo');
             const adminLink = document.getElementById('adminLink');
             const deliveryLink = document.getElementById('deliveryLink');
+            const merchantLink = document.getElementById('merchantLink');
+            const ordersLink = document.getElementById('ordersLink');
+            const cartLink = document.getElementById('cartLink');
             if (user) {
                 el.innerHTML = `<span>👋 ${user.nickname || user.username}</span>
                     <div class="dropdown">
@@ -153,10 +157,17 @@
                     </div>`;
                 if (adminLink) adminLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
                 if (deliveryLink) deliveryLink.style.display = user.role === 'DELIVERY' ? 'inline-block' : 'none';
+                if (merchantLink) merchantLink.style.display = user.role === 'MERCHANT' ? 'inline-block' : 'none';
+                // 商家不显示订单和购物车
+                if (ordersLink) ordersLink.style.display = user.role === 'MERCHANT' ? 'none' : 'inline-block';
+                if (cartLink) cartLink.style.display = user.role === 'MERCHANT' ? 'none' : 'inline-block';
             } else {
                 el.innerHTML = `<a href="/login.html">登录</a><a href="/register.html">注册</a>`;
                 if (adminLink) adminLink.style.display = 'none';
                 if (deliveryLink) deliveryLink.style.display = 'none';
+                if (merchantLink) merchantLink.style.display = 'none';
+                if (ordersLink) ordersLink.style.display = 'inline-block';
+                if (cartLink) cartLink.style.display = 'inline-block';
             }
         }
 
