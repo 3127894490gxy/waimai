@@ -178,6 +178,44 @@
         }
 
         function loadRestaurants(keyword) {
+            const user = getCurrentUser();
+            // 商家直接显示自己的餐厅信息
+            if (user && user.role === 'MERCHANT') {
+                fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
+                    const list = document.getElementById('restaurantList');
+                    const searchBar = document.querySelector('.search-bar');
+                    if (searchBar) searchBar.style.display = 'none';
+                    const title = document.querySelector('.page-title');
+                    if (title) title.textContent = '🏪 我的餐厅';
+
+                    const myRest = (resp.data || []).filter(r => r.merchantId === user.id);
+                    if (myRest.length === 0) {
+                        list.innerHTML = '<div class="empty"><div class="icon">🏪</div><p>你还没有餐厅，请联系管理员创建</p></div>';
+                        return;
+                    }
+                    const r = myRest[0];
+                    const colors = ['', 'green', 'blue', 'purple'];
+                    list.innerHTML = `
+                        <div style="max-width:500px;margin:0 auto;">
+                            <div class="restaurant-card card-enter" onclick="location.href='/merchant.html'" style="cursor:pointer;">
+                                <div class="banner green" style="font-size:64px;">${r.name.charAt(0)}</div>
+                                <div class="info">
+                                    <h3>${r.name}</h3>
+                                    <div class="desc">${r.description || '暂无介绍'}</div>
+                                    <div class="meta">
+                                        <span class="rating">⭐ ${r.rating || '5.0'}</span>
+                                        <span>配送费 ¥${r.deliveryFee || '0'}</span>
+                                        <span>📞 ${r.phone || '-'}</span>
+                                    </div>
+                                    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;text-align:center;color:#27ae60;font-weight:bold;">👆 点击进入商家管理 →</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                return;
+            }
+
             const url = keyword ? `/api/restaurants/search?name=${encodeURIComponent(keyword)}` : '/api/restaurants';
             fetch(url).then(r => r.json()).then(resp => {
                 const list = document.getElementById('restaurantList');
