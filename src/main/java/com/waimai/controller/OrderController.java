@@ -6,6 +6,7 @@ import com.waimai.dto.OrderRequest;
 import com.waimai.dto.PaymentRequest;
 import com.waimai.entity.Order;
 import com.waimai.entity.OrderItem;
+import com.waimai.repository.OrderRepository;
 import com.waimai.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,11 @@ import java.util.stream.Collectors;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, OrderRepository orderRepository) {
         this.orderService = orderService;
+        this.orderRepository = orderRepository;
     }
 
     @PostMapping
@@ -111,5 +114,18 @@ public class OrderController {
     @GetMapping("/delivery/{deliveryId}")
     public ApiResponse<List<Order>> listByDelivery(@PathVariable Long deliveryId) {
         return ApiResponse.success(orderService.findByDeliveryId(deliveryId));
+    }
+
+    /** 配送员统计信息 */
+    @GetMapping("/delivery/{deliveryId}/stats")
+    public ApiResponse<Map<String, Object>> deliveryStats(@PathVariable Long deliveryId) {
+        long total = orderRepository.countByDeliveryId(deliveryId);
+        long completed = orderRepository.countByDeliveryIdAndStatus(deliveryId, OrderStatus.DELIVERED);
+        long delivering = orderRepository.countByDeliveryIdAndStatus(deliveryId, OrderStatus.DELIVERING);
+        Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("totalDeliveries", total);
+        stats.put("completedDeliveries", completed);
+        stats.put("deliveringCount", delivering);
+        return ApiResponse.success(stats);
     }
 }

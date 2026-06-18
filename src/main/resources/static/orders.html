@@ -13,7 +13,8 @@
         .navbar .logo { font-size: 20px; font-weight: bold; }
         .container { max-width: 800px; margin: 0 auto; padding: 24px; }
         .page-title { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 20px; }
-        .order-card { background: #fff; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; }
+        .order-card { background: #fff; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .order-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
         .order-card .header { padding: 16px 20px 8px; display: flex; justify-content: space-between; align-items: center; }
         .order-card .header .order-no { font-size: 13px; color: #999; }
         .order-card .header .status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
@@ -32,6 +33,32 @@
         .empty a { display: inline-block; margin-top: 16px; padding: 10px 24px; background: #ff6b35; color: #fff; text-decoration: none; border-radius: 6px; }
         .loading { text-align: center; padding: 40px; color: #999; }
         .status-translate { 'PENDING_PAYMENT': '待支付', 'PAID': '已支付', 'ACCEPTED': '已接单', 'PREPARING': '准备中', 'DELIVERING': '配送中', 'DELIVERED': '已送达', 'COMPLETED': '已完成', 'CANCELLED': '已取消' }
+        /* 详情弹窗 */
+        .order-detail-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+        .order-detail-overlay.show { display: flex; }
+        .order-detail-modal { background: #fff; border-radius: 16px; width: 520px; max-width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.2); animation: fadeInUp 0.3s ease; }
+        .order-detail-modal .detail-header { padding: 20px 24px 16px; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; background: #fff; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: flex-start; }
+        .order-detail-modal .detail-header .order-title { font-size: 16px; font-weight: bold; color: #333; }
+        .order-detail-modal .detail-header .order-title small { font-size: 12px; font-weight: normal; color: #999; }
+        .order-detail-modal .close-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #f5f5f5; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #999; flex-shrink: 0; }
+        .order-detail-modal .close-btn:hover { background: #eee; color: #333; }
+        .order-detail-modal .detail-body { padding: 16px 24px 24px; }
+        .order-detail-modal .detail-section { margin-bottom: 20px; }
+        .order-detail-modal .detail-section h4 { font-size: 14px; color: #666; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #f5f5f5; }
+        .order-detail-modal .detail-section .info-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 14px; color: #555; }
+        .order-detail-modal .detail-section .info-row .label { color: #999; }
+        .order-detail-modal .detail-section .info-row .value { font-weight: bold; color: #333; }
+        .order-detail-modal .detail-section .info-row .value.price { color: #ff6b35; }
+        .order-detail-modal .detail-timeline { display: flex; justify-content: space-between; padding: 16px 0; }
+        .order-detail-modal .detail-timeline .step { text-align: center; flex: 1; position: relative; }
+        .order-detail-modal .detail-timeline .step .icon { font-size: 24px; display: block; margin-bottom: 4px; }
+        .order-detail-modal .detail-timeline .step .label { font-size: 11px; color: #ccc; }
+        .order-detail-modal .detail-timeline .step.active .label { color: #ff6b35; font-weight: bold; }
+        .order-detail-modal .detail-timeline .step.done .label { color: #27ae60; }
+        .order-detail-modal .delivery-stats { background: #f0f8ff; border-radius: 10px; padding: 14px; display: flex; gap: 16px; margin-top: 8px; }
+        .order-detail-modal .delivery-stats .stat-item { flex: 1; text-align: center; }
+        .order-detail-modal .delivery-stats .stat-item .num { font-size: 22px; font-weight: bold; color: #4a90d9; }
+        .order-detail-modal .delivery-stats .stat-item .lbl { font-size: 11px; color: #999; }
     </style>
 </head>
 <body>
@@ -49,6 +76,21 @@
             <div class="loading">加载中...</div>
         </div>
     </div>
+
+    <!-- 订单详情弹窗 -->
+    <div class="order-detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+        <div class="order-detail-modal" id="detailModal">
+            <div class="detail-header">
+                <div>
+                    <div class="order-title" id="detailTitle">订单详情</div>
+                    <small id="detailOrderNo"></small>
+                </div>
+                <button class="close-btn" onclick="closeDetail()">✕</button>
+            </div>
+            <div class="detail-body" id="detailBody"></div>
+        </div>
+    </div>
+
     <script>
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
@@ -95,8 +137,10 @@
                 });
 
                 Promise.all(promises).then(results => {
+                    // 存一份数据供详情弹窗用
+                    window._orderResults = results;
                     el.innerHTML = results.map(({ order, restName, itemsHtml, st }) => `
-                        <div class="order-card card-enter">
+                        <div class="order-card card-enter" onclick="showDetail(${order.id})">
                             <div class="header">
                                 <span class="order-no">🆔 ${order.orderNo}</span>
                                 <span class="status ${st.cls}">${st.text}</span>
@@ -167,6 +211,125 @@
                     }
                 }
             }).catch(() => {});
+        }
+
+        // ===== 订单详情弹窗 =====
+        function showDetail(orderId) {
+            const overlay = document.getElementById('detailOverlay');
+            const body = document.getElementById('detailBody');
+            const title = document.getElementById('detailTitle');
+            const orderNo = document.getElementById('detailOrderNo');
+
+            const results = window._orderResults || [];
+            const found = results.find(r => r.order.id === orderId);
+            if (!found) { alert('订单数据不存在'); return; }
+
+            const { order, restName, itemsHtml, st } = found;
+            title.textContent = '📋 订单详情';
+            orderNo.textContent = '🆔 ' + order.orderNo;
+            const totalAmount = order.totalAmount ? order.totalAmount.toFixed(2) : '0.00';
+            const createTime = order.createTime ? new Date(order.createTime).toLocaleString('zh-CN') : '-';
+            const address = order.deliveryAddress || '未填写';
+            const contact = (order.contactName || '未填写') + '  📞' + (order.contactPhone || '-');
+
+            // 时间轴
+            const timelineSteps = [
+                { icon: '📝', label: '已下单', done: true },
+                { icon: '💳', label: '已支付', done: st.step >= 1 },
+                { icon: '👨‍🍳', label: '已接单', done: st.step >= 2 },
+                { icon: '🚚', label: '配送中', done: st.step >= 3 },
+                { icon: '✅', label: '已送达', done: st.step >= 4 }
+            ];
+
+            let html = `
+                <!-- 状态与金额 -->
+                <div class="detail-section">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <span class="status ${st.cls}" style="padding:6px 16px;border-radius:20px;font-size:14px;font-weight:bold;">${st.text}</span>
+                        <span style="font-size:24px;font-weight:bold;color:#ff6b35;">¥${totalAmount}</span>
+                    </div>
+                    <!-- 时间轴 -->
+                    <div class="detail-timeline">
+                        ${timelineSteps.map((s, i) => `
+                            <div class="step ${s.done ? (i < timelineSteps.length-1 ? 'done' : 'active') : ''}">
+                                <span class="icon" style="opacity:${s.done ? 1 : 0.3};">${s.icon}</span>
+                                <span class="label">${s.label}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 订单商品 -->
+                <div class="detail-section">
+                    <h4>🍽️ 订单商品 · ${restName}</h4>
+                    ${itemsHtml}
+                    <div class="info-row" style="border-top:1px solid #f0f0f0;padding-top:8px;margin-top:4px;">
+                        <span class="label">配送费</span>
+                        <span class="value">¥${(order.deliveryFee || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="info-row" style="border-top:2px solid #ff6b35;padding-top:8px;margin-top:4px;">
+                        <span class="label" style="font-weight:bold;">合计</span>
+                        <span class="value price" style="font-size:18px;">¥${totalAmount}</span>
+                    </div>
+                </div>
+
+                <!-- 配送信息 -->
+                <div class="detail-section">
+                    <h4>📍 配送信息</h4>
+                    <div class="info-row"><span class="label">地址</span><span class="value">${address}</span></div>
+                    <div class="info-row"><span class="label">联系人</span><span class="value">${contact}</span></div>
+                    <div class="info-row"><span class="label">备注</span><span class="value">${order.remark || '无'}</span></div>
+                    <div class="info-row"><span class="label">下单时间</span><span class="value">${createTime}</span></div>
+                </div>
+            `;
+
+            // 配送员信息（含统计数据）
+            if (order.deliveryId) {
+                html += `
+                <div class="detail-section">
+                    <h4>🚚 配送员</h4>
+                    <div id="detailDelivery_${order.id}">
+                        <div class="info-row"><span class="label">姓名</span><span class="value" id="dd_name_${order.id}">${order.deliveryName || '配送员'}</span></div>
+                        <div class="info-row"><span class="label">电话</span><span class="value" id="dd_phone_${order.id}">加载中...</span></div>
+                        <div class="delivery-stats" id="dd_stats_${order.id}">
+                            <div class="stat-item"><div class="num">-</div><div class="lbl">总配送</div></div>
+                            <div class="stat-item"><div class="num">-</div><div class="lbl">已完成</div></div>
+                            <div class="stat-item"><div class="num">-</div><div class="lbl">进行中</div></div>
+                        </div>
+                    </div>
+                </div>
+                `;
+
+                // 异步加载配送员详细数据
+                fetch(`/api/users/${order.deliveryId}`).then(r => r.json()).then(resp => {
+                    if (resp.code === 200 && resp.data) {
+                        const d = resp.data;
+                        document.getElementById('dd_name_' + order.id).textContent = d.nickname || d.username;
+                        document.getElementById('dd_phone_' + order.id).textContent = '📞 ' + (d.phone || '暂无');
+                    }
+                }).catch(() => {});
+                // 加载配送统计
+                fetch(`/api/orders/delivery/${order.deliveryId}/stats`).then(r => r.json()).then(resp => {
+                    if (resp.code === 200 && resp.data) {
+                        const s = resp.data;
+                        const statsEl = document.getElementById('dd_stats_' + order.id);
+                        if (statsEl) {
+                            statsEl.innerHTML = `
+                                <div class="stat-item"><div class="num">${s.totalDeliveries}</div><div class="lbl">总配送单量</div></div>
+                                <div class="stat-item"><div class="num">${s.completedDeliveries}</div><div class="lbl">已完成</div></div>
+                                <div class="stat-item"><div class="num">${s.deliveringCount}</div><div class="lbl">配送中</div></div>
+                            `;
+                        }
+                    }
+                }).catch(() => {});
+            }
+
+            body.innerHTML = html;
+            overlay.classList.add('show');
+        }
+
+        function closeDetail() {
+            document.getElementById('detailOverlay').classList.remove('show');
         }
 
         loadOrders();
