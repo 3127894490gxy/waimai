@@ -1,5 +1,6 @@
 package com.waimai.service;
 
+import com.waimai.common.UserRole;
 import com.waimai.entity.User;
 import com.waimai.repository.UserRepository;
 import org.springframework.stereotype.Service;
