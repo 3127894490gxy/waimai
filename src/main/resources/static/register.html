@@ -60,8 +60,8 @@
             <label>用户名</label>
             <input type="text" id="username" placeholder="请设置用户名">
         </div>
-        <div class="form-group">
-            <label>昵称</label>
+        <div class="form-group" id="nicknameGroup">
+            <label id="nicknameLabel">昵称</label>
             <input type="text" id="nickname" placeholder="请输入昵称">
         </div>
         <div class="form-group">
@@ -70,7 +70,7 @@
         </div>
         <div class="form-group">
             <label>密码</label>
-            <input type="password" id="password" placeholder="请设置密码">
+            <input type="password" id="password" placeholder="请设置密码（至少4位）">
         </div>
         <button class="btn" id="registerBtn" onclick="register()">注 册</button>
         <div class="footer">已有账号？<a href="/login.html">立即登录</a></div>
@@ -82,6 +82,20 @@
             document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             selectedRole = el.dataset.role;
+            // 根据角色调整昵称字段
+            const label = document.getElementById('nicknameLabel');
+            const input = document.getElementById('nickname');
+            const group = document.getElementById('nicknameGroup');
+            if (selectedRole === 'MERCHANT') {
+                label.textContent = '商家名称';
+                input.placeholder = '请输入店铺名称';
+            } else if (selectedRole === 'DELIVERY') {
+                label.textContent = '姓名';
+                input.placeholder = '请输入配送员姓名';
+            } else {
+                label.textContent = '昵称';
+                input.placeholder = '请输入昵称';
+            }
         }
 
         function register() {
