@@ -23,7 +23,10 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse<User> register(@RequestBody User user) {
-        user.setRole(UserRole.CUSTOMER);
+        // 允许用户选择角色，但不能注册为管理员
+        if (user.getRole() == null || user.getRole() == UserRole.ADMIN) {
+            user.setRole(UserRole.CUSTOMER);
+        }
         return ApiResponse.success(userService.register(user));
     }
 

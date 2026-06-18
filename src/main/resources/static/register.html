@@ -8,13 +8,22 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .register-box { background: #fff; border-radius: 16px; padding: 40px; width: 400px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+        .register-box { background: #fff; border-radius: 16px; padding: 40px; width: 420px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
         .register-box h2 { text-align: center; font-size: 24px; color: #333; margin-bottom: 8px; }
         .register-box .subtitle { text-align: center; color: #999; font-size: 14px; margin-bottom: 32px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 14px; color: #666; margin-bottom: 6px; }
         .form-group input { width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; }
         .form-group input:focus { border-color: #ff6b35; }
+        .form-group select { width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; background: #fff; cursor: pointer; }
+        .form-group select:focus { border-color: #ff6b35; }
+        .role-cards { display: flex; gap: 10px; margin-bottom: 20px; }
+        .role-card { flex: 1; border: 2px solid #e0e0e0; border-radius: 12px; padding: 14px 8px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fff; }
+        .role-card:hover { border-color: #ff9a56; }
+        .role-card.selected { border-color: #ff6b35; background: #fff6f0; }
+        .role-card .icon { font-size: 28px; display: block; margin-bottom: 4px; }
+        .role-card .label { font-size: 13px; color: #666; }
+        .role-card.selected .label { color: #ff6b35; font-weight: bold; }
         .btn { width: 100%; padding: 12px; background: #ff6b35; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
         .btn:hover { background: #e55a2b; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -29,9 +38,24 @@
     <a href="/" class="back">← 返回首页</a>
     <div class="register-box">
         <h2>📝 注册</h2>
-        <div class="subtitle">创建账号开始点餐</div>
+        <div class="subtitle">选择身份，创建账号</div>
         <div class="error" id="errorMsg"></div>
         <div class="success" id="successMsg"></div>
+        <!-- 身份选择 -->
+        <div class="role-cards">
+            <div class="role-card selected" data-role="CUSTOMER" onclick="selectRole(this)">
+                <span class="icon">👤</span>
+                <span class="label">普通用户</span>
+            </div>
+            <div class="role-card" data-role="MERCHANT" onclick="selectRole(this)">
+                <span class="icon">🏪</span>
+                <span class="label">商家</span>
+            </div>
+            <div class="role-card" data-role="DELIVERY" onclick="selectRole(this)">
+                <span class="icon">🚚</span>
+                <span class="label">配送员</span>
+            </div>
+        </div>
         <div class="form-group">
             <label>用户名</label>
             <input type="text" id="username" placeholder="请设置用户名">
@@ -52,6 +76,14 @@
         <div class="footer">已有账号？<a href="/login.html">立即登录</a></div>
     </div>
     <script>
+        let selectedRole = 'CUSTOMER';
+
+        function selectRole(el) {
+            document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedRole = el.dataset.role;
+        }
+
         function register() {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -66,10 +98,11 @@
             fetch('/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, nickname: nickname || username, phone, password })
+                body: JSON.stringify({ username, nickname: nickname || username, phone, password, role: selectedRole })
             }).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
-                    sucEl.textContent = '🎉 注册成功！正在跳转到登录...';
+                    const roleNames = { CUSTOMER: '普通用户', MERCHANT: '商家', DELIVERY: '配送员' };
+                    sucEl.textContent = '🎉 ' + (roleNames[selectedRole] || '用户') + '注册成功！正在跳转到登录...';
                     sucEl.style.display = 'block';
                     setTimeout(() => location.href = '/login.html', 1500);
                 } else {
