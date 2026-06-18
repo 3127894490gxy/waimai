@@ -158,14 +158,6 @@
                 if (adminLink) adminLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
                 if (deliveryLink) deliveryLink.style.display = user.role === 'DELIVERY' ? 'inline-block' : 'none';
                 if (merchantLink) merchantLink.style.display = user.role === 'MERCHANT' ? 'inline-block' : 'none';
-                // 导航栏颜色按角色切换
-                const navbar = document.querySelector('.navbar');
-                if (navbar) {
-                    if (user.role === 'ADMIN') navbar.style.background = '#333';
-                    else if (user.role === 'MERCHANT') navbar.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
-                    else if (user.role === 'DELIVERY') navbar.style.background = 'linear-gradient(135deg, #4a90d9, #357abd)';
-                    else navbar.style.background = 'linear-gradient(135deg, #ff6b35, #f7931e)';
-                }
                 // 商家和配送员不显示订单和购物车
                 if (ordersLink) ordersLink.style.display = (user.role === 'MERCHANT' || user.role === 'DELIVERY') ? 'none' : 'inline-block';
                 if (cartLink) cartLink.style.display = (user.role === 'MERCHANT' || user.role === 'DELIVERY') ? 'none' : 'inline-block';
@@ -189,6 +181,8 @@
             const user = getCurrentUser();
             // 商家直接显示自己的餐厅信息
             if (user && user.role === 'MERCHANT') {
+                const navbar = document.querySelector('.navbar');
+                if (navbar) navbar.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
                 fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
                     const list = document.getElementById('restaurantList');
                     const searchBar = document.querySelector('.search-bar');
@@ -231,6 +225,9 @@
                 if (searchBar) searchBar.style.display = 'none';
                 const title = document.querySelector('.page-title');
                 if (title) title.textContent = '🚚 配送工作台';
+                // 导航栏变蓝色
+                const navbar = document.querySelector('.navbar');
+                if (navbar) navbar.style.background = 'linear-gradient(135deg, #4a90d9, #357abd)';
 
                 list.innerHTML = `
                     <div style="max-width:500px;margin:0 auto;text-align:center;">
