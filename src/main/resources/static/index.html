@@ -181,6 +181,8 @@
             const user = getCurrentUser();
             // 商家直接显示自己的餐厅信息
             if (user && user.role === 'MERCHANT') {
+                const navbar = document.querySelector('.navbar');
+                if (navbar) navbar.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
                 fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
                     const list = document.getElementById('restaurantList');
                     const searchBar = document.querySelector('.search-bar');
