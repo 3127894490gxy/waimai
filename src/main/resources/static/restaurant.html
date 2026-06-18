@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>餐厅菜单 - 外卖配送系统</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -97,7 +98,8 @@
             else { cart.push({ dishId: dish.id, dishName: dish.name, price: dish.price, quantity: 1, restaurantId: parseInt(restaurantId), userId: user.id }); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
-            loadDishes(currentCategoryId);
+            // 立即更新当前菜品的按钮，然后刷新列表
+            refreshDishDisplay(dish.id);
         }
 
         function changeQty(dishId, delta) {
@@ -108,7 +110,28 @@
             if (item) { item.quantity += delta; if (item.quantity <= 0) cart = cart.filter(i => i.dishId !== dishId); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
-            loadDishes(currentCategoryId);
+            refreshDishDisplay(dishId);
+        }
+
+        // 直接更新单个菜品的显示
+        function refreshDishDisplay(dishId) {
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            const item = cart.find(i => i.dishId === dishId);
+            const qty = item ? item.quantity : 0;
+            // 遍历所有菜品卡片，找到匹配的数量控件并更新
+            let found = false;
+            document.querySelectorAll('.dish-card').forEach(card => {
+                const qtySpan = card.querySelector('.qty');
+                if (!qtySpan) return;
+                // 通过卡片的 onclick 属性匹配 dishId（加减按钮在卡片内）
+                const btns = card.querySelectorAll('[onclick*="changeQty(' + dishId + ',"]');
+                if (btns.length > 0) {
+                    qtySpan.textContent = qty;
+                    found = true;
+                }
+            });
+            // 如果没找到现成的数量控件，说明要从"加入"变为"− x +"，需要全刷新
+            if (!found) loadDishes(currentCategoryId);
         }
 
         function getCartQty(dishId) {
