@@ -58,8 +58,9 @@
         </div>
         <div class="form-group">
             <label>用户名</label>
-            <input type="text" id="username" placeholder="请设置用户名" oninput="syncNickname()">
+            <input type="text" id="username" placeholder="请设置用户名（仅限英文和数字）" oninput="syncNickname();checkUsername()">
         </div>
+        <div id="usernameError" style="color:#e74c3c;font-size:13px;margin:-14px 0 14px;display:none;">⚠️ 用户名不能包含中文</div>
         <div class="form-group" id="nicknameGroup">
             <label id="nicknameLabel">昵称</label>
             <input type="text" id="nickname" placeholder="请输入昵称" oninput="nicknameEdited()">
@@ -87,6 +88,13 @@
 
         function nicknameEdited() {
             nicknameSynced = false;
+        }
+
+        function checkUsername() {
+            const val = document.getElementById('username').value;
+            const errEl = document.getElementById('usernameError');
+            const hasChinese = /[\u4e00-\u9fa5]/.test(val);
+            errEl.style.display = hasChinese ? 'block' : 'none';
         }
 
         function selectRole(el) {
@@ -121,6 +129,7 @@
             const sucEl = document.getElementById('successMsg');
             const btn = document.getElementById('registerBtn');
             if (!username || !password) { errEl.textContent = '用户名和密码为必填项'; errEl.style.display = 'block'; sucEl.style.display = 'none'; return; }
+            if (/[\u4e00-\u9fa5]/.test(username)) { errEl.textContent = '用户名不能包含中文'; errEl.style.display = 'block'; sucEl.style.display = 'none'; btn.disabled = false; btn.textContent = '注 册'; return; }
             errEl.style.display = 'none'; sucEl.style.display = 'none';
             btn.disabled = true; btn.textContent = '注册中...';
             fetch('/api/users/register', {
