@@ -69,6 +69,19 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("✅ 默认用户已创建: user1 / 123456");
         }
 
+        // 创建默认配送员
+        if (!userRepository.existsByUsername("delivery1")) {
+            User delivery = new User();
+            delivery.setUsername("delivery1");
+            delivery.setPassword("123456");
+            delivery.setNickname("李四");
+            delivery.setRole(UserRole.DELIVERY);
+            delivery.setPhone("13800000004");
+            delivery.setAddress("配送站");
+            userRepository.save(delivery);
+            System.out.println("✅ 默认配送员已创建: delivery1 / 123456");
+        }
+
         // ===== 2. 创建默认餐厅 =====
         Restaurant restaurant = null;
         if (merchant != null && !restaurantRepository.findByNameContaining("老王中餐").isEmpty()) {

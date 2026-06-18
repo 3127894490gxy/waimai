@@ -45,6 +45,13 @@ public class Order extends BaseEntity {
     @Column(length = 500)
     private String remark;
 
+    /** 配送员ID */
+    private Long deliveryId;
+
+    /** 配送员姓名 */
+    @Column(length = 50)
+    private String deliveryName;
+
     @Column(nullable = false)
     private Boolean deleted = false;
 }

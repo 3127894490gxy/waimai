@@ -90,4 +90,26 @@ public class OrderController {
         Order order = orderService.updateStatus(request.getOrderId(), OrderStatus.PAID);
         return ApiResponse.success(order);
     }
+
+    // ===== 配送相关接口 =====
+
+    /** 分配配送员 */
+    @PutMapping("/{id}/assign-delivery")
+    public ApiResponse<Order> assignDelivery(@PathVariable Long id, @RequestBody Map<String, Object> params) {
+        Long deliveryId = Long.valueOf(params.get("deliveryId").toString());
+        String deliveryName = (String) params.get("deliveryName");
+        return ApiResponse.success(orderService.assignDelivery(id, deliveryId, deliveryName));
+    }
+
+    /** 查询待配送订单 */
+    @GetMapping("/delivery/pending")
+    public ApiResponse<List<Order>> listPendingDelivery() {
+        return ApiResponse.success(orderService.findPendingDelivery());
+    }
+
+    /** 按配送员查询订单 */
+    @GetMapping("/delivery/{deliveryId}")
+    public ApiResponse<List<Order>> listByDelivery(@PathVariable Long deliveryId) {
+        return ApiResponse.success(orderService.findByDeliveryId(deliveryId));
+    }
 }

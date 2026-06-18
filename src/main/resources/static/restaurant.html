@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>餐厅菜单 - 外卖配送系统</title>
+    <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
@@ -45,6 +46,11 @@
     </style>
 </head>
 <body>
+    <!-- 背景装饰 -->
+    <div class="food-bg">
+        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
+        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
+    </div>
     <nav class="navbar">
         <a href="/" class="logo">← 返回首页</a>
         <a href="/cart.html" style="color:#fff;">🛒 购物车</a>
@@ -161,12 +167,12 @@
             fetch(url).then(r => r.json()).then(resp => {
                 const area = document.getElementById('dishArea');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    area.innerHTML = '<div class="empty-dish">🥘 暂无菜品</div>'; return;
+                    area.innerHTML = '<div class="empty-dish card-enter">🥘 暂无菜品</div>'; return;
                 }
                 area.innerHTML = resp.data.map(d => {
                     const qty = getCartQty(d.id);
                     return `
-                        <div class="dish-card">
+                        <div class="dish-card card-enter">
                             <div class="dish-icon">${getDishIcon(d.name)}</div>
                             <div class="dish-info">
                                 <h4>${d.name}</h4>
