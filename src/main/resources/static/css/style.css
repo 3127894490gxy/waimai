@@ -1,0 +1,240 @@
+/* ============================================
+   外卖系统 - 全局动画与美化样式
+   ============================================ */
+
+/* ---- 浮动动画（用于食物图标） ---- */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+@keyframes float-delayed {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-8px) rotate(2deg); }
+    66% { transform: translateY(-4px) rotate(-1deg); }
+}
+
+/* ---- 脉冲动画（用于提醒标记） ---- */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* ---- 渐入动画 ---- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ---- 骨架屏加载动画 ---- */
+@keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+}
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+/* ---- 旋转加载动画 ---- */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.loading-spinner {
+    display: inline-block;
+    width: 32px; height: 32px;
+    border: 3px solid #f0f0f0;
+    border-top-color: #ff6b35;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ---- 弹出提示动画 ---- */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- 背景食物装饰 ---- */
+.food-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: -1;
+}
+.food-bg span {
+    position: absolute;
+    font-size: 28px;
+    opacity: 0.06;
+    animation: float-slow 6s ease-in-out infinite;
+}
+.food-bg span:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+.food-bg span:nth-child(2) { top: 25%; right: 8%; animation-delay: 0.5s; font-size: 22px; }
+.food-bg span:nth-child(3) { top: 45%; left: 3%; animation-delay: 1s; font-size: 32px; }
+.food-bg span:nth-child(4) { top: 60%; right: 5%; animation-delay: 1.5s; }
+.food-bg span:nth-child(5) { top: 75%; left: 10%; animation-delay: 2s; font-size: 24px; }
+.food-bg span:nth-child(6) { top: 15%; right: 15%; animation-delay: 2.5s; font-size: 20px; }
+.food-bg span:nth-child(7) { top: 50%; left: 50%; animation-delay: 3s; font-size: 36px; }
+.food-bg span:nth-child(8) { top: 80%; right: 12%; animation-delay: 3.5s; font-size: 18px; }
+
+/* ---- 卡片入场动画 ---- */
+.card-enter {
+    animation: fadeInUp 0.5s ease both;
+}
+.card-enter:nth-child(1) { animation-delay: 0.05s; }
+.card-enter:nth-child(2) { animation-delay: 0.10s; }
+.card-enter:nth-child(3) { animation-delay: 0.15s; }
+.card-enter:nth-child(4) { animation-delay: 0.20s; }
+.card-enter:nth-child(5) { animation-delay: 0.25s; }
+.card-enter:nth-child(6) { animation-delay: 0.30s; }
+.card-enter:nth-child(7) { animation-delay: 0.35s; }
+.card-enter:nth-child(8) { animation-delay: 0.40s; }
+
+/* ---- 导航栏加强 ---- */
+.navbar {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* ---- 搜索框聚焦效果 ---- */
+.search-bar input:focus {
+    box-shadow: 0 0 0 3px rgba(255,107,53,0.15);
+}
+
+/* ---- 餐厅卡片加强 ---- */
+.restaurant-card .banner {
+    position: relative;
+    overflow: hidden;
+}
+.restaurant-card .banner::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+.restaurant-card:hover .banner::after {
+    opacity: 1;
+}
+.restaurant-card .banner .icon-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ---- 菜品卡片加强 ---- */
+.dish-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* ---- 购物车浮动按钮 ---- */
+.cart-float {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cart-float:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 28px rgba(255,107,53,0.5);
+}
+.cart-float .badge {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ---- 按钮交互加强 ---- */
+.btn-primary, .add-btn, .submit-btn, .checkout-btn {
+    position: relative;
+    overflow: hidden;
+}
+.btn-primary::after, .add-btn::after, .submit-btn::after, .checkout-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+.btn-primary:active::after, .add-btn:active::after,
+.submit-btn:active::after, .checkout-btn:active::after {
+    width: 300px; height: 300px;
+}
+
+/* ---- Toast 加强 ---- */
+.toast {
+    animation: slideDown 0.3s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* ---- 空状态动画 ---- */
+.empty .icon {
+    animation: float-slow 4s ease-in-out infinite;
+}
+
+/* ---- 订单状态标签动画 ---- */
+.status-badge {
+    transition: all 0.3s;
+}
+.status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* ---- 价格标签 ---- */
+.price-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6b35, #ff9a56);
+    color: #fff;
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* ---- 星级评分样式 ---- */
+.stars {
+    color: #ffc107;
+    letter-spacing: 2px;
+}
+
+/* ---- 加载占位 ---- */
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+@keyframes dots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+}
+
+/* ---- 数字跳动 ---- */
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.count-anim {
+    animation: countUp 0.3s ease;
+}
+
+/* ---- 响应式微调 ---- */
+@media (max-width: 768px) {
+    .food-bg { display: none; }
+    .restaurant-card .banner { height: 100px; }
+}
