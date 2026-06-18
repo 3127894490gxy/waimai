@@ -120,20 +120,24 @@
             const qty = item ? item.quantity : 0;
             
             if (qty === 0) {
-                // 数量归零：刷新列表让"− 0 +"变回"加入"按钮
+                // 减到0：刷新让 − 0 + 变回 加入
                 loadDishes(currentCategoryId);
                 return;
             }
             
-            // 数量 > 0：直接在 DOM 中更新数字，不用等 API
+            // 找这个菜品卡片上的数量文字，如果能找到就直接更新
+            let updated = false;
             document.querySelectorAll('.dish-card').forEach(card => {
-                const qtySpan = card.querySelector('.qty');
-                if (!qtySpan) return;
-                const btns = card.querySelectorAll('[onclick*="changeQty(' + dishId + ',"]');
-                if (btns.length > 0) {
-                    qtySpan.textContent = qty;
+                if (card.querySelector('[onclick*="changeQty(' + dishId + ',"]')) {
+                    const span = card.querySelector('.qty');
+                    if (span) { span.textContent = qty; updated = true; }
                 }
             });
+            
+            if (!updated) {
+                // 没找到数量控件（卡片还是"加入"按钮）→ 刷新列表切换为 "− qty +"
+                loadDishes(currentCategoryId);
+            }
         }
 
         function getCartQty(dishId) {
