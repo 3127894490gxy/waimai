@@ -28,7 +28,7 @@
     <a href="/" class="back">← 返回首页</a>
     <div class="login-box">
         <h2>🔐 登录</h2>
-        <div class="subtitle">登录后即可点餐</div>
+        <div class="subtitle">登录后即可点餐 · 配送 · 管理</div>
         <div class="error" id="errorMsg"></div>
         <div class="form-group">
             <label>用户名</label>
@@ -57,8 +57,18 @@
             }).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
                     localStorage.setItem('waimai_user', JSON.stringify(resp.data));
-                    const redirect = new URLSearchParams(location.search).get('redirect') || '/';
-                    location.href = redirect;
+                    // 根据角色跳转不同页面
+                    const role = resp.data.role;
+                    const redirectParam = new URLSearchParams(location.search).get('redirect');
+                    if (redirectParam && !redirectParam.startsWith('/rider.html')) {
+                        location.href = redirectParam;
+                    } else if (role === 'DELIVERY') {
+                        location.href = '/rider.html';
+                    } else if (role === 'ADMIN') {
+                        location.href = '/admin.html';
+                    } else {
+                        location.href = '/';
+                    }
                 } else {
                     errEl.textContent = resp.message || '用户名或密码错误';
                     errEl.style.display = 'block';

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>骑手工作台 - 外卖配送系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
+        /* 导航栏 */
+        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+        .navbar a { color: #fff; text-decoration: none; }
+        .navbar .logo { font-size: 20px; font-weight: bold; }
+        .navbar .user-info { font-size: 13px; opacity: 0.9; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        /* Tab 切换 */
+        .tabs { display: flex; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
+        .tabs .tab { flex: 1; padding: 14px; text-align: center; font-size: 15px; font-weight: bold; color: #999; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; }
+        .tabs .tab:hover { color: #ff6b35; background: #fff8f5; }
+        .tabs .tab.active { color: #ff6b35; border-bottom-color: #ff6b35; background: #fff8f5; }
+        .tabs .tab .count { display: inline-block; background: #ff6b35; color: #fff; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* 订单卡片 */
+        .order-card { background: #fff; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; animation: fadeInUp 0.4s ease both; }
+        .order-card:nth-child(1) { animation-delay: 0.05s; }
+        .order-card:nth-child(2) { animation-delay: 0.10s; }
+        .order-card:nth-child(3) { animation-delay: 0.15s; }
+        .order-card:nth-child(4) { animation-delay: 0.20s; }
+        .order-card .header { padding: 16px 20px 8px; display: flex; justify-content: space-between; align-items: center; }
+        .order-card .header .order-no { font-size: 13px; color: #999; }
+        .order-card .header .status { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .order-card .header .status.pending { background: #fff3e0; color: #ff8c00; }
+        .order-card .header .status.delivering { background: #e3f2fd; color: #1976d2; }
+        .order-card .header .status.completed { background: #e8f5e9; color: #2e7d32; }
+        .order-card .body { padding: 8px 20px 16px; }
+        .order-card .body .info-row { display: flex; justify-content: space-between; font-size: 14px; color: #555; padding: 4px 0; }
+        .order-card .body .info-row .label { color: #999; }
+        .order-card .body .info-row .value { font-weight: bold; color: #333; }
+        .order-card .body .address { font-size: 14px; color: #333; padding: 6px 0; }
+        .order-card .body .address .icon { margin-right: 6px; }
+        .order-card .body .amount { font-size: 18px; font-weight: bold; color: #ff6b35; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; text-align: right; }
+        .order-card .footer { background: #fafafa; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .order-card .footer .time { font-size: 13px; color: #999; }
+        /* 按钮 */
+        .btn { padding: 8px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
+        .btn-accept { background: #4caf50; color: #fff; }
+        .btn-accept:hover { background: #43a047; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(76,175,80,0.3); }
+        .btn-accept:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-deliver { background: #1976d2; color: #fff; }
+        .btn-deliver:hover { background: #1565c0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(25,118,210,0.3); }
+        .btn-deliver:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-outline { background: #fff; color: #ff6b35; border: 2px solid #ff6b35; }
+        .btn-outline:hover { background: #fff8f5; }
+        .btn-logout { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        .btn-logout:hover { background: rgba(255,255,255,0.1); }
+        /* 空状态 */
+        .empty { text-align: center; padding: 60px 20px; color: #999; }
+        .empty .icon { font-size: 56px; margin-bottom: 12px; }
+        .empty p { font-size: 15px; }
+        /* Toast */
+        .toast { display: none; position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 999; animation: slideDown 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .toast.success { background: #4caf50; }
+        .toast.error { background: #e74c3c; }
+        .toast.info { background: #1976d2; }
+        /* 餐厅名称高亮 */
+        .rest-name { color: #ff6b35; font-weight: bold; }
+        /* 联系方式 */
+        .contact-info { display: flex; gap: 16px; font-size: 13px; color: #666; padding: 4px 0; }
+        .contact-info span { display: flex; align-items: center; gap: 4px; }
+        /* 响应式 */
+        @media (max-width: 600px) {
+            .container { padding: 12px; }
+            .tabs .tab { font-size: 13px; padding: 12px 8px; }
+            .order-card .footer { flex-direction: column; gap: 8px; align-items: stretch; }
+            .order-card .footer .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="food-bg">
+        <span>🏍️</span><span>🚚</span><span>📦</span><span>🗺️</span>
+        <span>📍</span><span>⚡</span><span>🎯</span><span>✅</span>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <a href="/" class="logo">🏍️ 骑手工作台</a>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span class="user-info" id="riderInfo"></span>
+            <button class="btn-logout" onclick="logout()">退出登录</button>
+        </div>
+    </nav>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <div class="container">
+        <!-- Tab 切换 -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('available')" id="tab-available">
+                📋 可接单 <span class="count" id="availableCount">0</span>
+            </div>
+            <div class="tab" onclick="switchTab('delivering')" id="tab-delivering">
+                🚚 配送中 <span class="count" id="deliveringCount">0</span>
+            </div>
+            <div class="tab" onclick="switchTab('history')" id="tab-history">
+                ✅ 配送历史
+            </div>
+        </div>
+
+        <!-- Tab 1: 可接单 -->
+        <div class="tab-content active" id="content-available">
+            <div id="availableList"><div class="loading" style="text-align:center;padding:40px;color:#999;">加载中...</div></div>
+        </div>
+
+        <!-- Tab 2: 配送中 -->
+        <div class="tab-content" id="content-delivering">
+            <div id="deliveringList"><div class="loading" style="text-align:center;padding:40px;color:#999;">加载中...</div></div>
+        </div>
+
+        <!-- Tab 3: 配送历史 -->
+        <div class="tab-content" id="content-history">
+            <div id="historyList"><div class="loading" style="text-align:center;padding:40px;color:#999;">加载中...</div></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 工具函数 =====
+        function getCurrentUser() {
+            const u = localStorage.getItem('waimai_user');
+            return u ? JSON.parse(u) : null;
+        }
+
+        function checkRider() {
+            const user = getCurrentUser();
+            if (!user || user.role !== 'DELIVERY') {
+                alert('请用骑手账号登录！\n默认骑手账号: delivery1 / 123456');
+                location.href = '/login.html?redirect=/rider.html';
+                return null;
+            }
+            document.getElementById('riderInfo').textContent = '👋 ' + (user.nickname || user.username);
+            return user;
+        }
+
+        function toast(msg, type) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast ' + (type || 'info');
+            el.style.display = 'block';
+            setTimeout(function () { el.style.display = 'none'; }, 2500);
+        }
+
+        function logout() {
+            localStorage.removeItem('waimai_user');
+            location.href = '/login.html';
+        }
+
+        // ===== Tab 切换 =====
+        var currentTab = 'available';
+
+        function switchTab(name) {
+            currentTab = name;
+            document.querySelectorAll('.tab').forEach(function (el) { el.classList.remove('active'); });
+            document.querySelectorAll('.tab-content').forEach(function (el) { el.classList.remove('active'); });
+            document.getElementById('tab-' + name).classList.add('active');
+            document.getElementById('content-' + name).classList.add('active');
+            if (name === 'available') loadAvailableOrders();
+            if (name === 'delivering') loadDeliveringOrders();
+            if (name === 'history') loadHistoryOrders();
+        }
+
+        // ===== 状态映射 =====
+        var statusMap = {
+            'PAID': { text: '待配送', cls: 'pending' },
+            'ACCEPTED': { text: '商家已接单', cls: 'pending' },
+            'PREPARING': { text: '准备中', cls: 'pending' },
+            'DELIVERING': { text: '配送中', cls: 'delivering' },
+            'DELIVERED': { text: '已送达', cls: 'completed' },
+            'COMPLETED': { text: '已完成', cls: 'completed' }
+        };
+
+        // ===== 加载餐厅名称 =====
+        var restNameCache = {};
+
+        function getRestaurantName(restaurantId) {
+            if (restNameCache[restaurantId]) return Promise.resolve(restNameCache[restaurantId]);
+            return fetch('/api/restaurants/' + restaurantId).then(function (r) { return r.json(); }).then(function (resp) {
+                var name = resp.data ? resp.data.name : '餐厅#' + restaurantId;
+                restNameCache[restaurantId] = name;
+                return name;
+            }).catch(function () { return '餐厅#' + restaurantId; });
+        }
+
+        // ===== 加载可接单列表 =====
+        function loadAvailableOrders() {
+            var el = document.getElementById('availableList');
+            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>加载中...</div>';
+            fetch('/api/orders/delivery/pending').then(function (r) { return r.json(); }).then(function (resp) {
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>暂无待配送订单</p></div>';
+                    document.getElementById('availableCount').textContent = '0';
+                    return;
+                }
+                document.getElementById('availableCount').textContent = resp.data.length;
+                var promises = resp.data.map(function (order) {
+                    return getRestaurantName(order.restaurantId).then(function (restName) {
+                        var st = statusMap[order.status] || { text: order.status, cls: '' };
+                        return { order: order, restName: restName, st: st };
+                    });
+                });
+                Promise.all(promises).then(function (results) {
+                    el.innerHTML = results.map(function (r) {
+                        var o = r.order;
+                        return '<div class="order-card">' +
+                            '<div class="header">' +
+                            '<span class="order-no">🆔 ' + o.orderNo + '</span>' +
+                            '<span class="status ' + r.st.cls + '">' + r.st.text + '</span>' +
+                            '</div>' +
+                            '<div class="body">' +
+                            '<div class="info-row"><span class="label">🏪 餐厅</span><span class="value rest-name">' + r.restName + '</span></div>' +
+                            '<div class="address"><span class="icon">📍</span>' + (o.deliveryAddress || '未填写地址') + '</div>' +
+                            '<div class="contact-info">' +
+                            (o.contactName ? '<span>👤 ' + o.contactName + '</span>' : '') +
+                            (o.contactPhone ? '<span>📞 ' + o.contactPhone + '</span>' : '') +
+                            '</div>' +
+                            '<div class="amount">¥' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
+                            '</div>' +
+                            '<div class="footer">' +
+                            '<span class="time">⏰ ' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
+                            '<button class="btn btn-accept" onclick="acceptOrder(' + o.id + ', this)">🏍️ 接单</button>' +
+                            '</div>' +
+                            '</div>';
+                    }).join('');
+                });
+            }).catch(function () {
+                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败，请确认后端已启动</p></div>';
+            });
+        }
+
+        // ===== 接单 =====
+        function acceptOrder(orderId, btn) {
+            var user = getCurrentUser();
+            if (!user) { toast('请先登录', 'error'); return; }
+            btn.disabled = true;
+            btn.textContent = '接单中...';
+            fetch('/api/orders/' + orderId + '/assign-delivery', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    deliveryId: user.id,
+                    deliveryName: user.nickname || user.username
+                })
+            }).then(function (r) { return r.json(); }).then(function (resp) {
+                if (resp.code === 200) {
+                    toast('✅ 接单成功！前往配送中查看', 'success');
+                    loadAvailableOrders();
+                    loadDeliveringOrders();
+                } else {
+                    toast(resp.message || '接单失败', 'error');
+                    btn.disabled = false;
+                    btn.textContent = '🏍️ 接单';
+                }
+            }).catch(function () {
+                toast('网络错误', 'error');
+                btn.disabled = false;
+                btn.textContent = '🏍️ 接单';
+            });
+        }
+
+        // ===== 加载配送中订单 =====
+        function loadDeliveringOrders() {
+            var user = getCurrentUser();
+            var el = document.getElementById('deliveringList');
+            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">🔐</div><p>请先登录</p></div>'; return; }
+            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>加载中...</div>';
+            fetch('/api/orders/delivery/' + user.id).then(function (r) { return r.json(); }).then(function (resp) {
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    el.innerHTML = '<div class="empty"><div class="icon">🚚</div><p>暂无配送中的订单</p></div>';
+                    document.getElementById('deliveringCount').textContent = '0';
+                    return;
+                }
+                // 筛选出配送中和已送达但未完成的
+                var delivering = resp.data.filter(function (o) {
+                    return o.status === 'DELIVERING' || o.status === 'PAID' || o.status === 'ACCEPTED' || o.status === 'PREPARING';
+                });
+                document.getElementById('deliveringCount').textContent = delivering.length;
+                if (delivering.length === 0) {
+                    el.innerHTML = '<div class="empty"><div class="icon">🚚</div><p>暂无配送中的订单</p></div>';
+                    return;
+                }
+                var promises = delivering.map(function (order) {
+                    return getRestaurantName(order.restaurantId).then(function (restName) {
+                        var st = statusMap[order.status] || { text: order.status, cls: '' };
+                        return { order: order, restName: restName, st: st };
+                    });
+                });
+                Promise.all(promises).then(function (results) {
+                    el.innerHTML = results.map(function (r) {
+                        var o = r.order;
+                        return '<div class="order-card">' +
+                            '<div class="header">' +
+                            '<span class="order-no">🆔 ' + o.orderNo + '</span>' +
+                            '<span class="status ' + r.st.cls + '">' + r.st.text + '</span>' +
+                            '</div>' +
+                            '<div class="body">' +
+                            '<div class="info-row"><span class="label">🏪 餐厅</span><span class="value rest-name">' + r.restName + '</span></div>' +
+                            '<div class="address"><span class="icon">📍</span>' + (o.deliveryAddress || '未填写地址') + '</div>' +
+                            '<div class="contact-info">' +
+                            (o.contactName ? '<span>👤 ' + o.contactName + '</span>' : '') +
+                            (o.contactPhone ? '<span>📞 ' + o.contactPhone + '</span>' : '') +
+                            '</div>' +
+                            '<div class="amount">¥' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
+                            '</div>' +
+                            '<div class="footer">' +
+                            '<span class="time">⏰ ' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
+                            (o.status === 'DELIVERING' ?
+                                '<button class="btn btn-deliver" onclick="confirmDelivered(' + o.id + ', this)">✅ 确认送达</button>' :
+                                '<span style="color:#ff8c00;font-size:13px;font-weight:bold;">⏳ 等待商家出餐</span>'
+                            ) +
+                            '</div>' +
+                            '</div>';
+                    }).join('');
+                });
+            }).catch(function () {
+                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败</p></div>';
+            });
+        }
+
+        // ===== 确认送达 =====
+        function confirmDelivered(orderId, btn) {
+            if (!confirm('确认该订单已送达？')) return;
+            btn.disabled = true;
+            btn.textContent = '确认中...';
+            fetch('/api/orders/' + orderId + '/status', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'DELIVERED' })
+            }).then(function (r) { return r.json(); }).then(function (resp) {
+                if (resp.code === 200) {
+                    toast('✅ 已确认送达！', 'success');
+                    loadDeliveringOrders();
+                    loadHistoryOrders();
+                } else {
+                    toast(resp.message || '操作失败', 'error');
+                    btn.disabled = false;
+                    btn.textContent = '✅ 确认送达';
+                }
+            }).catch(function () {
+                toast('网络错误', 'error');
+                btn.disabled = false;
+                btn.textContent = '✅ 确认送达';
+            });
+        }
+
+        // ===== 加载配送历史 =====
+        function loadHistoryOrders() {
+            var user = getCurrentUser();
+            var el = document.getElementById('historyList');
+            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">🔐</div><p>请先登录</p></div>'; return; }
+            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>加载中...</div>';
+            fetch('/api/orders/delivery/' + user.id).then(function (r) { return r.json(); }).then(function (resp) {
+                if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
+                    el.innerHTML = '<div class="empty"><div class="icon">📦</div><p>暂无配送记录</p></div>';
+                    return;
+                }
+                var history = resp.data.filter(function (o) {
+                    return o.status === 'DELIVERED' || o.status === 'COMPLETED' || o.status === 'CANCELLED';
+                });
+                if (history.length === 0) {
+                    el.innerHTML = '<div class="empty"><div class="icon">📦</div><p>暂无配送记录</p></div>';
+                    return;
+                }
+                var promises = history.map(function (order) {
+                    return getRestaurantName(order.restaurantId).then(function (restName) {
+                        var st = statusMap[order.status] || { text: order.status, cls: '' };
+                        var cls = order.status === 'CANCELLED' ? 'cancelled' : st.cls;
+                        return { order: order, restName: restName, text: st.text, cls: cls };
+                    });
+                });
+                Promise.all(promises).then(function (results) {
+                    el.innerHTML = results.map(function (r) {
+                        var o = r.order;
+                        return '<div class="order-card">' +
+                            '<div class="header">' +
+                            '<span class="order-no">🆔 ' + o.orderNo + '</span>' +
+                            '<span class="status ' + r.cls + '">' + r.text + '</span>' +
+                            '</div>' +
+                            '<div class="body">' +
+                            '<div class="info-row"><span class="label">🏪 餐厅</span><span class="value rest-name">' + r.restName + '</span></div>' +
+                            '<div class="address"><span class="icon">📍</span>' + (o.deliveryAddress || '未填写地址') + '</div>' +
+                            '<div class="amount">¥' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
+                            '</div>' +
+                            '<div class="footer">' +
+                            '<span class="time">⏰ ' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
+                            '</div>' +
+                            '</div>';
+                    }).join('');
+                });
+            }).catch(function () {
+                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败</p></div>';
+            });
+        }
+
+        // ===== 初始化 =====
+        var rider = checkRider();
+        if (rider) {
+            loadAvailableOrders();
+            loadDeliveringOrders();
+            loadHistoryOrders();
+        }
+    </script>
+</body>
+</html>
