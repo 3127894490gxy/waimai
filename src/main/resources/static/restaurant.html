@@ -97,6 +97,7 @@
             else { cart.push({ dishId: dish.id, dishName: dish.name, price: dish.price, quantity: 1, restaurantId: parseInt(restaurantId), userId: user.id }); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
+            loadDishes(currentCategoryId);
         }
 
         function changeQty(dishId, delta) {
@@ -107,7 +108,7 @@
             if (item) { item.quantity += delta; if (item.quantity <= 0) cart = cart.filter(i => i.dishId !== dishId); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
-            renderDishes(currentCategoryId);
+            loadDishes(currentCategoryId);
         }
 
         function getCartQty(dishId) {
