@@ -158,9 +158,9 @@
                 if (adminLink) adminLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
                 if (deliveryLink) deliveryLink.style.display = user.role === 'DELIVERY' ? 'inline-block' : 'none';
                 if (merchantLink) merchantLink.style.display = user.role === 'MERCHANT' ? 'inline-block' : 'none';
-                // 商家不显示订单和购物车
-                if (ordersLink) ordersLink.style.display = user.role === 'MERCHANT' ? 'none' : 'inline-block';
-                if (cartLink) cartLink.style.display = user.role === 'MERCHANT' ? 'none' : 'inline-block';
+                // 商家和配送员不显示订单和购物车
+                if (ordersLink) ordersLink.style.display = (user.role === 'MERCHANT' || user.role === 'DELIVERY') ? 'none' : 'inline-block';
+                if (cartLink) cartLink.style.display = (user.role === 'MERCHANT' || user.role === 'DELIVERY') ? 'none' : 'inline-block';
             } else {
                 el.innerHTML = `<a href="/login.html">登录</a><a href="/register.html">注册</a>`;
                 if (adminLink) adminLink.style.display = 'none';
@@ -223,6 +223,9 @@
                 if (searchBar) searchBar.style.display = 'none';
                 const title = document.querySelector('.page-title');
                 if (title) title.textContent = '🚚 配送工作台';
+                // 导航栏变蓝色
+                const navbar = document.querySelector('.navbar');
+                if (navbar) navbar.style.background = 'linear-gradient(135deg, #4a90d9, #357abd)';
 
                 list.innerHTML = `
                     <div style="max-width:500px;margin:0 auto;text-align:center;">
