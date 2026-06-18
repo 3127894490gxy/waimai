@@ -86,11 +86,12 @@
 
         const statusSteps = [
             { status: 'PENDING_PAYMENT', icon: '💳', label: '待支付', step: 0 },
-            { status: 'PAID', icon: '👨‍🍳', label: '已支付', step: 1 },
-            { status: 'PREPARING', icon: '👨‍🍳', label: '准备中', step: 2 },
-            { status: 'DELIVERING', icon: '🚚', label: '配送中', step: 3 },
-            { status: 'DELIVERED', icon: '✅', label: '已送达', step: 4 },
-            { status: 'COMPLETED', icon: '✅', label: '已完成', step: 5 }
+            { status: 'PAID', icon: '💳', label: '已支付', step: 1 },
+            { status: 'ACCEPTED', icon: '👨‍🍳', label: '待接单', step: 2 },
+            { status: 'PREPARING', icon: '👨‍🍳', label: '取餐中', step: 3 },
+            { status: 'DELIVERING', icon: '🚚', label: '配送中', step: 4 },
+            { status: 'DELIVERED', icon: '✅', label: '已送达', step: 5 },
+            { status: 'COMPLETED', icon: '✅', label: '已完成', step: 6 }
         ];
 
         const statusMap = {};
@@ -227,7 +228,7 @@
 
         // 状态变化通知
         function showStatusToast(order, oldStatus, newStatus, restName) {
-            const statusLabels = { 'PENDING_PAYMENT':'待支付','PAID':'已支付','ACCEPTED':'已接单','PREPARING':'准备中','DELIVERING':'配送中','DELIVERED':'已送达','COMPLETED':'已完成','CANCELLED':'已取消' };
+            const statusLabels = { 'PENDING_PAYMENT':'待支付','PAID':'已支付','ACCEPTED':'待接单','PREPARING':'取餐中','DELIVERING':'配送中','DELIVERED':'已送达','COMPLETED':'已完成','CANCELLED':'已取消' };
             const newLabel = statusLabels[newStatus] || newStatus;
             const toast = document.getElementById('newOrderToast');
             let msg = '';
