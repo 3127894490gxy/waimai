@@ -57,4 +57,16 @@ public class UserService {
     public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
+
+    //修改密码
+    public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+        return userRepository.findById(userId)
+                .filter(u -> u.getPassword().equals(oldPassword))
+                .map(u -> {
+                    u.setPassword(newPassword);
+                    userRepository.save(u);
+                    return true;
+                })
+                .orElse(false);
+    }
 }

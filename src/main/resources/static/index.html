@@ -18,6 +18,13 @@
         .user-info span { font-size: 14px; }
         .user-info a { color: #fff; text-decoration: none; font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; }
         .user-info a:hover { background: rgba(255,255,255,0.2); }
+        .user-info .dropdown { position: relative; display: inline-block; }
+        .user-info .dropbtn { color: #fff; text-decoration: none; font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer; background: none; }
+        .user-info .dropbtn:hover { background: rgba(255,255,255,0.2); }
+        .user-info .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 120px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 200; overflow: hidden; }
+        .user-info .dropdown-content a { display: block; padding: 10px 16px; color: #333 !important; border: none !important; border-radius: 0 !important; font-size: 13px; }
+        .user-info .dropdown-content a:hover { background: #f5f5f5; }
+        .user-info .dropdown:hover .dropdown-content { display: block; }
         .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
         .page-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; }
         .search-bar { display: flex; gap: 12px; margin-bottom: 24px; }
@@ -70,6 +77,52 @@
         </div>
     </div>
     <script>
+        // ===== 修改密码弹窗 =====
+        const pwdModalHtml = `
+            <div class="modal-overlay" id="pwdModal" style="display:none;">
+                <div class="modal" style="max-width:380px;">
+                    <h3>🔑 修改密码</h3>
+                    <div class="form-group"><label>原密码</label><input type="password" id="pwd_old" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:6px;font-size:14px;outline:none;"></div>
+                    <div class="form-group" style="margin-top:12px;"><label>新密码</label><input type="password" id="pwd_new" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:6px;font-size:14px;outline:none;"></div>
+                    <div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                        <button class="btn btn-secondary" onclick="closePwdModal()" style="padding:8px 20px;border:none;border-radius:6px;background:#95a5a6;color:#fff;cursor:pointer;">取消</button>
+                        <button class="btn btn-primary" onclick="changePwd()" style="padding:8px 20px;border:none;border-radius:6px;background:#ff6b35;color:#fff;cursor:pointer;">确认修改</button>
+                    </div>
+                    <div id="pwdMsg" style="margin-top:10px;font-size:13px;color:#e74c3c;display:none;"></div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', pwdModalHtml);
+
+        function showPwdModal() {
+            document.getElementById('pwdModal').style.display = 'flex';
+            document.getElementById('pwd_old').value = '';
+            document.getElementById('pwd_new').value = '';
+            document.getElementById('pwdMsg').style.display = 'none';
+        }
+        function closePwdModal() { document.getElementById('pwdModal').style.display = 'none'; }
+        function changePwd() {
+            const user = getCurrentUser();
+            const oldPwd = document.getElementById('pwd_old').value.trim();
+            const newPwd = document.getElementById('pwd_new').value.trim();
+            const msg = document.getElementById('pwdMsg');
+            if (!oldPwd || !newPwd) { msg.textContent = '请填写完整'; msg.style.display = 'block'; return; }
+            if (newPwd.length < 4) { msg.textContent = '新密码至少4位'; msg.style.display = 'block'; return; }
+            fetch('/api/users/password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, oldPassword: oldPwd, newPassword: newPwd })
+            }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) {
+                    alert('✅ 密码修改成功，请重新登录');
+                    logout();
+                } else {
+                    msg.textContent = resp.message || '修改失败';
+                    msg.style.display = 'block';
+                }
+            }).catch(() => { msg.textContent = '网络错误'; msg.style.display = 'block'; });
+        }
+
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
             return u ? JSON.parse(u) : null;
@@ -81,7 +134,14 @@
             const adminLink = document.getElementById('adminLink');
             const deliveryLink = document.getElementById('deliveryLink');
             if (user) {
-                el.innerHTML = `<span>👋 ${user.nickname || user.username}</span><a href="#" onclick="logout()">退出</a>`;
+                el.innerHTML = `<span>👋 ${user.nickname || user.username}</span>
+                    <div class="dropdown">
+                        <button class="dropbtn">👤 个人 ▾</button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="showPwdModal();return false;">🔑 修改密码</a>
+                            <a href="#" onclick="logout();return false;">🚪 退出</a>
+                        </div>
+                    </div>`;
                 if (adminLink) adminLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
                 if (deliveryLink) deliveryLink.style.display = user.role === 'DELIVERY' ? 'inline-block' : 'none';
             } else {

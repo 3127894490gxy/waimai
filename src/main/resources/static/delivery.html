@@ -64,6 +64,7 @@
         <a href="/" class="logo">🚚 配送工作台</a>
         <div class="nav-right">
             <a href="/orders.html">📋 我的订单</a>
+            <a href="#" onclick="showPwdModal();return false;" style="color:rgba(255,255,255,0.8);">🔑 修改密码</a>
             <a href="/" onclick="logout()">🚪 退出</a>
         </div>
     </nav>
@@ -99,6 +100,20 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- 修改密码弹窗 -->
+    <div style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;" id="pwdModal" onclick="if(event.target===this)closePwdModal()">
+        <div style="background:#fff;border-radius:12px;padding:24px;width:380px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
+            <h3 style="margin-bottom:16px;color:#333;">🔑 修改密码</h3>
+            <div style="margin-bottom:12px;"><label style="font-size:13px;color:#666;display:block;margin-bottom:4px;">原密码</label><input type="password" id="pwd_old" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:6px;font-size:14px;outline:none;"></div>
+            <div style="margin-bottom:12px;"><label style="font-size:13px;color:#666;display:block;margin-bottom:4px;">新密码</label><input type="password" id="pwd_new" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:6px;font-size:14px;outline:none;"></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                <button onclick="closePwdModal()" style="padding:8px 20px;border:none;border-radius:6px;background:#95a5a6;color:#fff;cursor:pointer;">取消</button>
+                <button onclick="changePwd()" style="padding:8px 20px;border:none;border-radius:6px;background:#4a90d9;color:#fff;cursor:pointer;">确认修改</button>
+            </div>
+            <div id="pwdMsg" style="margin-top:10px;font-size:13px;color:#e74c3c;display:none;"></div>
+        </div>
+    </div>
+
     <script>
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
@@ -125,6 +140,22 @@
         function logout() {
             localStorage.removeItem('waimai_user');
             location.href = '/';
+        }
+
+        // ===== 修改密码 =====
+        function showPwdModal() { document.getElementById('pwdModal').style.display = 'flex'; document.getElementById('pwd_old').value = ''; document.getElementById('pwd_new').value = ''; document.getElementById('pwdMsg').style.display = 'none'; }
+        function closePwdModal() { document.getElementById('pwdModal').style.display = 'none'; }
+        function changePwd() {
+            const u = getCurrentUser();
+            const oldPwd = document.getElementById('pwd_old').value.trim();
+            const newPwd = document.getElementById('pwd_new').value.trim();
+            const msg = document.getElementById('pwdMsg');
+            if (!oldPwd || !newPwd) { msg.textContent = '请填写完整'; msg.style.display = 'block'; return; }
+            fetch('/api/users/password', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: u.id, oldPassword: oldPwd, newPassword: newPwd }) })
+            .then(r => r.json()).then(resp => {
+                if (resp.code === 200) { alert('✅ 修改成功，请重新登录'); logout(); }
+                else { msg.textContent = resp.message || '修改失败'; msg.style.display = 'block'; }
+            }).catch(() => { msg.textContent = '网络错误'; msg.style.display = 'block'; });
         }
 
         function switchTab(name) {
