@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的订单 - 外卖配送系统</title>
+    <title>鎴戠殑璁㈠崟 - 澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
-        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+        .navbar { background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
         .navbar a { color: #fff; text-decoration: none; }
         .navbar .logo { font-size: 20px; font-weight: bold; }
         .container { max-width: 800px; margin: 0 auto; padding: 24px; }
@@ -26,56 +26,56 @@
         .order-card .header .status.cancelled { background: #fce4ec; color: #c62828; }
         .order-card .body { padding: 8px 20px 16px; }
         .order-card .body .item-row { display: flex; justify-content: space-between; font-size: 14px; color: #555; padding: 4px 0; }
-        .order-card .body .total { text-align: right; font-size: 18px; font-weight: bold; color: #ff6b35; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+        .order-card .body .total { text-align: right; font-size: 18px; font-weight: bold; color: #4a90d9; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
         .order-card .footer { background: #fafafa; padding: 10px 20px; display: flex; justify-content: space-between; font-size: 13px; color: #999; }
-        .order-card .footer .rest-name { color: #ff6b35; }
+        .order-card .footer .rest-name { color: #4a90d9; }
         .order-card .footer .rider-name { color: #4a90d9; font-weight:bold; }
         .empty { text-align: center; padding: 80px 20px; color: #999; }
         .empty .icon { font-size: 64px; margin-bottom: 16px; }
-        .empty a { display: inline-block; margin-top: 16px; padding: 10px 24px; background: #ff6b35; color: #fff; text-decoration: none; border-radius: 6px; }
+        .empty a { display: inline-block; margin-top: 16px; padding: 10px 24px; background: #4a90d9; color: #fff; text-decoration: none; border-radius: 6px; }
         .loading { text-align: center; padding: 40px; color: #999; }
-        /* 进度条动画 */
+        /* 杩涘害鏉″姩鐢?*/
         .progress-bar { display:flex;align-items:center;justify-content:center;gap:0;padding:16px 0 8px;border-top:1px solid #f5f5f5;margin-top:8px; }
         .progress-step { display:flex;flex-direction:column;align-items:center;gap:4px;position:relative; }
         .progress-step .icon { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.6s; }
-        .progress-step .icon.active { background:#ff6b35;transform:scale(1.15);box-shadow:0 2px 12px rgba(255,107,53,0.4); }
+        .progress-step .icon.active { background:#4a90d9;transform:scale(1.15);box-shadow:0 2px 12px rgba(74,144,217,0.4); }
         .progress-step .icon.done { background:#4caf50; }
         .progress-step .icon.pending { background:#f0f0f0;opacity:0.5; }
         .progress-step .label { font-size:11px;color:#999;white-space:nowrap; }
-        .progress-step .label.active { color:#ff6b35;font-weight:bold; }
+        .progress-step .label.active { color:#4a90d9;font-weight:bold; }
         .progress-step .label.done { color:#4caf50; }
         .progress-line { width:50px;height:3px;margin:0 4px;margin-bottom:20px;border-radius:2px;transition:all 0.6s; }
         .progress-line.done { background:#4caf50; }
-        .progress-line.active { background:linear-gradient(90deg,#4caf50,#ff6b35);animation:progressPulse 1s infinite; }
+        .progress-line.active { background:linear-gradient(90deg,#4caf50,#4a90d9);animation:progressPulse 1s infinite; }
         .progress-line.pending { background:#eee; }
         .progress-line.cancelled { background:#e74c3c; }
-        @keyframes statusFlash { 0%{box-shadow:0 0 0 0 rgba(255,107,53,0.4)} 100%{box-shadow:0 0 0 20px rgba(255,107,53,0)} }
+        @keyframes statusFlash { 0%{box-shadow:0 0 0 0 rgba(74,144,217,0.4)} 100%{box-shadow:0 0 0 20px rgba(255,107,53,0)} }
         @keyframes progressPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-        /* 支付倒计时 */
-        .pay-countdown { text-align:center;padding:8px;background:#fff8f5;border-radius:8px;margin:8px 0 0;font-size:13px;color:#ff6b35; }
+        /* 鏀粯鍊掕鏃?*/
+        .pay-countdown { text-align:center;padding:8px;background:#f5f8ff;border-radius:8px;margin:8px 0 0;font-size:13px;color:#4a90d9; }
         .pay-countdown .timer { font-weight:bold;font-size:16px; }
-        /* 新订单提示 */
+        /* 鏂拌鍗曟彁绀?*/
         .new-order-toast { position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#4caf50;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;z-index:999;animation:slideDown 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:none; }
     </style>
 </head>
 <body>
     <div class="food-bg">
-        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
-        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
+        <span>馃崪</span><span>馃</span><span>馃崟</span><span>馃尞</span>
+        <span>馃崳</span><span>馃</span><span>馃崷</span><span>馃</span>
     </div>
     <nav class="navbar">
-        <a href="/" class="logo">← 返回首页</a>
-        <a href="/cart.html" id="orderCartLink">🛒 购物车</a>
-        <a href="/rider.html" id="orderRiderLink" style="display:none;">🏍️ 骑手工作台</a>
+        <a href="/" class="logo">鈫?杩斿洖棣栭〉</a>
+        <a href="/cart.html" id="orderCartLink">馃洅 璐墿杞?/a>
+        <a href="/rider.html" id="orderRiderLink" style="display:none;">馃弽锔?楠戞墜宸ヤ綔鍙?/a>
     </nav>
     <div class="new-order-toast" id="newOrderToast"></div>
     <div class="container">
         <div class="page-title">
-            <span>📋 我的订单</span>
-            <span class="live-badge" id="liveBadge" style="display:none;">● 实时</span>
+            <span>馃搵 鎴戠殑璁㈠崟</span>
+            <span class="live-badge" id="liveBadge" style="display:none;">鈼?瀹炴椂</span>
         </div>
         <div id="orderList">
-            <div class="loading">加载中...</div>
+            <div class="loading">鍔犺浇涓?..</div>
         </div>
     </div>
     <script>
@@ -85,13 +85,13 @@
         }
 
         const statusSteps = [
-            { status: 'PENDING_PAYMENT', icon: '💳', label: '待支付', step: 0 },
-            { status: 'PAID', icon: '💳', label: '已支付', step: 1 },
-            { status: 'ACCEPTED', icon: '👨‍🍳', label: '待接单', step: 2 },
-            { status: 'PREPARING', icon: '👨‍🍳', label: '取餐中', step: 3 },
-            { status: 'DELIVERING', icon: '🚚', label: '配送中', step: 4 },
-            { status: 'DELIVERED', icon: '✅', label: '已送达', step: 5 },
-            { status: 'COMPLETED', icon: '✅', label: '已完成', step: 6 }
+            { status: 'PENDING_PAYMENT', icon: '馃挸', label: '寰呮敮浠?, step: 0 },
+            { status: 'PAID', icon: '馃挸', label: '宸叉敮浠?, step: 1 },
+            { status: 'ACCEPTED', icon: '馃懆鈥嶐煃?, label: '寰呮帴鍗?, step: 2 },
+            { status: 'PREPARING', icon: '馃懆鈥嶐煃?, label: '鍙栭涓?, step: 3 },
+            { status: 'DELIVERING', icon: '馃殮', label: '閰嶉€佷腑', step: 4 },
+            { status: 'DELIVERED', icon: '鉁?, label: '宸查€佽揪', step: 5 },
+            { status: 'COMPLETED', icon: '鉁?, label: '宸插畬鎴?, step: 6 }
         ];
 
         const statusMap = {};
@@ -102,17 +102,17 @@
         statusMap.DELIVERED.cls = 'completed';
         statusMap.COMPLETED.cls = 'completed';
         statusMap.PENDING_PAYMENT.cls = 'pending';
-        statusMap.CANCELLED = { text: '已取消', cls: 'cancelled', step: -1 };
+        statusMap.CANCELLED = { text: '宸插彇娑?, cls: 'cancelled', step: -1 };
 
-        // 获取当前进度步骤索引（0-5）
+        // 鑾峰彇褰撳墠杩涘害姝ラ绱㈠紩锛?-5锛?
         function getStep(status) {
             const s = statusSteps.findIndex(s => s.status === status);
             return s >= 0 ? s : -1;
         }
 
-        // 渲染进度条
+        // 娓叉煋杩涘害鏉?
         function renderProgress(currentStatus, cancelled) {
-            if (cancelled) return '<div class="progress-bar"><span style="color:#e74c3c;font-size:14px;">❌ 订单已取消</span></div>';
+            if (cancelled) return '<div class="progress-bar"><span style="color:#e74c3c;font-size:14px;">鉂?璁㈠崟宸插彇娑?/span></div>';
             const currentStep = getStep(currentStatus);
             if (currentStep < 0) return '';
             return '<div class="progress-bar">' +
@@ -130,13 +130,13 @@
             '</div>';
         }
 
-        // 保存上一次的订单状态，用于检测变化
+        // 淇濆瓨涓婁竴娆＄殑璁㈠崟鐘舵€侊紝鐢ㄤ簬妫€娴嬪彉鍖?
         let prevOrderStatus = {};
 
         function loadOrders() {
             const user = getCurrentUser();
             const el = document.getElementById('orderList');
-            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">🔐</div><p>请先登录查看订单</p><a href="/login.html">去登录</a></div>'; return; }
+            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">馃攼</div><p>璇峰厛鐧诲綍鏌ョ湅璁㈠崟</p><a href="/login.html">鍘荤櫥褰?/a></div>'; return; }
             if (user.role === 'DELIVERY') {
                 location.href = '/rider.html';
                 return;
@@ -144,12 +144,12 @@
 
             fetch(`/api/orders/user/${user.id}`).then(r => r.json()).then(resp => {
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>暂无订单</p><a href="/">去点餐</a></div>';
+                    el.innerHTML = '<div class="empty"><div class="icon">馃搵</div><p>鏆傛棤璁㈠崟</p><a href="/">鍘荤偣椁?/a></div>';
                     document.getElementById('liveBadge').style.display = 'none';
                     return;
                 }
 
-                // 显示实时标记
+                // 鏄剧ず瀹炴椂鏍囪
                 const hasActive = resp.data.some(o => 
                     ['PENDING_PAYMENT','PAID','ACCEPTED','PREPARING','DELIVERING'].includes(o.status)
                 );
@@ -158,11 +158,11 @@
                 const promises = resp.data.map(order => {
                     const st = statusMap[order.status] || { text: order.status, cls: '' };
                     return fetch(`/api/restaurants/${order.restaurantId}`).then(r => r.json()).then(resp2 => {
-                        const restName = resp2.data ? resp2.data.name : '餐厅#' + order.restaurantId;
+                        const restName = resp2.data ? resp2.data.name : '椁愬巺#' + order.restaurantId;
                         return fetch(`/api/orders/${order.id}/items`).then(r => r.json()).then(resp3 => {
                             const items = resp3.data || [];
                             const itemsHtml = items.map(item => 
-                                `<div class="item-row"><span>${item.dishName} × ${item.quantity}</span><span>¥${(item.price * item.quantity).toFixed(2)}</span></div>`
+                                `<div class="item-row"><span>${item.dishName} 脳 ${item.quantity}</span><span>楼${(item.price * item.quantity).toFixed(2)}</span></div>`
                             ).join('');
                             return { order, restName, itemsHtml, st };
                         });
@@ -178,19 +178,19 @@
                         const isNew = !prevOrderStatus[order.id];
                         const statusChanged = prevOrderStatus[order.id] && prevOrderStatus[order.id] !== order.status;
 
-                        // 检测到状态变化
+                        // 妫€娴嬪埌鐘舵€佸彉鍖?
                         if (statusChanged) {
                             hasChanges = true;
                             showStatusToast(order, prevOrderStatus[order.id], order.status, restName);
                         }
 
-                        // 更新记录
+                        // 鏇存柊璁板綍
                         prevOrderStatus[order.id] = order.status;
 
-                        // 待支付显示倒计时
+                        // 寰呮敮浠樻樉绀哄€掕鏃?
                         let countdownHtml = '';
                         if (order.status === 'PENDING_PAYMENT') {
-                            countdownHtml = '<div class="pay-countdown">⏳ 等待支付，请尽快完成付款</div>';
+                            countdownHtml = '<div class="pay-countdown">鈴?绛夊緟鏀粯锛岃灏藉揩瀹屾垚浠樻</div>';
                         }
 
                         const orderStep = getStep(order.status);
@@ -198,68 +198,68 @@
                         return `
                         <div class="order-card card-enter ${statusChanged ? 'status-changed' : ''}" id="orderCard_${order.id}">
                             <div class="header">
-                                <span class="order-no">🆔 ${order.orderNo}</span>
+                                <span class="order-no">馃啍 ${order.orderNo}</span>
                                 <span class="status ${st.cls}">${st.text}</span>
                             </div>
                             <div class="body">
                                 ${itemsHtml}
                                 ${renderProgress(order.status, isCancelled)}
                                 ${countdownHtml}
-                                <div class="total">合计 ¥${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</div>
+                                <div class="total">鍚堣 楼${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</div>
                             </div>
                             <div class="footer">
-                                <span class="rest-name">🏪 ${restName}</span>
-                                ${order.deliveryName ? `<span class="rider-name">🚚 ${order.deliveryName}</span>` : ''}
+                                <span class="rest-name">馃彧 ${restName}</span>
+                                ${order.deliveryName ? `<span class="rider-name">馃殮 ${order.deliveryName}</span>` : ''}
                                 <span>${new Date(order.createTime).toLocaleString('zh-CN')}</span>
                             </div>
                         </div>`;
                     }).join('');
 
-                    // 自动滚动到有变化的订单
+                    // 鑷姩婊氬姩鍒版湁鍙樺寲鐨勮鍗?
                     if (hasChanges) {
                         const changedCard = document.querySelector('.status-changed');
                         if (changedCard) changedCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 });
             }).catch(() => {
-                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败，请确认后端已启动</p></div>';
+                el.innerHTML = '<div class="empty"><div class="icon">鈿狅笍</div><p>鍔犺浇澶辫触锛岃纭鍚庣宸插惎鍔?/p></div>';
             });
         }
 
-        // 状态变化通知
+        // 鐘舵€佸彉鍖栭€氱煡
         function showStatusToast(order, oldStatus, newStatus, restName) {
-            const statusLabels = { 'PENDING_PAYMENT':'待支付','PAID':'已支付','ACCEPTED':'待接单','PREPARING':'取餐中','DELIVERING':'配送中','DELIVERED':'已送达','COMPLETED':'已完成','CANCELLED':'已取消' };
+            const statusLabels = { 'PENDING_PAYMENT':'寰呮敮浠?,'PAID':'宸叉敮浠?,'ACCEPTED':'寰呮帴鍗?,'PREPARING':'鍙栭涓?,'DELIVERING':'閰嶉€佷腑','DELIVERED':'宸查€佽揪','COMPLETED':'宸插畬鎴?,'CANCELLED':'宸插彇娑? };
             const newLabel = statusLabels[newStatus] || newStatus;
             const toast = document.getElementById('newOrderToast');
             let msg = '';
             if (newStatus === 'DELIVERING') {
-                msg = `🚚 ${restName} 订单开始配送${order.deliveryName ? '（配送员：' + order.deliveryName + '）' : ''}`;
+                msg = `馃殮 ${restName} 璁㈠崟寮€濮嬮厤閫?{order.deliveryName ? '锛堥厤閫佸憳锛? + order.deliveryName + '锛? : ''}`;
             } else if (newStatus === 'DELIVERED') {
-                msg = `✅ ${restName} 订单已送达，请取餐！`;
+                msg = `鉁?${restName} 璁㈠崟宸查€佽揪锛岃鍙栭锛乣;
             } else if (newStatus === 'CANCELLED') {
-                msg = `❌ ${restName} 订单已取消`;
+                msg = `鉂?${restName} 璁㈠崟宸插彇娑坄;
             } else {
-                msg = `📢 ${restName} 订单状态更新：${newLabel}`;
+                msg = `馃摙 ${restName} 璁㈠崟鐘舵€佹洿鏂帮細${newLabel}`;
             }
             toast.textContent = msg;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 4000);
         }
 
-        // 轮询 - 有活跃订单时每5秒刷新
+        // 杞 - 鏈夋椿璺冭鍗曟椂姣?绉掑埛鏂?
         let pollTimer = null;
 
         function startPolling() {
             if (pollTimer) clearInterval(pollTimer);
             pollTimer = setInterval(function() {
-                // 检查是否有活跃订单来决定是否继续轮询
+                // 妫€鏌ユ槸鍚︽湁娲昏穬璁㈠崟鏉ュ喅瀹氭槸鍚︾户缁疆璇?
                 const user = getCurrentUser();
                 if (!user) { clearInterval(pollTimer); pollTimer = null; return; }
                 loadOrders();
             }, 5000);
         }
 
-        // 页面可见性变化时调整轮询
+        // 椤甸潰鍙鎬у彉鍖栨椂璋冩暣杞
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -269,7 +269,7 @@
             }
         });
 
-        // ===== 初始化 =====
+        // ===== 鍒濆鍖?=====
         loadOrders();
         startPolling();
     </script>

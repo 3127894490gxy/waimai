@@ -1,66 +1,66 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>餐厅菜单 - 外卖配送系统</title>
+    <title>椁愬巺鑿滃崟 - 澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
-        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+        .navbar { background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
         .navbar a { color: rgba(255,255,255,0.9); text-decoration: none; }
         .navbar .logo { font-size: 20px; font-weight: bold; color: #fff; }
         .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
         .restaurant-header { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; gap: 20px; }
-        .restaurant-header .avatar { width: 80px; height: 80px; border-radius: 12px; background: linear-gradient(135deg, #ff6b35, #ff9a56); display: flex; align-items: center; justify-content: center; font-size: 36px; color: #fff; flex-shrink: 0; }
+        .restaurant-header .avatar { width: 80px; height: 80px; border-radius: 12px; background: linear-gradient(135deg, #4a90d9, #5b9bd5); display: flex; align-items: center; justify-content: center; font-size: 36px; color: #fff; flex-shrink: 0; }
         .restaurant-header .info { flex: 1; }
         .restaurant-header .info h1 { font-size: 22px; color: #333; margin-bottom: 6px; }
         .restaurant-header .info .desc { color: #999; font-size: 14px; margin-bottom: 8px; }
         .restaurant-header .info .meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; color: #888; }
-        .restaurant-header .info .meta .rating { color: #ff6b35; font-weight: bold; }
+        .restaurant-header .info .meta .rating { color: #4a90d9; font-weight: bold; }
         .menu-layout { display: flex; gap: 20px; }
         .category-side { width: 160px; flex-shrink: 0; }
         .category-side .cat-item { padding: 12px 16px; background: #fff; border-radius: 8px; margin-bottom: 8px; cursor: pointer; font-size: 14px; color: #666; transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-        .category-side .cat-item:hover, .category-side .cat-item.active { background: #fff6f0; color: #ff6b35; font-weight: bold; }
+        .category-side .cat-item:hover, .category-side .cat-item.active { background: #f0f7ff; color: #4a90d9; font-weight: bold; }
         .dish-area { flex: 1; }
         .dish-card { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); display: flex; gap: 16px; align-items: center; }
-        .dish-card .dish-icon { width: 64px; height: 64px; border-radius: 8px; background: #fff0e8; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+        .dish-card .dish-icon { width: 64px; height: 64px; border-radius: 8px; background: #e8f0fe; display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
         .dish-card .dish-info { flex: 1; }
         .dish-card .dish-info h4 { font-size: 16px; color: #333; margin-bottom: 4px; }
         .dish-card .dish-info .desc { font-size: 12px; color: #aaa; margin-bottom: 6px; }
-        .dish-card .dish-info .price { font-size: 18px; color: #ff6b35; font-weight: bold; }
+        .dish-card .dish-info .price { font-size: 18px; color: #4a90d9; font-weight: bold; }
         .dish-card .dish-info .price small { font-size: 12px; font-weight: normal; }
         .dish-card .actions { display: flex; align-items: center; gap: 8px; }
         .dish-card .actions .qty-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #ddd; background: #fff; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .dish-card .actions .qty-btn:hover { border-color: #ff6b35; color: #ff6b35; }
+        .dish-card .actions .qty-btn:hover { border-color: #4a90d9; color: #4a90d9; }
         .dish-card .actions .qty { font-size: 16px; min-width: 24px; text-align: center; font-weight: bold; }
-        .dish-card .actions .add-btn { padding: 8px 20px; background: #ff6b35; color: #fff; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
-        .dish-card .actions .add-btn:hover { background: #e55a2b; }
-        .cart-float { position: fixed; bottom: 30px; right: 30px; background: #ff6b35; color: #fff; border: none; border-radius: 50px; padding: 16px 28px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(255,107,53,0.4); display: flex; align-items: center; gap: 8px; z-index: 50; transition: transform 0.2s; }
+        .dish-card .actions .add-btn { padding: 8px 20px; background: #4a90d9; color: #fff; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+        .dish-card .actions .add-btn:hover { background: #3a7bc8; }
+        .cart-float { position: fixed; bottom: 30px; right: 30px; background: #4a90d9; color: #fff; border: none; border-radius: 50px; padding: 16px 28px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(74,144,217,0.4); display: flex; align-items: center; gap: 8px; z-index: 50; transition: transform 0.2s; }
         .cart-float:hover { transform: scale(1.05); }
-        .cart-float .badge { background: #fff; color: #ff6b35; border-radius: 50%; padding: 2px 8px; font-size: 12px; font-weight: bold; }
+        .cart-float .badge { background: #fff; color: #4a90d9; border-radius: 50%; padding: 2px 8px; font-size: 12px; font-weight: bold; }
         .loading { text-align: center; padding: 40px; color: #999; }
         .empty-dish { text-align: center; padding: 40px; color: #999; }
         @media (max-width: 640px) { .menu-layout { flex-direction: column; } .category-side { width: 100%; display: flex; gap: 8px; overflow-x: auto; } .category-side .cat-item { flex-shrink: 0; } }
     </style>
 </head>
 <body>
-    <!-- 背景装饰 -->
+    <!-- 鑳屾櫙瑁呴グ -->
     <div class="food-bg">
-        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
-        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
+        <span>馃崪</span><span>馃</span><span>馃崟</span><span>馃尞</span>
+        <span>馃崳</span><span>馃</span><span>馃崷</span><span>馃</span>
     </div>
     <nav class="navbar">
-        <a href="/" class="logo">← 返回首页</a>
-        <a href="/cart.html" id="navCartLink" style="color:#fff;">🛒 购物车</a>
-        <a href="/rider.html" id="navRiderLink" style="color:#fff;display:none;">🏍️ 骑手工作台</a>
+        <a href="/" class="logo">鈫?杩斿洖棣栭〉</a>
+        <a href="/cart.html" id="navCartLink" style="color:#fff;">馃洅 璐墿杞?/a>
+        <a href="/rider.html" id="navRiderLink" style="color:#fff;display:none;">馃弽锔?楠戞墜宸ヤ綔鍙?/a>
     </nav>
     <div class="container">
         <div id="restaurantHeader" class="restaurant-header"></div>
         <div id="riderBanner" style="display:none;background:#e3f2fd;border:1px solid #90caf9;border-radius:8px;padding:12px 16px;margin-bottom:16px;text-align:center;font-size:14px;">
-            🏍️ 您当前为骑手模式，无需点餐。
-            <a href="/rider.html" style="color:#1976d2;font-weight:bold;">前往骑手工作台 →</a>
+            馃弽锔?鎮ㄥ綋鍓嶄负楠戞墜妯″紡锛屾棤闇€鐐归銆?
+            <a href="/rider.html" style="color:#1976d2;font-weight:bold;">鍓嶅線楠戞墜宸ヤ綔鍙?鈫?/a>
         </div>
         <div class="menu-layout">
             <div class="category-side" id="categorySide"></div>
@@ -68,13 +68,13 @@
         </div>
     </div>
     <button class="cart-float" id="cartFloatBtn" onclick="location.href='/cart.html'">
-        🛒 购物车 <span class="badge" id="cartBadge">0</span>
+        馃洅 璐墿杞?<span class="badge" id="cartBadge">0</span>
     </button>
 
     <script>
         const params = new URLSearchParams(location.search);
         const restaurantId = params.get('id');
-        if (!restaurantId) { alert('餐厅ID不存在'); location.href = '/'; }
+        if (!restaurantId) { alert('椁愬巺ID涓嶅瓨鍦?); location.href = '/'; }
 
         let currentCategoryId = null;
 
@@ -91,12 +91,12 @@
 
         function addToCart(dish) {
             const user = getCurrentUser();
-            if (!user) { alert('请先登录'); location.href = '/login.html?redirect=' + encodeURIComponent(location.href); return; }
-            if (!restaurantId) { alert('餐厅信息错误'); return; }
+            if (!user) { alert('璇峰厛鐧诲綍'); location.href = '/login.html?redirect=' + encodeURIComponent(location.href); return; }
+            if (!restaurantId) { alert('椁愬巺淇℃伅閿欒'); return; }
             let cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
-            // 检查是否来自同一餐厅
+            // 妫€鏌ユ槸鍚︽潵鑷悓涓€椁愬巺
             if (cart.length > 0 && cart[0].restaurantId !== parseInt(restaurantId)) {
-                if (!confirm('切换餐厅将清空购物车，确定吗？')) return;
+                if (!confirm('鍒囨崲椁愬巺灏嗘竻绌鸿喘鐗╄溅锛岀‘瀹氬悧锛?)) return;
                 cart = [];
             }
             const existing = cart.find(i => i.dishId === dish.id);
@@ -126,18 +126,18 @@
 
         function loadRestaurant() {
             fetch(`/api/restaurants/${restaurantId}`).then(r => r.json()).then(resp => {
-                if (resp.code !== 200) { document.getElementById('restaurantHeader').innerHTML = '<p>餐厅不存在</p>'; return; }
+                if (resp.code !== 200) { document.getElementById('restaurantHeader').innerHTML = '<p>椁愬巺涓嶅瓨鍦?/p>'; return; }
                 const r = resp.data;
                 document.getElementById('restaurantHeader').innerHTML = `
                     <div class="avatar">${r.name.charAt(0)}</div>
                     <div class="info">
                         <h1>${r.name}</h1>
-                        <div class="desc">${r.description || '暂无介绍'}</div>
+                        <div class="desc">${r.description || '鏆傛棤浠嬬粛'}</div>
                         <div class="meta">
-                            <span class="rating">⭐ ${r.rating || '5.0'}</span>
-                            <span>配送费 ¥${r.deliveryFee || '0'}</span>
-                            <span>📞 ${r.phone || '-'}</span>
-                            <span>📍 ${r.address || '-'}</span>
+                            <span class="rating">猸?${r.rating || '5.0'}</span>
+                            <span>閰嶉€佽垂 楼${r.deliveryFee || '0'}</span>
+                            <span>馃摓 ${r.phone || '-'}</span>
+                            <span>馃搷 ${r.address || '-'}</span>
                         </div>
                     </div>
                 `;
@@ -148,12 +148,12 @@
             fetch(`/api/categories/restaurant/${restaurantId}`).then(r => r.json()).then(resp => {
                 const side = document.getElementById('categorySide');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    side.innerHTML = '<div class="cat-item active">全部</div>';
+                    side.innerHTML = '<div class="cat-item active">鍏ㄩ儴</div>';
                     currentCategoryId = null;
                     loadDishes(null);
                     return;
                 }
-                let html = '<div class="cat-item" onclick="selectCategory(null)">🍽️ 全部</div>';
+                let html = '<div class="cat-item" onclick="selectCategory(null)">馃嵔锔?鍏ㄩ儴</div>';
                 resp.data.forEach(c => {
                     html += `<div class="cat-item" data-id="${c.id}" onclick="selectCategory(${c.id})">${c.name}</div>`;
                 });
@@ -175,11 +175,11 @@
             fetch(url).then(r => r.json()).then(resp => {
                 const area = document.getElementById('dishArea');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    area.innerHTML = '<div class="empty-dish card-enter">🥘 暂无菜品</div>'; return;
+                    area.innerHTML = '<div class="empty-dish card-enter">馃 鏆傛棤鑿滃搧</div>'; return;
                 }
                 area.innerHTML = resp.data.map(d => {
                     const qty = getCartQty(d.id);
-                    // 安全转义菜品名中的引号
+                    // 瀹夊叏杞箟鑿滃搧鍚嶄腑鐨勫紩鍙?
                     const safeName = d.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     return `
                         <div class="dish-card card-enter" data-dish-id="${d.id}" data-dish-name="${safeName}" data-dish-price="${d.price}">
@@ -187,19 +187,19 @@
                             <div class="dish-info">
                                 <h4>${d.name}</h4>
                                 <div class="desc">${d.description || ''}</div>
-                                <div class="price">¥${d.price} <small>/${d.stock > 0 ? '有货' : '售罄'}</small></div>
+                                <div class="price">楼${d.price} <small>/${d.stock > 0 ? '鏈夎揣' : '鍞絼'}</small></div>
                             </div>
                             <div class="actions">
                                 ${qty > 0 ? `
-                                    <button class="qty-btn" onclick="event.stopPropagation();changeQty(${d.id}, -1)">−</button>
+                                    <button class="qty-btn" onclick="event.stopPropagation();changeQty(${d.id}, -1)">鈭?/button>
                                     <span class="qty">${qty}</span>
                                     <button class="qty-btn" onclick="event.stopPropagation();changeQty(${d.id}, 1)">+</button>
-                                ` : `<button class="add-btn" data-add-dish="${d.id}">加入</button>`}
+                                ` : `<button class="add-btn" data-add-dish="${d.id}">鍔犲叆</button>`}
                             </div>
                         </div>
                     `;
                 }).join('');
-                // 通过事件委托监听"加入"按钮点击，避免 inline JS 注入问题
+                // 閫氳繃浜嬩欢濮旀墭鐩戝惉"鍔犲叆"鎸夐挳鐐瑰嚮锛岄伩鍏?inline JS 娉ㄥ叆闂
                 area.querySelectorAll('.add-btn').forEach(btn => {
                     btn.onclick = function(e) {
                         e.stopPropagation();
@@ -214,25 +214,25 @@
         }
 
         function getDishIcon(name) {
-            if (name.includes('鸡') || name.includes('鸭')) return '🍗';
-            if (name.includes('鱼') || name.includes('虾') || name.includes('蟹')) return '🐟';
-            if (name.includes('肉') || name.includes('猪') || name.includes('牛') || name.includes('羊')) return '🥩';
-            if (name.includes('饭') || name.includes('面') || name.includes('粉')) return '🍜';
-            if (name.includes('汤')) return '🍲';
-            if (name.includes('菜') || name.includes('蔬')) return '🥬';
-            if (name.includes('蛋')) return '🥚';
-            if (name.includes('豆')) return '🫘';
-            return '🍽️';
+            if (name.includes('楦?) || name.includes('楦?)) return '馃崡';
+            if (name.includes('楸?) || name.includes('铏?) || name.includes('锜?)) return '馃悷';
+            if (name.includes('鑲?) || name.includes('鐚?) || name.includes('鐗?) || name.includes('缇?)) return '馃ォ';
+            if (name.includes('楗?) || name.includes('闈?) || name.includes('绮?)) return '馃崪';
+            if (name.includes('姹?)) return '馃嵅';
+            if (name.includes('鑿?) || name.includes('钄?)) return '馃ガ';
+            if (name.includes('铔?)) return '馃';
+            if (name.includes('璞?)) return '馃珮';
+            return '馃嵔锔?;
         }
 
         loadRestaurant();
         loadCategories();
         updateCartBadge();
 
-        // 骑手隐藏购物车相关元素
+        // 楠戞墜闅愯棌璐墿杞︾浉鍏冲厓绱?
         const user = getCurrentUser();
 
-        // 跨标签同步购物车
+        // 璺ㄦ爣绛惧悓姝ヨ喘鐗╄溅
         window.addEventListener('storage', function(e) {
             if (e.key === 'waimai_cart') {
                 updateCartBadge();
@@ -245,7 +245,7 @@
             document.getElementById('cartFloatBtn').style.display = 'none';
             document.getElementById('navRiderLink').style.display = 'inline';
             document.getElementById('riderBanner').style.display = 'block';
-            document.getElementById('dishArea').innerHTML = '<div class="empty" style="text-align:center;padding:60px 20px;color:#999;"><div class="icon" style="font-size:56px;">🏍️</div><p style="font-size:15px;">骑手无需浏览菜品，请前往骑手工作台接单配送</p></div>';
+            document.getElementById('dishArea').innerHTML = '<div class="empty" style="text-align:center;padding:60px 20px;color:#999;"><div class="icon" style="font-size:56px;">馃弽锔?/div><p style="font-size:15px;">楠戞墜鏃犻渶娴忚鑿滃搧锛岃鍓嶅線楠戞墜宸ヤ綔鍙版帴鍗曢厤閫?/p></div>';
             document.getElementById('categorySide').innerHTML = '';
         }
     </script>

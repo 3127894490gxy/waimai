@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>结算 - 外卖配送系统</title>
+    <title>缁撶畻 - 澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
-        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; height: 60px; }
+        .navbar { background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; padding: 0 24px; display: flex; align-items: center; height: 60px; }
         .navbar a { color: #fff; text-decoration: none; font-size: 18px; }
         .container { max-width: 800px; margin: 0 auto; padding: 24px; }
         .page-title { font-size: 22px; font-weight: bold; color: #333; margin-bottom: 20px; }
@@ -17,38 +17,38 @@
         .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
         .form-group input, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
-        .form-group input:focus, .form-group textarea:focus { border-color: #ff6b35; }
+        .form-group input:focus, .form-group textarea:focus { border-color: #4a90d9; }
         .form-group textarea { resize: vertical; min-height: 60px; }
         .order-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; border-bottom: 1px solid #f5f5f5; }
         .order-item:last-child { border: none; }
         .order-item .name { color: #333; }
         .order-item .price { color: #888; }
-        .total-line { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-top: 12px; padding-top: 12px; border-top: 2px solid #ff6b35; }
-        .total-line .price { color: #ff6b35; }
+        .total-line { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; margin-top: 12px; padding-top: 12px; border-top: 2px solid #4a90d9; }
+        .total-line .price { color: #4a90d9; }
         .pay-options { display: flex; gap: 12px; margin: 12px 0; }
         .pay-options label { flex: 1; border: 2px solid #e0e0e0; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 14px; }
-        .pay-options label:hover { border-color: #ff9a56; }
-        .pay-options input[type="radio"]:checked + span { color: #ff6b35; }
+        .pay-options label:hover { border-color: #5b9bd5; }
+        .pay-options input[type="radio"]:checked + span { color: #4a90d9; }
         .pay-options input { display: none; }
-        .pay-options input:checked + span { color: #ff6b35; font-weight: bold; }
-        .pay-options label:has(input:checked) { border-color: #ff6b35; background: #fff6f0; }
-        .submit-btn { width: 100%; padding: 14px; background: #ff6b35; color: #fff; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; transition: background 0.2s; }
-        .submit-btn:hover { background: #e55a2b; }
+        .pay-options input:checked + span { color: #4a90d9; font-weight: bold; }
+        .pay-options label:has(input:checked) { border-color: #4a90d9; background: #f0f7ff; }
+        .submit-btn { width: 100%; padding: 14px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #3a7bc8; }
         .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
         .loading { text-align: center; padding: 40px; color: #999; }
     </style>
 </head>
 <body>
     <div class="food-bg">
-        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
-        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
+        <span>馃崪</span><span>馃</span><span>馃崟</span><span>馃尞</span>
+        <span>馃崳</span><span>馃</span><span>馃崷</span><span>馃</span>
     </div>
     <nav class="navbar">
-        <a href="/cart.html">← 返回购物车</a>
-        <a href="/rider.html" id="checkoutRiderLink" style="display:none;">🏍️ 骑手工作台</a>
+        <a href="/cart.html">鈫?杩斿洖璐墿杞?/a>
+        <a href="/rider.html" id="checkoutRiderLink" style="display:none;">馃弽锔?楠戞墜宸ヤ綔鍙?/a>
     </nav>
     <div class="container">
-        <div class="page-title">📋 确认订单</div>
+        <div class="page-title">馃搵 纭璁㈠崟</div>
         <div id="checkoutContent"></div>
     </div>
     <script>
@@ -60,15 +60,15 @@
         function loadCheckout() {
             const user = getCurrentUser();
             if (!user) { location.href = '/login.html?redirect=/checkout.html'; return; }
-            // 骑手拦截
+            // 楠戞墜鎷︽埅
             if (user.role === 'DELIVERY') {
-                document.getElementById('checkoutContent').innerHTML = '<div class="section"><div style="text-align:center;padding:40px 20px;"><div style="font-size:56px;margin-bottom:12px;">🏍️</div><p style="font-size:16px;color:#333;font-weight:bold;">骑手无需下单</p><p style="color:#999;margin-top:8px;">请前往骑手工作台管理配送订单</p><a href="/rider.html" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#ff6b35;color:#fff;text-decoration:none;border-radius:6px;">前往工作台 →</a></div></div>';
+                document.getElementById('checkoutContent').innerHTML = '<div class="section"><div style="text-align:center;padding:40px 20px;"><div style="font-size:56px;margin-bottom:12px;">馃弽锔?/div><p style="font-size:16px;color:#333;font-weight:bold;">楠戞墜鏃犻渶涓嬪崟</p><p style="color:#999;margin-top:8px;">璇峰墠寰€楠戞墜宸ヤ綔鍙扮鐞嗛厤閫佽鍗?/p><a href="/rider.html" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#4a90d9;color:#fff;text-decoration:none;border-radius:6px;">鍓嶅線宸ヤ綔鍙?鈫?/a></div></div>';
                 document.getElementById('checkoutRiderLink').style.display = 'inline';
                 return;
             }
 
             const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
-            if (cart.length === 0) { document.getElementById('checkoutContent').innerHTML = '<div class="section"><p style="text-align:center;color:#999;">购物车是空的</p></div>'; return; }
+            if (cart.length === 0) { document.getElementById('checkoutContent').innerHTML = '<div class="section"><p style="text-align:center;color:#999;">璐墿杞︽槸绌虹殑</p></div>'; return; }
 
             const restaurantId = cart[0].restaurantId;
             let subtotal = 0;
@@ -76,48 +76,48 @@
             cart.forEach(item => {
                 const total = item.price * item.quantity;
                 subtotal += total;
-                itemsHtml += `<div class="order-item"><span class="name">${item.dishName} × ${item.quantity}</span><span class="price">¥${total.toFixed(2)}</span></div>`;
+                itemsHtml += `<div class="order-item"><span class="name">${item.dishName} 脳 ${item.quantity}</span><span class="price">楼${total.toFixed(2)}</span></div>`;
             });
 
-            // 获取餐厅信息（配送费）
+            // 鑾峰彇椁愬巺淇℃伅锛堥厤閫佽垂锛?
             fetch(`/api/restaurants/${restaurantId}`).then(r => r.json()).then(resp => {
                 const deliveryFee = (resp.data && resp.data.deliveryFee) ? parseFloat(resp.data.deliveryFee) : 0;
                 const total = subtotal + deliveryFee;
                 document.getElementById('checkoutContent').innerHTML = `
                     <div class="section">
-                        <h3>📍 配送信息</h3>
+                        <h3>馃搷 閰嶉€佷俊鎭?/h3>
                         <div class="form-group">
-                            <label>联系人</label>
+                            <label>鑱旂郴浜?/label>
                             <input type="text" id="contactName" value="${user.nickname || user.username}">
                         </div>
                         <div class="form-group">
-                            <label>联系电话</label>
+                            <label>鑱旂郴鐢佃瘽</label>
                             <input type="text" id="contactPhone" value="${user.phone || ''}">
                         </div>
                         <div class="form-group">
-                            <label>配送地址</label>
+                            <label>閰嶉€佸湴鍧€</label>
                             <textarea id="deliveryAddress">${user.address || ''}</textarea>
                         </div>
                         <div class="form-group">
-                            <label>备注</label>
-                            <textarea id="remark" placeholder="如：少辣、多放醋..."></textarea>
+                            <label>澶囨敞</label>
+                            <textarea id="remark" placeholder="濡傦細灏戣荆銆佸鏀鹃唻..."></textarea>
                         </div>
                     </div>
                     <div class="section">
-                        <h3>🍜 订单商品</h3>
+                        <h3>馃崪 璁㈠崟鍟嗗搧</h3>
                         ${itemsHtml}
-                        <div class="order-item"><span>配送费</span><span>¥${deliveryFee.toFixed(2)}</span></div>
-                        <div class="total-line"><span>合计</span><span class="price">¥${total.toFixed(2)}</span></div>
+                        <div class="order-item"><span>閰嶉€佽垂</span><span>楼${deliveryFee.toFixed(2)}</span></div>
+                        <div class="total-line"><span>鍚堣</span><span class="price">楼${total.toFixed(2)}</span></div>
                     </div>
                     <div class="section">
-                        <h3>💳 支付方式</h3>
+                        <h3>馃挸 鏀粯鏂瑰紡</h3>
                         <div class="pay-options">
-                            <label><input type="radio" name="payment" value="微信支付" checked><span>💚 微信支付</span></label>
-                            <label><input type="radio" name="payment" value="支付宝"><span>💙 支付宝</span></label>
-                            <label><input type="radio" name="payment" value="货到付款"><span>💵 货到付款</span></label>
+                            <label><input type="radio" name="payment" value="寰俊鏀粯" checked><span>馃挌 寰俊鏀粯</span></label>
+                            <label><input type="radio" name="payment" value="鏀粯瀹?><span>馃挋 鏀粯瀹?/span></label>
+                            <label><input type="radio" name="payment" value="璐у埌浠樻"><span>馃挼 璐у埌浠樻</span></label>
                         </div>
                     </div>
-                    <button class="submit-btn" onclick="submitOrder(${restaurantId}, ${deliveryFee}, ${total})">提交订单 · ¥${total.toFixed(2)}</button>
+                    <button class="submit-btn" onclick="submitOrder(${restaurantId}, ${deliveryFee}, ${total})">鎻愪氦璁㈠崟 路 楼${total.toFixed(2)}</button>
                 `;
             });
         }
@@ -125,10 +125,10 @@
         function submitOrder(restaurantId, deliveryFee, totalAmount) {
             const user = getCurrentUser();
             const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
-            if (cart.length === 0) { alert('购物车为空'); return; }
+            if (cart.length === 0) { alert('璐墿杞︿负绌?); return; }
 
             const btn = document.querySelector('.submit-btn');
-            btn.disabled = true; btn.textContent = '提交中...';
+            btn.disabled = true; btn.textContent = '鎻愪氦涓?..';
 
             const items = cart.map(item => ({
                 dishId: item.dishId,
@@ -152,27 +152,27 @@
                 })
             }).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
-                    // 支付
+                    // 鏀粯
                     return fetch('/api/orders/pay', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ orderId: resp.data.id, paymentMethod: '微信支付' })
+                        body: JSON.stringify({ orderId: resp.data.id, paymentMethod: '寰俊鏀粯' })
                     }).then(r => r.json());
                 } else {
-                    throw new Error(resp.message || '下单失败');
+                    throw new Error(resp.message || '涓嬪崟澶辫触');
                 }
             }).then(payResp => {
                 if (payResp.code === 200) {
                     localStorage.removeItem('waimai_cart');
-                    alert('🎉 支付成功！订单已提交');
+                    alert('馃帀 鏀粯鎴愬姛锛佽鍗曞凡鎻愪氦');
                     location.href = '/orders.html';
                 } else {
-                    alert('支付失败，请重试');
-                    btn.disabled = false; btn.textContent = '重新支付';
+                    alert('鏀粯澶辫触锛岃閲嶈瘯');
+                    btn.disabled = false; btn.textContent = '閲嶆柊鏀粯';
                 }
             }).catch(err => {
-                alert('操作失败: ' + err.message);
-                btn.disabled = false; btn.textContent = '重试';
+                alert('鎿嶄綔澶辫触: ' + err.message);
+                btn.disabled = false; btn.textContent = '閲嶈瘯';
             });
         }
 

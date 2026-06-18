@@ -1,117 +1,117 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>购物车 - 外卖配送系统</title>
+    <title>璐墿杞?- 澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f5f5f5; padding-bottom: 100px; }
 
-        /* ===== 导航栏 ===== */
-        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(255,107,53,0.3); }
+        /* ===== 瀵艰埅鏍?===== */
+        .navbar { background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(74,144,217,0.3); }
         .navbar a { color: #fff; text-decoration: none; font-size: 15px; }
         .navbar .title { font-size: 18px; font-weight: bold; }
         .navbar .right-actions { display: flex; gap: 16px; align-items: center; }
         .navbar .right-actions a { font-size: 14px; color: rgba(255,255,255,0.85); }
         .navbar .right-actions a.danger { color: #ffe0d0; }
 
-        /* ===== 容器 ===== */
+        /* ===== 瀹瑰櫒 ===== */
         .container { max-width: 720px; margin: 0 auto; padding: 20px; }
 
-        /* ===== 餐厅信息条 ===== */
+        /* ===== 椁愬巺淇℃伅鏉?===== */
         .restaurant-bar { background: #fff; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 14px; }
-        .restaurant-bar .avatar { width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #ff6b35, #ff9a56); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; flex-shrink: 0; }
+        .restaurant-bar .avatar { width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #4a90d9, #5b9bd5); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; flex-shrink: 0; }
         .restaurant-bar .info { flex: 1; min-width: 0; }
         .restaurant-bar .info .name { font-size: 16px; font-weight: bold; color: #333; }
         .restaurant-bar .info .meta { font-size: 12px; color: #999; margin-top: 2px; }
         .restaurant-bar .arrow { color: #ccc; font-size: 18px; }
 
-        /* ===== 全选栏 ===== */
+        /* ===== 鍏ㄩ€夋爮 ===== */
         .select-bar { background: #fff; border-radius: 12px; padding: 12px 20px; margin-bottom: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; }
         .select-bar .left { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
         .select-bar .left .checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #d0d0d0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
-        .select-bar .left .checkbox.checked { background: #ff6b35; border-color: #ff6b35; }
-        .select-bar .left .checkbox.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: bold; }
-        .select-bar .left .checkbox.half { background: #ff6b35; border-color: #ff6b35; }
-        .select-bar .left .checkbox.half::after { content: '−'; color: #fff; font-size: 16px; font-weight: bold; line-height: 1; }
+        .select-bar .left .checkbox.checked { background: #4a90d9; border-color: #4a90d9; }
+        .select-bar .left .checkbox.checked::after { content: '鉁?; color: #fff; font-size: 13px; font-weight: bold; }
+        .select-bar .left .checkbox.half { background: #4a90d9; border-color: #4a90d9; }
+        .select-bar .left .checkbox.half::after { content: '鈭?; color: #fff; font-size: 16px; font-weight: bold; line-height: 1; }
         .select-bar .left .label { font-size: 14px; color: #333; }
         .select-bar .right { font-size: 13px; color: #e74c3c; cursor: pointer; user-select: none; }
 
-        /* ===== 购物车列表 ===== */
+        /* ===== 璐墿杞﹀垪琛?===== */
         .cart-list { background: #fff; border-radius: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); overflow: hidden; }
 
-        /* 每个购物车项 */
+        /* 姣忎釜璐墿杞﹂」 */
         .cart-item { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid #f5f5f5; position: relative; transition: transform 0.3s, opacity 0.3s, max-height 0.3s, padding 0.3s, margin 0.3s; overflow: hidden; }
         .cart-item:last-child { border-bottom: none; }
         .cart-item.removing { transform: translateX(-120%); opacity: 0; max-height: 0; padding-top: 0; padding-bottom: 0; margin: 0; border: none; }
 
-        /* 滑动删除背景 */
+        /* 婊戝姩鍒犻櫎鑳屾櫙 */
         .cart-item .swipe-bg { position: absolute; right: 0; top: 0; height: 100%; width: 80px; background: #e74c3c; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; font-weight: bold; z-index: 0; border-radius: 0; }
 
-        /* 选择框 */
+        /* 閫夋嫨妗?*/
         .cart-item .checkbox { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #d0d0d0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; cursor: pointer; z-index: 1; }
-        .cart-item .checkbox.checked { background: #ff6b35; border-color: #ff6b35; }
-        .cart-item .checkbox.checked::after { content: '✓'; color: #fff; font-size: 13px; font-weight: bold; }
+        .cart-item .checkbox.checked { background: #4a90d9; border-color: #4a90d9; }
+        .cart-item .checkbox.checked::after { content: '鉁?; color: #fff; font-size: 13px; font-weight: bold; }
 
-        /* 菜品信息 */
+        /* 鑿滃搧淇℃伅 */
         .cart-item .item-info { flex: 1; min-width: 0; z-index: 1; }
         .cart-item .item-info .name { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cart-item .item-info .price { font-size: 18px; font-weight: bold; color: #ff6b35; }
+        .cart-item .item-info .price { font-size: 18px; font-weight: bold; color: #4a90d9; }
         .cart-item .item-info .price .unit { font-size: 12px; font-weight: normal; }
 
-        /* 数量控制器 */
+        /* 鏁伴噺鎺у埗鍣?*/
         .cart-item .qty-stepper { display: flex; align-items: center; gap: 2px; z-index: 1; flex-shrink: 0; }
         .cart-item .qty-stepper .btn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e0e0e0; background: #fafafa; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; color: #555; user-select: none; line-height: 1; }
-        .cart-item .qty-stepper .btn:hover { background: #fff; border-color: #ff6b35; color: #ff6b35; }
-        .cart-item .qty-stepper .btn:active { transform: scale(0.92); background: #fff0e8; }
+        .cart-item .qty-stepper .btn:hover { background: #fff; border-color: #4a90d9; color: #4a90d9; }
+        .cart-item .qty-stepper .btn:active { transform: scale(0.92); background: #e8f0fe; }
         .cart-item .qty-stepper .qty { min-width: 36px; text-align: center; font-size: 16px; font-weight: bold; color: #333; user-select: none; }
         .cart-item .qty-stepper .subtle { color: #bbb; }
 
-        /* 单项小计 */
+        /* 鍗曢」灏忚 */
         .cart-item .item-subtotal { font-size: 14px; color: #999; text-align: right; min-width: 50px; z-index: 1; flex-shrink: 0; }
 
-        /* 滑动删除提示 */
+        /* 婊戝姩鍒犻櫎鎻愮ず */
         .swipe-hint { display: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #ccc; font-size: 14px; z-index: 1; pointer-events: none; }
 
-        /* ===== 底部结算栏 ===== */
+        /* ===== 搴曢儴缁撶畻鏍?===== */
         .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; box-shadow: 0 -2px 16px rgba(0,0,0,0.08); padding: 14px 20px; padding-bottom: max(14px, env(safe-area-inset-bottom)); z-index: 50; display: flex; align-items: center; gap: 16px; }
         .bottom-bar .total-info { flex: 1; }
         .bottom-bar .total-info .total-label { display: flex; align-items: center; gap: 8px; }
         .bottom-bar .total-info .count { font-size: 13px; color: #999; }
-        .bottom-bar .total-info .price { font-size: 24px; font-weight: bold; color: #ff6b35; }
+        .bottom-bar .total-info .price { font-size: 24px; font-weight: bold; color: #4a90d9; }
         .bottom-bar .total-info .price .unit { font-size: 14px; font-weight: normal; }
         .bottom-bar .total-info .delivery { font-size: 12px; color: #aaa; }
-        .bottom-bar .checkout-btn { padding: 12px 36px; background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; border: none; border-radius: 24px; font-size: 17px; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-shadow: 0 4px 16px rgba(255,107,53,0.3); }
-        .bottom-bar .checkout-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,107,53,0.4); }
+        .bottom-bar .checkout-btn { padding: 12px 36px; background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; border: none; border-radius: 24px; font-size: 17px; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; box-shadow: 0 4px 16px rgba(74,144,217,0.3); }
+        .bottom-bar .checkout-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(74,144,217,0.4); }
         .bottom-bar .checkout-btn:active { transform: scale(0.96); }
         .bottom-bar .checkout-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; transform: none; }
 
         /* ===== Toast ===== */
         .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 10px; align-items: center; }
         .toast { background: #333; color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 14px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); animation: toastIn 0.3s ease; white-space: nowrap; }
-        .toast .undo-btn { color: #ff9a56; cursor: pointer; font-weight: bold; border: none; background: none; font-size: 14px; padding: 2px 8px; }
-        .toast .undo-btn:hover { color: #ff6b35; }
+        .toast .undo-btn { color: #5b9bd5; cursor: pointer; font-weight: bold; border: none; background: none; font-size: 14px; padding: 2px 8px; }
+        .toast .undo-btn:hover { color: #4a90d9; }
         .toast.leaving { animation: toastOut 0.3s ease forwards; }
         @keyframes toastIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
 
-        /* ===== 空状态 ===== */
+        /* ===== 绌虹姸鎬?===== */
         .empty-state { text-align: center; padding: 60px 20px; }
         .empty-state .illustration { font-size: 72px; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .empty-state .msg { font-size: 16px; color: #666; margin-bottom: 8px; }
         .empty-state .sub-msg { font-size: 13px; color: #aaa; margin-bottom: 24px; }
-        .empty-state .go-shop { display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; text-decoration: none; border-radius: 24px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 16px rgba(255,107,53,0.3); transition: transform 0.2s; }
+        .empty-state .go-shop { display: inline-block; padding: 12px 32px; background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; text-decoration: none; border-radius: 24px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 16px rgba(74,144,217,0.3); transition: transform 0.2s; }
         .empty-state .go-shop:hover { transform: translateY(-2px); }
 
-        /* ===== 加载 ===== */
+        /* ===== 鍔犺浇 ===== */
         .loading-state { text-align: center; padding: 60px; color: #999; }
-        .loading-spinner { display: inline-block; width: 36px; height: 36px; border: 3px solid #f0f0f0; border-top-color: #ff6b35; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .loading-spinner { display: inline-block; width: 36px; height: 36px; border: 3px solid #f0f0f0; border-top-color: #4a90d9; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ===== 响应式 ===== */
+        /* ===== 鍝嶅簲寮?===== */
         @media (max-width: 480px) {
             .container { padding: 12px; }
             .cart-item { padding: 14px 16px; gap: 10px; }
@@ -124,53 +124,53 @@
 </head>
 <body>
     <div class="food-bg">
-        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
-        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
+        <span>馃崪</span><span>馃</span><span>馃崟</span><span>馃尞</span>
+        <span>馃崳</span><span>馃</span><span>馃崷</span><span>馃</span>
     </div>
     <nav class="navbar">
-        <a href="javascript:history.back()">← 返回</a>
-        <span class="title">🛒 购物车</span>
+        <a href="javascript:history.back()">鈫?杩斿洖</a>
+        <span class="title">馃洅 璐墿杞?/span>
         <div class="right-actions">
-            <a href="/orders.html" id="cartOrderLink">📋 订单</a>
-            <a href="/rider.html" id="cartRiderLink" style="display:none;">🏍️ 工作台</a>
-            <span style="position:relative;font-size:14px;color:#fff;">🛒 <span id="cartBadge" style="display:none;background:#fff;color:#ff6b35;font-size:11px;padding:1px 5px;border-radius:8px;font-weight:bold;">0</span></span>
+            <a href="/orders.html" id="cartOrderLink">馃搵 璁㈠崟</a>
+            <a href="/rider.html" id="cartRiderLink" style="display:none;">馃弽锔?宸ヤ綔鍙?/a>
+            <span style="position:relative;font-size:14px;color:#fff;">馃洅 <span id="cartBadge" style="display:none;background:#fff;color:#4a90d9;font-size:11px;padding:1px 5px;border-radius:8px;font-weight:bold;">0</span></span>
         </div>
     </nav>
 
     <div class="container">
         <div id="cartContent">
-            <div class="loading-state"><div class="loading-spinner"></div><p style="margin-top:12px;color:#999;">加载中...</p></div>
+            <div class="loading-state"><div class="loading-spinner"></div><p style="margin-top:12px;color:#999;">鍔犺浇涓?..</p></div>
         </div>
     </div>
 
-    <!-- Toast 容器 -->
+    <!-- Toast 瀹瑰櫒 -->
     <div class="toast-container" id="toastContainer"></div>
 
     <div class="bottom-bar" id="bottomBar" style="display:none;">
         <div class="total-info">
             <div class="total-label">
-                <span class="price"><span class="unit">¥</span><span id="totalPrice">0.00</span></span>
+                <span class="price"><span class="unit">楼</span><span id="totalPrice">0.00</span></span>
             </div>
-            <div class="delivery">含配送费 ¥<span id="deliveryFee">0.00</span> · 已选<span id="selectedCount">0</span>件</div>
+            <div class="delivery">鍚厤閫佽垂 楼<span id="deliveryFee">0.00</span> 路 宸查€?span id="selectedCount">0</span>浠?/div>
         </div>
-        <button class="checkout-btn" id="checkoutBtn" onclick="goCheckout()">去结算</button>
+        <button class="checkout-btn" id="checkoutBtn" onclick="goCheckout()">鍘荤粨绠?/button>
     </div>
 
     <script>
         /* ============================================
-         *  全局状态
+         *  鍏ㄥ眬鐘舵€?
          * ============================================ */
-        let cart = [];                  // 当前购物车数据
-        let deliveryFee = 0;           // 餐厅配送费
-        let restaurantId = null;       // 当前餐厅ID
-        let restaurantName = '';       // 餐厅名称
-        let selectedIds = new Set();   // 选中的菜品 dishId 集合
-        let pendingUndo = null;        // 待撤销的删除操作
-        let toastTimer = null;         // Toast 自动消失计时器
+        let cart = [];                  // 褰撳墠璐墿杞︽暟鎹?
+        let deliveryFee = 0;           // 椁愬巺閰嶉€佽垂
+        let restaurantId = null;       // 褰撳墠椁愬巺ID
+        let restaurantName = '';       // 椁愬巺鍚嶇О
+        let selectedIds = new Set();   // 閫変腑鐨勮彍鍝?dishId 闆嗗悎
+        let pendingUndo = null;        // 寰呮挙閿€鐨勫垹闄ゆ搷浣?
+        let toastTimer = null;         // Toast 鑷姩娑堝け璁℃椂鍣?
         let swipeState = { itemEl: null, startX: 0, offsetX: 0 };
 
         /* ============================================
-         *  用户相关
+         *  鐢ㄦ埛鐩稿叧
          * ============================================ */
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
@@ -178,29 +178,29 @@
         }
 
         /* ============================================
-         *  初始化
+         *  鍒濆鍖?
          * ============================================ */
         function init() {
             const user = getCurrentUser();
             if (!user) {
                 document.getElementById('cartContent').innerHTML = `
                     <div class="empty-state">
-                        <div class="illustration">🔐</div>
-                        <div class="msg">请先登录</div>
-                        <div class="sub-msg">登录后即可查看购物车</div>
-                        <a class="go-shop" href="/login.html?redirect=/cart.html">去登录</a>
+                        <div class="illustration">馃攼</div>
+                        <div class="msg">璇峰厛鐧诲綍</div>
+                        <div class="sub-msg">鐧诲綍鍚庡嵆鍙煡鐪嬭喘鐗╄溅</div>
+                        <a class="go-shop" href="/login.html?redirect=/cart.html">鍘荤櫥褰?/a>
                     </div>`;
                 document.getElementById('bottomBar').style.display = 'none';
                 return;
             }
-            // 骑手拦截
+            // 楠戞墜鎷︽埅
             if (user.role === 'DELIVERY') {
                 document.getElementById('cartContent').innerHTML = `
                     <div class="empty-state">
-                        <div class="illustration">🏍️</div>
-                        <div class="msg">骑手无需使用购物车</div>
-                        <div class="sub-msg">请前往骑手工作台管理配送订单</div>
-                        <a class="go-shop" href="/rider.html">前往工作台</a>
+                        <div class="illustration">馃弽锔?/div>
+                        <div class="msg">楠戞墜鏃犻渶浣跨敤璐墿杞?/div>
+                        <div class="sub-msg">璇峰墠寰€楠戞墜宸ヤ綔鍙扮鐞嗛厤閫佽鍗?/div>
+                        <a class="go-shop" href="/rider.html">鍓嶅線宸ヤ綔鍙?/a>
                     </div>`;
                 document.getElementById('bottomBar').style.display = 'none';
                 document.getElementById('cartOrderLink').style.display = 'none';
@@ -212,7 +212,7 @@
         }
 
         /* ============================================
-         *  加载购物车 & 餐厅信息
+         *  鍔犺浇璐墿杞?& 椁愬巺淇℃伅
          * ============================================ */
         function loadCart() {
             const raw = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
@@ -220,10 +220,10 @@
             if (raw.length === 0) {
                 document.getElementById('cartContent').innerHTML = `
                     <div class="empty-state">
-                        <div class="illustration">🛒</div>
-                        <div class="msg">购物车是空的</div>
-                        <div class="sub-msg">快去看看有什么好吃的吧~</div>
-                        <a class="go-shop" href="/">去逛逛</a>
+                        <div class="illustration">馃洅</div>
+                        <div class="msg">璐墿杞︽槸绌虹殑</div>
+                        <div class="sub-msg">蹇幓鐪嬬湅鏈変粈涔堝ソ鍚冪殑鍚</div>
+                        <a class="go-shop" href="/">鍘婚€涢€?/a>
                     </div>`;
                 document.getElementById('bottomBar').style.display = 'none';
                 return;
@@ -231,23 +231,23 @@
 
             cart = raw;
             restaurantId = cart[0].restaurantId;
-            selectedIds = new Set(cart.map(item => item.dishId)); // 默认全选
+            selectedIds = new Set(cart.map(item => item.dishId)); // 榛樿鍏ㄩ€?
 
-            // 获取餐厅信息
+            // 鑾峰彇椁愬巺淇℃伅
             fetch(`/api/restaurants/${restaurantId}`).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
                     deliveryFee = parseFloat(resp.data.deliveryFee) || 0;
-                    restaurantName = resp.data.name || '餐厅';
+                    restaurantName = resp.data.name || '椁愬巺';
                 }
                 renderAll();
             }).catch(() => {
-                // 后端不可用时仍能渲染
+                // 鍚庣涓嶅彲鐢ㄦ椂浠嶈兘娓叉煋
                 renderAll();
             });
         }
 
         /* ============================================
-         *  渲染全部
+         *  娓叉煋鍏ㄩ儴
          * ============================================ */
         function renderAll() {
             renderRestaurantBar();
@@ -257,7 +257,7 @@
         }
 
         /* ============================================
-         *  餐厅信息条
+         *  椁愬巺淇℃伅鏉?
          * ============================================ */
         function renderRestaurantBar() {
             const el = document.getElementById('cartContent');
@@ -269,9 +269,9 @@
                         <div class="avatar">${restaurantName.charAt(0)}</div>
                         <div class="info">
                             <div class="name">${restaurantName}</div>
-                            <div class="meta">配送费 ¥${deliveryFee.toFixed(2)}</div>
+                            <div class="meta">閰嶉€佽垂 楼${deliveryFee.toFixed(2)}</div>
                         </div>
-                        <span class="arrow">›</span>
+                        <span class="arrow">鈥?/span>
                     </div>`;
             }
 
@@ -284,7 +284,7 @@
         }
 
         /* ============================================
-         *  全选 / 批量操作栏
+         *  鍏ㄩ€?/ 鎵归噺鎿嶄綔鏍?
          * ============================================ */
         function renderSelectBar() {
             const area = document.getElementById('selectBarArea');
@@ -301,14 +301,14 @@
                 <div class="select-bar">
                     <div class="left" onclick="toggleSelectAll()">
                         <div class="checkbox ${state}"></div>
-                        <span class="label">${selCount > 0 ? '已选 ' + selCount + ' 件' : '全选'}</span>
+                        <span class="label">${selCount > 0 ? '宸查€?' + selCount + ' 浠? : '鍏ㄩ€?}</span>
                     </div>
-                    ${selCount > 0 ? `<span class="right" onclick="batchRemove()">🗑 删除选中</span>` : ''}
+                    ${selCount > 0 ? `<span class="right" onclick="batchRemove()">馃棏 鍒犻櫎閫変腑</span>` : ''}
                 </div>`;
         }
 
         /* ============================================
-         *  渲染购物车列表
+         *  娓叉煋璐墿杞﹀垪琛?
          * ============================================ */
         function renderCartItems() {
             const list = document.getElementById('cartList');
@@ -322,18 +322,18 @@
                 html += `
                     <div class="cart-item" id="cartItem${idx}" data-index="${idx}"
                          ontouchstart="onSwipeStart(event, this)" ontouchmove="onSwipeMove(event, this)" ontouchend="onSwipeEnd(event, this)">
-                        <div class="swipe-bg" style="display:none;">删除</div>
+                        <div class="swipe-bg" style="display:none;">鍒犻櫎</div>
                         <div class="checkbox ${isChecked ? 'checked' : ''}" onclick="toggleItem(${item.dishId})"></div>
                         <div class="item-info">
                             <div class="name">${getDishIcon(item.dishName)} ${item.dishName}</div>
-                            <div class="price"><span class="unit">¥</span>${item.price.toFixed(2)}</div>
+                            <div class="price"><span class="unit">楼</span>${item.price.toFixed(2)}</div>
                         </div>
                         <div class="qty-stepper">
-                            <button class="btn ${item.quantity <= 1 ? 'subtle' : ''}" onclick="changeQty(${idx}, -1)" ${item.quantity <= 1 ? '' : ''}>−</button>
+                            <button class="btn ${item.quantity <= 1 ? 'subtle' : ''}" onclick="changeQty(${idx}, -1)" ${item.quantity <= 1 ? '' : ''}>鈭?/button>
                             <span class="qty">${item.quantity}</span>
                             <button class="btn" onclick="changeQty(${idx}, 1)">+</button>
                         </div>
-                        <div class="item-subtotal">¥${subTotal}</div>
+                        <div class="item-subtotal">楼${subTotal}</div>
                     </div>`;
             });
 
@@ -341,7 +341,7 @@
         }
 
         /* ============================================
-         *  更新底部结算栏
+         *  鏇存柊搴曢儴缁撶畻鏍?
          * ============================================ */
         function updateBottomBar() {
             const bar = document.getElementById('bottomBar');
@@ -359,11 +359,11 @@
 
             const btn = document.getElementById('checkoutBtn');
             btn.disabled = selCount === 0;
-            btn.textContent = selCount > 0 ? `去结算 (${selCount})` : '请选择商品';
+            btn.textContent = selCount > 0 ? `鍘荤粨绠?(${selCount})` : '璇烽€夋嫨鍟嗗搧';
         }
 
         /* ============================================
-         *  选择操作
+         *  閫夋嫨鎿嶄綔
          * ============================================ */
         function toggleItem(dishId) {
             if (selectedIds.has(dishId)) {
@@ -379,9 +379,9 @@
         function toggleSelectAll() {
             const allIds = new Set(cart.map(item => item.dishId));
             if (selectedIds.size === allIds.size) {
-                selectedIds.clear(); // 全不选
+                selectedIds.clear(); // 鍏ㄤ笉閫?
             } else {
-                selectedIds = new Set(allIds); // 全选
+                selectedIds = new Set(allIds); // 鍏ㄩ€?
             }
             renderSelectBar();
             renderCartItems();
@@ -389,7 +389,7 @@
         }
 
         /* ============================================
-         *  数量变更
+         *  鏁伴噺鍙樻洿
          * ============================================ */
         function changeQty(idx, delta) {
             if (idx < 0 || idx >= cart.length) return;
@@ -406,7 +406,7 @@
         }
 
         /* ============================================
-         *  删除操作
+         *  鍒犻櫎鎿嶄綔
          * ============================================ */
         function removeItem(idx, showToast = true) {
             if (idx < 0 || idx >= cart.length) return;
@@ -414,26 +414,26 @@
             const removed = cart[idx];
             const dishId = removed.dishId;
 
-            // 动画移除
+            // 鍔ㄧ敾绉婚櫎
             const itemEl = document.getElementById('cartItem' + idx);
             if (itemEl) {
                 itemEl.classList.add('removing');
             }
 
-            // 从购物车中移除
+            // 浠庤喘鐗╄溅涓Щ闄?
             cart.splice(idx, 1);
             selectedIds.delete(dishId);
             saveCart();
 
             if (cart.length === 0) {
-                // 购物车清空
+                // 璐墿杞︽竻绌?
                 setTimeout(() => {
                     document.getElementById('cartContent').innerHTML = `
                         <div class="empty-state">
-                            <div class="illustration">🛒</div>
-                            <div class="msg">购物车是空的</div>
-                            <div class="sub-msg">快去看看有什么好吃的吧~</div>
-                            <a class="go-shop" href="/">去逛逛</a>
+                            <div class="illustration">馃洅</div>
+                            <div class="msg">璐墿杞︽槸绌虹殑</div>
+                            <div class="sub-msg">蹇幓鐪嬬湅鏈変粈涔堝ソ鍚冪殑鍚</div>
+                            <a class="go-shop" href="/">鍘婚€涢€?/a>
                         </div>`;
                     document.getElementById('bottomBar').style.display = 'none';
                 }, 300);
@@ -441,7 +441,7 @@
                 setTimeout(() => refreshCartDisplay(), 300);
             }
 
-            // Toast + 撤销
+            // Toast + 鎾ら攢
             if (showToast) {
                 showUndoToast(removed);
             }
@@ -457,10 +457,10 @@
             if (cart.length === 0) {
                 document.getElementById('cartContent').innerHTML = `
                     <div class="empty-state">
-                        <div class="illustration">🛒</div>
-                        <div class="msg">购物车是空的</div>
-                        <div class="sub-msg">已清空选中商品</div>
-                        <a class="go-shop" href="/">去逛逛</a>
+                        <div class="illustration">馃洅</div>
+                        <div class="msg">璐墿杞︽槸绌虹殑</div>
+                        <div class="sub-msg">宸叉竻绌洪€変腑鍟嗗搧</div>
+                        <a class="go-shop" href="/">鍘婚€涢€?/a>
                     </div>`;
                 document.getElementById('bottomBar').style.display = 'none';
                 showUndoToast(backup, true);
@@ -471,29 +471,29 @@
         }
 
         /* ============================================
-         *  Toast 撤销通知
+         *  Toast 鎾ら攢閫氱煡
          * ============================================ */
         function showUndoToast(removed, isBatch = false) {
             const container = document.getElementById('toastContainer');
 
-            // 清除旧 toast 和计时器
+            // 娓呴櫎鏃?toast 鍜岃鏃跺櫒
             if (toastTimer) clearTimeout(toastTimer);
             const oldToasts = container.querySelectorAll('.toast');
             oldToasts.forEach(t => t.remove());
 
             const msg = isBatch
-                ? `已删除 ${Array.isArray(removed) ? removed.length : 1} 件商品`
-                : `已删除「${removed.dishName}」`;
+                ? `宸插垹闄?${Array.isArray(removed) ? removed.length : 1} 浠跺晢鍝乣
+                : `宸插垹闄ゃ€?{removed.dishName}銆峘;
 
             const toast = document.createElement('div');
             toast.className = 'toast';
-            toast.innerHTML = `<span>${msg}</span><button class="undo-btn" onclick="undoRemove(event)">撤销</button>`;
+            toast.innerHTML = `<span>${msg}</span><button class="undo-btn" onclick="undoRemove(event)">鎾ら攢</button>`;
             container.appendChild(toast);
 
-            // 保存撤销信息
+            // 淇濆瓨鎾ら攢淇℃伅
             pendingUndo = { items: Array.isArray(removed) ? removed : [removed], isBatch };
 
-            // 4秒后自动消失
+            // 4绉掑悗鑷姩娑堝け
             toastTimer = setTimeout(() => {
                 toast.classList.add('leaving');
                 setTimeout(() => toast.remove(), 300);
@@ -505,7 +505,7 @@
             event.stopPropagation();
             if (!pendingUndo) return;
 
-            // 恢复商品
+            // 鎭㈠鍟嗗搧
             for (const item of pendingUndo.items) {
                 const existing = cart.find(i => i.dishId === item.dishId);
                 if (existing) {
@@ -518,7 +518,7 @@
             saveCart();
             refreshCartDisplay();
 
-            // 清除 toast
+            // 娓呴櫎 toast
             const toast = event.target.closest('.toast');
             if (toast) {
                 toast.classList.add('leaving');
@@ -529,7 +529,7 @@
         }
 
         /* ============================================
-         *  滑动删除（移动端）
+         *  婊戝姩鍒犻櫎锛堢Щ鍔ㄧ锛?
          * ============================================ */
         function onSwipeStart(e, el) {
             swipeState.itemEl = el;
@@ -540,7 +540,7 @@
         function onSwipeMove(e, el) {
             if (swipeState.itemEl !== el) return;
             const dx = e.touches[0].clientX - swipeState.startX;
-            // 只允许左滑
+            // 鍙厑璁稿乏婊?
             if (dx > 0) {
                 el.style.transform = '';
                 el.querySelector('.swipe-bg').style.display = 'none';
@@ -559,12 +559,12 @@
             const idx = parseInt(el.dataset.index);
 
             if (dx < -50) {
-                // 触发删除
+                // 瑙﹀彂鍒犻櫎
                 el.style.transform = 'translateX(-80px)';
                 el.querySelector('.swipe-bg').style.display = 'flex';
                 setTimeout(() => removeItem(idx), 200);
             } else {
-                // 回弹
+                // 鍥炲脊
                 el.style.transition = 'transform 0.25s ease';
                 el.style.transform = 'translateX(0)';
                 el.querySelector('.swipe-bg').style.display = 'none';
@@ -575,7 +575,7 @@
         }
 
         /* ============================================
-         *  持久化 & 刷新
+         *  鎸佷箙鍖?& 鍒锋柊
          * ============================================ */
         function saveCart() {
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
@@ -597,43 +597,43 @@
         }
 
         /* ============================================
-         *  跳转结算
+         *  璺宠浆缁撶畻
          * ============================================ */
         function goCheckout() {
             const user = getCurrentUser();
             if (!user) { location.href = '/login.html?redirect=/checkout.html'; return; }
-            if (selectedIds.size === 0) { alert('请先选择要结算的商品'); return; }
+            if (selectedIds.size === 0) { alert('璇峰厛閫夋嫨瑕佺粨绠楃殑鍟嗗搧'); return; }
 
-            // 将未选中的商品从 cart 中移除（持久化到 localStorage）
+            // 灏嗘湭閫変腑鐨勫晢鍝佷粠 cart 涓Щ闄わ紙鎸佷箙鍖栧埌 localStorage锛?
             cart = cart.filter(item => selectedIds.has(item.dishId));
             saveCart();
             location.href = '/checkout.html';
         }
 
         /* ============================================
-         *  辅助
+         *  杈呭姪
          * ============================================ */
         function getDishIcon(name) {
-            if (!name) return '🍽️';
-            if (name.includes('鸡') || name.includes('鸭') || name.includes('鹅')) return '🍗';
-            if (name.includes('鱼') || name.includes('虾') || name.includes('蟹') || name.includes('贝')) return '🐟';
-            if (name.includes('肉') || name.includes('猪') || name.includes('牛') || name.includes('羊')) return '🥩';
-            if (name.includes('饭') || name.includes('面') || name.includes('粉') || name.includes('米')) return '🍜';
-            if (name.includes('汤') || name.includes('煲')) return '🍲';
-            if (name.includes('菜') || name.includes('蔬') || name.includes('菇')) return '🥬';
-            if (name.includes('蛋')) return '🥚';
-            if (name.includes('豆') || name.includes('腐')) return '🫘';
-            if (name.includes('饼') || name.includes('包') || name.includes('饺')) return '🥟';
-            if (name.includes('辣') || name.includes('麻')) return '🌶️';
-            return '🍽️';
+            if (!name) return '馃嵔锔?;
+            if (name.includes('楦?) || name.includes('楦?) || name.includes('楣?)) return '馃崡';
+            if (name.includes('楸?) || name.includes('铏?) || name.includes('锜?) || name.includes('璐?)) return '馃悷';
+            if (name.includes('鑲?) || name.includes('鐚?) || name.includes('鐗?) || name.includes('缇?)) return '馃ォ';
+            if (name.includes('楗?) || name.includes('闈?) || name.includes('绮?) || name.includes('绫?)) return '馃崪';
+            if (name.includes('姹?) || name.includes('鐓?)) return '馃嵅';
+            if (name.includes('鑿?) || name.includes('钄?) || name.includes('鑿?)) return '馃ガ';
+            if (name.includes('铔?)) return '馃';
+            if (name.includes('璞?) || name.includes('鑵?)) return '馃珮';
+            if (name.includes('楗?) || name.includes('鍖?) || name.includes('楗?)) return '馃';
+            if (name.includes('杈?) || name.includes('楹?)) return '馃尪锔?;
+            return '馃嵔锔?;
         }
 
         /* ============================================
-         *  启动
+         *  鍚姩
          * ============================================ */
         init();
 
-        // 跨标签同步购物车
+        // 璺ㄦ爣绛惧悓姝ヨ喘鐗╄溅
         window.addEventListener('storage', function(e) {
             if (e.key === 'waimai_cart') init();
         });

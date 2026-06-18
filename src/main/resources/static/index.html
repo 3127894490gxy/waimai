@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>外卖配送系统</title>
+    <title>澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f5f5f5; }
-        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(255,107,53,0.3); }
+        .navbar { background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(74,144,217,0.3); }
         .navbar .logo { font-size: 22px; font-weight: bold; text-decoration: none; color: #fff; }
         .navbar .logo span { margin-right: 8px; }
         .nav-links { display: flex; align-items: center; gap: 20px; }
@@ -22,13 +22,13 @@
         .page-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; }
         .search-bar { display: flex; gap: 12px; margin-bottom: 24px; }
         .search-bar input { flex: 1; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; }
-        .search-bar input:focus { border-color: #ff6b35; }
-        .search-bar button { padding: 12px 28px; background: #ff6b35; color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; transition: background 0.2s; }
-        .search-bar button:hover { background: #e55a2b; }
+        .search-bar input:focus { border-color: #4a90d9; }
+        .search-bar button { padding: 12px 28px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; transition: background 0.2s; }
+        .search-bar button:hover { background: #3a7bc8; }
         .restaurant-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .restaurant-card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
         .restaurant-card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
-        .restaurant-card .banner { height: 140px; background: linear-gradient(135deg, #ff6b35, #ff9a56); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+        .restaurant-card .banner { height: 140px; background: linear-gradient(135deg, #4a90d9, #5b9bd5); display: flex; align-items: center; justify-content: center; font-size: 48px; }
         .restaurant-card .banner.green { background: linear-gradient(135deg, #43b581, #72d6a0); }
         .restaurant-card .banner.blue { background: linear-gradient(135deg, #4a90d9, #7bb3f0); }
         .restaurant-card .banner.purple { background: linear-gradient(135deg, #9b59b6, #c48dd6); }
@@ -36,36 +36,36 @@
         .restaurant-card .info h3 { font-size: 18px; color: #333; margin-bottom: 6px; }
         .restaurant-card .info .desc { font-size: 13px; color: #999; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .restaurant-card .info .meta { display: flex; align-items: center; gap: 16px; font-size: 13px; color: #888; }
-        .restaurant-card .info .meta .rating { color: #ff6b35; font-weight: bold; }
+        .restaurant-card .info .meta .rating { color: #4a90d9; font-weight: bold; }
         .empty { text-align: center; padding: 80px 20px; color: #999; }
         .empty .icon { font-size: 64px; margin-bottom: 16px; }
         .loading { text-align: center; padding: 40px; color: #999; }
     </style>
 </head>
 <body>
-    <!-- 背景食物装饰 -->
+    <!-- 鑳屾櫙椋熺墿瑁呴グ -->
     <div class="food-bg">
-        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
-        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
+        <span>馃崪</span><span>馃</span><span>馃崟</span><span>馃尞</span>
+        <span>馃崳</span><span>馃</span><span>馃崷</span><span>馃</span>
     </div>
     <nav class="navbar">
-        <a href="/" class="logo"><span>🍜</span>外卖配送</a>
+        <a href="/" class="logo"><span>馃崪</span>澶栧崠閰嶉€?/a>
         <div class="nav-links">
-            <a href="/" class="active">首页</a>
-            <a href="/orders.html">我的订单</a>
-            <a href="/cart.html" id="navCart">🛒 购物车 <span class="badge" id="cartBadge" style="display:none;background:#ff6b35;color:#fff;font-size:11px;padding:1px 6px;border-radius:8px;margin-left:2px;">0</span></a>
-            <a href="/admin.html" id="adminLink" style="display:none;background:rgba(255,255,255,0.15);">⚙️ 管理</a>
+            <a href="/" class="active">棣栭〉</a>
+            <a href="/orders.html">鎴戠殑璁㈠崟</a>
+            <a href="/cart.html" id="navCart">馃洅 璐墿杞?<span class="badge" id="cartBadge" style="display:none;background:#4a90d9;color:#fff;font-size:11px;padding:1px 6px;border-radius:8px;margin-left:2px;">0</span></a>
+            <a href="/admin.html" id="adminLink" style="display:none;background:rgba(255,255,255,0.15);">鈿欙笍 绠＄悊</a>
             <div class="user-info" id="userInfo"></div>
         </div>
     </nav>
     <div class="container">
-        <div class="page-title">🍽️ 附近餐厅</div>
+        <div class="page-title">馃嵔锔?闄勮繎椁愬巺</div>
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="搜索餐厅名称..." onkeyup="if(event.key==='Enter') searchRestaurants()">
-            <button onclick="searchRestaurants()">搜索</button>
+            <input type="text" id="searchInput" placeholder="鎼滅储椁愬巺鍚嶇О..." onkeyup="if(event.key==='Enter') searchRestaurants()">
+            <button onclick="searchRestaurants()">鎼滅储</button>
         </div>
         <div id="restaurantList">
-            <div class="loading">加载中...</div>
+            <div class="loading">鍔犺浇涓?..</div>
         </div>
     </div>
     <script>
@@ -83,7 +83,7 @@
             const navOrders = document.getElementById('navOrders');
             const navCart = document.getElementById('navCart');
             if (user) {
-                el.innerHTML = `<span>👋 ${user.nickname || user.username}</span><a href="#" onclick="logout()">退出</a>`;
+                el.innerHTML = `<span>馃憢 ${user.nickname || user.username}</span><a href="#" onclick="logout()">閫€鍑?/a>`;
                 if (user.role === 'ADMIN' && adminLink) adminLink.style.display = 'inline-block';
                 if (user.role === 'DELIVERY') {
                     if (riderLink) riderLink.style.display = 'inline-block';
@@ -91,7 +91,7 @@
                     if (navCart) navCart.style.display = 'none';
                 }
             } else {
-                el.innerHTML = `<a href="/login.html">登录</a><a href="/register.html">注册</a>`;
+                el.innerHTML = `<a href="/login.html">鐧诲綍</a><a href="/register.html">娉ㄥ唽</a>`;
                 if (adminLink) adminLink.style.display = 'none';
                 if (riderLink) riderLink.style.display = 'none';
             }
@@ -118,7 +118,7 @@
             fetch(url).then(r => r.json()).then(resp => {
                 const list = document.getElementById('restaurantList');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    list.innerHTML = '<div class="empty"><div class="icon">🍽️</div><p style="animation:fadeIn 0.5s">暂无餐厅</p></div>';
+                    list.innerHTML = '<div class="empty"><div class="icon">馃嵔锔?/div><p style="animation:fadeIn 0.5s">鏆傛棤椁愬巺</p></div>';
                     return;
                 }
                 const colors = ['', 'green', 'blue', 'purple'];
@@ -127,17 +127,17 @@
                         <div class="banner ${colors[i % 4]}"><span class="icon-float">${r.name.charAt(0)}</span></div>
                         <div class="info">
                             <h3>${r.name}</h3>
-                            <div class="desc">${r.description || '暂无介绍'}</div>
+                            <div class="desc">${r.description || '鏆傛棤浠嬬粛'}</div>
                             <div class="meta">
-                                <span class="rating">⭐ ${r.rating || '5.0'}</span>
-                                <span>配送费 ¥${r.deliveryFee || '0'}</span>
-                                <span>📞 ${r.phone || '-'}</span>
+                                <span class="rating">猸?${r.rating || '5.0'}</span>
+                                <span>閰嶉€佽垂 楼${r.deliveryFee || '0'}</span>
+                                <span>馃摓 ${r.phone || '-'}</span>
                             </div>
                         </div>
                     </div>
                 `).join('');
             }).catch(() => {
-                document.getElementById('restaurantList').innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败，请确认后端已启动</p></div>';
+                document.getElementById('restaurantList').innerHTML = '<div class="empty"><div class="icon">鈿狅笍</div><p>鍔犺浇澶辫触锛岃纭鍚庣宸插惎鍔?/p></div>';
             });
         }
 
@@ -149,12 +149,12 @@
         renderUser();
         loadRestaurants();
 
-        // 跨标签同步购物车
+        // 璺ㄦ爣绛惧悓姝ヨ喘鐗╄溅
         window.addEventListener('storage', function(e) {
             if (e.key === 'waimai_cart') updateCartBadge();
         });
 
-        // 骑手访问首页时重定向到骑手工作台
+        // 楠戞墜璁块棶棣栭〉鏃堕噸瀹氬悜鍒伴獞鎵嬪伐浣滃彴
         const currentUser = getCurrentUser();
         if (currentUser && currentUser.role === 'DELIVERY') {
             location.href = '/rider.html';

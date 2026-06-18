@@ -1,28 +1,28 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>骑手工作台 - 外卖配送系统</title>
+    <title>楠戞墜宸ヤ綔鍙?- 澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
-        /* 导航栏 */
-        .navbar { background: linear-gradient(135deg, #ff6b35, #f7931e); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+        /* 瀵艰埅鏍?*/
+        .navbar { background: linear-gradient(135deg, #4a90d9, #7bb3f0); color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
         .navbar a { color: #fff; text-decoration: none; }
         .navbar .logo { font-size: 20px; font-weight: bold; }
         .navbar .user-info { font-size: 13px; opacity: 0.9; }
         .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        /* Tab 切换 */
+        /* Tab 鍒囨崲 */
         .tabs { display: flex; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin-bottom: 20px; }
         .tabs .tab { flex: 1; padding: 14px; text-align: center; font-size: 15px; font-weight: bold; color: #999; cursor: pointer; transition: all 0.3s; border-bottom: 3px solid transparent; }
-        .tabs .tab:hover { color: #ff6b35; background: #fff8f5; }
-        .tabs .tab.active { color: #ff6b35; border-bottom-color: #ff6b35; background: #fff8f5; }
-        .tabs .tab .count { display: inline-block; background: #ff6b35; color: #fff; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+        .tabs .tab:hover { color: #4a90d9; background: #f5f8ff; }
+        .tabs .tab.active { color: #4a90d9; border-bottom-color: #4a90d9; background: #f5f8ff; }
+        .tabs .tab .count { display: inline-block; background: #4a90d9; color: #fff; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        /* 订单卡片 */
+        /* 璁㈠崟鍗＄墖 */
         .order-card { background: #fff; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden; animation: fadeInUp 0.4s ease both; }
         .order-card:nth-child(1) { animation-delay: 0.05s; }
         .order-card:nth-child(2) { animation-delay: 0.10s; }
@@ -40,10 +40,10 @@
         .order-card .body .info-row .value { font-weight: bold; color: #333; }
         .order-card .body .address { font-size: 14px; color: #333; padding: 6px 0; }
         .order-card .body .address .icon { margin-right: 6px; }
-        .order-card .body .amount { font-size: 18px; font-weight: bold; color: #ff6b35; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; text-align: right; }
+        .order-card .body .amount { font-size: 18px; font-weight: bold; color: #4a90d9; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; text-align: right; }
         .order-card .footer { background: #fafafa; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
         .order-card .footer .time { font-size: 13px; color: #999; }
-        /* 按钮 */
+        /* 鎸夐挳 */
         .btn { padding: 8px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s; }
         .btn-accept { background: #4caf50; color: #fff; }
         .btn-accept:hover { background: #43a047; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(76,175,80,0.3); }
@@ -51,11 +51,11 @@
         .btn-deliver { background: #1976d2; color: #fff; }
         .btn-deliver:hover { background: #1565c0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(25,118,210,0.3); }
         .btn-deliver:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-        .btn-outline { background: #fff; color: #ff6b35; border: 2px solid #ff6b35; }
-        .btn-outline:hover { background: #fff8f5; }
+        .btn-outline { background: #fff; color: #4a90d9; border: 2px solid #4a90d9; }
+        .btn-outline:hover { background: #f5f8ff; }
         .btn-logout { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
         .btn-logout:hover { background: rgba(255,255,255,0.1); }
-        /* 空状态 */
+        /* 绌虹姸鎬?*/
         .empty { text-align: center; padding: 60px 20px; color: #999; }
         .empty .icon { font-size: 56px; margin-bottom: 12px; }
         .empty p { font-size: 15px; }
@@ -64,12 +64,12 @@
         .toast.success { background: #4caf50; }
         .toast.error { background: #e74c3c; }
         .toast.info { background: #1976d2; }
-        /* 餐厅名称高亮 */
-        .rest-name { color: #ff6b35; font-weight: bold; }
-        /* 联系方式 */
+        /* 椁愬巺鍚嶇О楂樹寒 */
+        .rest-name { color: #4a90d9; font-weight: bold; }
+        /* 鑱旂郴鏂瑰紡 */
         .contact-info { display: flex; gap: 16px; font-size: 13px; color: #666; padding: 4px 0; }
         .contact-info span { display: flex; align-items: center; gap: 4px; }
-        /* 响应式 */
+        /* 鍝嶅簲寮?*/
         @media (max-width: 600px) {
             .container { padding: 12px; }
             .tabs .tab { font-size: 13px; padding: 12px 8px; }
@@ -80,16 +80,16 @@
 </head>
 <body>
     <div class="food-bg">
-        <span>🏍️</span><span>🚚</span><span>📦</span><span>🗺️</span>
-        <span>📍</span><span>⚡</span><span>🎯</span><span>✅</span>
+        <span>馃弽锔?/span><span>馃殮</span><span>馃摝</span><span>馃椇锔?/span>
+        <span>馃搷</span><span>鈿?/span><span>馃幆</span><span>鉁?/span>
     </div>
 
-    <!-- 导航栏 -->
+    <!-- 瀵艰埅鏍?-->
     <nav class="navbar">
-        <a href="/" class="logo">🏍️ 骑手工作台</a>
+        <a href="/" class="logo">馃弽锔?楠戞墜宸ヤ綔鍙?/a>
         <div style="display:flex;align-items:center;gap:12px;">
             <span class="user-info" id="riderInfo"></span>
-            <button class="btn-logout" onclick="logout()">退出登录</button>
+            <button class="btn-logout" onclick="logout()">閫€鍑虹櫥褰?/button>
         </div>
     </nav>
 
@@ -97,37 +97,37 @@
     <div class="toast" id="toast"></div>
 
     <div class="container">
-        <!-- Tab 切换 -->
+        <!-- Tab 鍒囨崲 -->
         <div class="tabs">
             <div class="tab active" onclick="switchTab('available')" id="tab-available">
-                📋 可接单 <span class="count" id="availableCount">0</span>
+                馃搵 鍙帴鍗?<span class="count" id="availableCount">0</span>
             </div>
             <div class="tab" onclick="switchTab('delivering')" id="tab-delivering">
-                🚚 配送中 <span class="count" id="deliveringCount">0</span>
+                馃殮 閰嶉€佷腑 <span class="count" id="deliveringCount">0</span>
             </div>
             <div class="tab" onclick="switchTab('history')" id="tab-history">
-                ✅ 配送历史
+                鉁?閰嶉€佸巻鍙?
             </div>
         </div>
 
-        <!-- Tab 1: 可接单 -->
+        <!-- Tab 1: 鍙帴鍗?-->
         <div class="tab-content active" id="content-available">
-            <div id="availableList"><div class="loading" style="text-align:center;padding:40px;color:#999;">加载中...</div></div>
+            <div id="availableList"><div class="loading" style="text-align:center;padding:40px;color:#999;">鍔犺浇涓?..</div></div>
         </div>
 
-        <!-- Tab 2: 配送中 -->
+        <!-- Tab 2: 閰嶉€佷腑 -->
         <div class="tab-content" id="content-delivering">
-            <div id="deliveringList"><div class="loading" style="text-align:center;padding:40px;color:#999;">加载中...</div></div>
+            <div id="deliveringList"><div class="loading" style="text-align:center;padding:40px;color:#999;">鍔犺浇涓?..</div></div>
         </div>
 
-        <!-- Tab 3: 配送历史 -->
+        <!-- Tab 3: 閰嶉€佸巻鍙?-->
         <div class="tab-content" id="content-history">
-            <div id="historyList"><div class="loading" style="text-align:center;padding:40px;color:#999;">加载中...</div></div>
+            <div id="historyList"><div class="loading" style="text-align:center;padding:40px;color:#999;">鍔犺浇涓?..</div></div>
         </div>
     </div>
 
     <script>
-        // ===== 工具函数 =====
+        // ===== 宸ュ叿鍑芥暟 =====
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
             return u ? JSON.parse(u) : null;
@@ -136,11 +136,11 @@
         function checkRider() {
             const user = getCurrentUser();
             if (!user || user.role !== 'DELIVERY') {
-                alert('请用骑手账号登录！\n默认骑手账号: delivery1 / 123456');
+                alert('璇风敤楠戞墜璐﹀彿鐧诲綍锛乗n榛樿楠戞墜璐﹀彿: delivery1 / 123456');
                 location.href = '/login.html?redirect=/rider.html';
                 return null;
             }
-            document.getElementById('riderInfo').textContent = '👋 ' + (user.nickname || user.username);
+            document.getElementById('riderInfo').textContent = '馃憢 ' + (user.nickname || user.username);
             return user;
         }
 
@@ -157,7 +157,7 @@
             location.href = '/login.html';
         }
 
-        // ===== Tab 切换 =====
+        // ===== Tab 鍒囨崲 =====
         var currentTab = 'available';
 
         function switchTab(name) {
@@ -171,35 +171,35 @@
             if (name === 'history') loadHistoryOrders();
         }
 
-        // ===== 状态映射 =====
+        // ===== 鐘舵€佹槧灏?=====
         var statusMap = {
-            'PAID': { text: '已支付', cls: 'pending' },
-            'ACCEPTED': { text: '待接单', cls: 'pending' },
-            'PREPARING': { text: '取餐中', cls: 'pending' },
-            'DELIVERING': { text: '配送中', cls: 'delivering' },
-            'DELIVERED': { text: '已送达', cls: 'completed' },
-            'COMPLETED': { text: '已完成', cls: 'completed' }
+            'PAID': { text: '宸叉敮浠?, cls: 'pending' },
+            'ACCEPTED': { text: '寰呮帴鍗?, cls: 'pending' },
+            'PREPARING': { text: '鍙栭涓?, cls: 'pending' },
+            'DELIVERING': { text: '閰嶉€佷腑', cls: 'delivering' },
+            'DELIVERED': { text: '宸查€佽揪', cls: 'completed' },
+            'COMPLETED': { text: '宸插畬鎴?, cls: 'completed' }
         };
 
-        // ===== 加载餐厅名称 =====
+        // ===== 鍔犺浇椁愬巺鍚嶇О =====
         var restNameCache = {};
 
         function getRestaurantName(restaurantId) {
             if (restNameCache[restaurantId]) return Promise.resolve(restNameCache[restaurantId]);
             return fetch('/api/restaurants/' + restaurantId).then(function (r) { return r.json(); }).then(function (resp) {
-                var name = resp.data ? resp.data.name : '餐厅#' + restaurantId;
+                var name = resp.data ? resp.data.name : '椁愬巺#' + restaurantId;
                 restNameCache[restaurantId] = name;
                 return name;
-            }).catch(function () { return '餐厅#' + restaurantId; });
+            }).catch(function () { return '椁愬巺#' + restaurantId; });
         }
 
-        // ===== 加载可接单列表 =====
+        // ===== 鍔犺浇鍙帴鍗曞垪琛?=====
         function loadAvailableOrders() {
             var el = document.getElementById('availableList');
-            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>加载中...</div>';
+            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>鍔犺浇涓?..</div>';
             fetch('/api/orders/delivery/pending').then(function (r) { return r.json(); }).then(function (resp) {
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    el.innerHTML = '<div class="empty"><div class="icon">📋</div><p>暂无待配送订单</p></div>';
+                    el.innerHTML = '<div class="empty"><div class="icon">馃搵</div><p>鏆傛棤寰呴厤閫佽鍗?/p></div>';
                     document.getElementById('availableCount').textContent = '0';
                     return;
                 }
@@ -215,36 +215,36 @@
                         var o = r.order;
                         return '<div class="order-card">' +
                             '<div class="header">' +
-                            '<span class="order-no">🆔 ' + o.orderNo + '</span>' +
+                            '<span class="order-no">馃啍 ' + o.orderNo + '</span>' +
                             '<span class="status ' + r.st.cls + '">' + r.st.text + '</span>' +
                             '</div>' +
                             '<div class="body">' +
-                            '<div class="info-row"><span class="label">🏪 餐厅</span><span class="value rest-name">' + r.restName + '</span></div>' +
-                            '<div class="address"><span class="icon">📍</span>' + (o.deliveryAddress || '未填写地址') + '</div>' +
+                            '<div class="info-row"><span class="label">馃彧 椁愬巺</span><span class="value rest-name">' + r.restName + '</span></div>' +
+                            '<div class="address"><span class="icon">馃搷</span>' + (o.deliveryAddress || '鏈～鍐欏湴鍧€') + '</div>' +
                             '<div class="contact-info">' +
-                            (o.contactName ? '<span>👤 ' + o.contactName + '</span>' : '') +
-                            (o.contactPhone ? '<span>📞 ' + o.contactPhone + '</span>' : '') +
+                            (o.contactName ? '<span>馃懁 ' + o.contactName + '</span>' : '') +
+                            (o.contactPhone ? '<span>馃摓 ' + o.contactPhone + '</span>' : '') +
                             '</div>' +
-                            '<div class="amount">¥' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
+                            '<div class="amount">楼' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
                             '</div>' +
                             '<div class="footer">' +
-                            '<span class="time">⏰ ' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
-                            '<button class="btn btn-accept" onclick="acceptOrder(' + o.id + ', this)">🏍️ 接单</button>' +
+                            '<span class="time">鈴?' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
+                            '<button class="btn btn-accept" onclick="acceptOrder(' + o.id + ', this)">馃弽锔?鎺ュ崟</button>' +
                             '</div>' +
                             '</div>';
                     }).join('');
                 });
             }).catch(function () {
-                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败，请确认后端已启动</p></div>';
+                el.innerHTML = '<div class="empty"><div class="icon">鈿狅笍</div><p>鍔犺浇澶辫触锛岃纭鍚庣宸插惎鍔?/p></div>';
             });
         }
 
-        // ===== 接单 =====
+        // ===== 鎺ュ崟 =====
         function acceptOrder(orderId, btn) {
             var user = getCurrentUser();
-            if (!user) { toast('请先登录', 'error'); return; }
+            if (!user) { toast('璇峰厛鐧诲綍', 'error'); return; }
             btn.disabled = true;
-            btn.textContent = '接单中...';
+            btn.textContent = '鎺ュ崟涓?..';
             fetch('/api/orders/' + orderId + '/assign-delivery', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -254,40 +254,40 @@
                 })
             }).then(function (r) { return r.json(); }).then(function (resp) {
                 if (resp.code === 200) {
-                    toast('✅ 接单成功！前往配送中查看', 'success');
+                    toast('鉁?鎺ュ崟鎴愬姛锛佸墠寰€閰嶉€佷腑鏌ョ湅', 'success');
                     loadAvailableOrders();
                     loadDeliveringOrders();
                 } else {
-                    toast(resp.message || '接单失败', 'error');
+                    toast(resp.message || '鎺ュ崟澶辫触', 'error');
                     btn.disabled = false;
-                    btn.textContent = '🏍️ 接单';
+                    btn.textContent = '馃弽锔?鎺ュ崟';
                 }
             }).catch(function () {
-                toast('网络错误', 'error');
+                toast('缃戠粶閿欒', 'error');
                 btn.disabled = false;
-                btn.textContent = '🏍️ 接单';
+                btn.textContent = '馃弽锔?鎺ュ崟';
             });
         }
 
-        // ===== 加载配送中订单 =====
+        // ===== 鍔犺浇閰嶉€佷腑璁㈠崟 =====
         function loadDeliveringOrders() {
             var user = getCurrentUser();
             var el = document.getElementById('deliveringList');
-            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">🔐</div><p>请先登录</p></div>'; return; }
-            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>加载中...</div>';
+            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">馃攼</div><p>璇峰厛鐧诲綍</p></div>'; return; }
+            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>鍔犺浇涓?..</div>';
             fetch('/api/orders/delivery/' + user.id).then(function (r) { return r.json(); }).then(function (resp) {
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    el.innerHTML = '<div class="empty"><div class="icon">🚚</div><p>暂无配送中的订单</p></div>';
+                    el.innerHTML = '<div class="empty"><div class="icon">馃殮</div><p>鏆傛棤閰嶉€佷腑鐨勮鍗?/p></div>';
                     document.getElementById('deliveringCount').textContent = '0';
                     return;
                 }
-                // 筛选出配送中和已送达但未完成的
+                // 绛涢€夊嚭閰嶉€佷腑鍜屽凡閫佽揪浣嗘湭瀹屾垚鐨?
                 var delivering = resp.data.filter(function (o) {
                     return o.status === 'DELIVERING' || o.status === 'PAID' || o.status === 'ACCEPTED' || o.status === 'PREPARING';
                 });
                 document.getElementById('deliveringCount').textContent = delivering.length;
                 if (delivering.length === 0) {
-                    el.innerHTML = '<div class="empty"><div class="icon">🚚</div><p>暂无配送中的订单</p></div>';
+                    el.innerHTML = '<div class="empty"><div class="icon">馃殮</div><p>鏆傛棤閰嶉€佷腑鐨勮鍗?/p></div>';
                     return;
                 }
                 var promises = delivering.map(function (order) {
@@ -301,75 +301,75 @@
                         var o = r.order;
                         return '<div class="order-card">' +
                             '<div class="header">' +
-                            '<span class="order-no">🆔 ' + o.orderNo + '</span>' +
+                            '<span class="order-no">馃啍 ' + o.orderNo + '</span>' +
                             '<span class="status ' + r.st.cls + '">' + r.st.text + '</span>' +
                             '</div>' +
                             '<div class="body">' +
-                            '<div class="info-row"><span class="label">🏪 餐厅</span><span class="value rest-name">' + r.restName + '</span></div>' +
-                            '<div class="address"><span class="icon">📍</span>' + (o.deliveryAddress || '未填写地址') + '</div>' +
+                            '<div class="info-row"><span class="label">馃彧 椁愬巺</span><span class="value rest-name">' + r.restName + '</span></div>' +
+                            '<div class="address"><span class="icon">馃搷</span>' + (o.deliveryAddress || '鏈～鍐欏湴鍧€') + '</div>' +
                             '<div class="contact-info">' +
-                            (o.contactName ? '<span>👤 ' + o.contactName + '</span>' : '') +
-                            (o.contactPhone ? '<span>📞 ' + o.contactPhone + '</span>' : '') +
+                            (o.contactName ? '<span>馃懁 ' + o.contactName + '</span>' : '') +
+                            (o.contactPhone ? '<span>馃摓 ' + o.contactPhone + '</span>' : '') +
                             '</div>' +
-                            '<div class="amount">¥' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
+                            '<div class="amount">楼' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
                             '</div>' +
                             '<div class="footer">' +
-                            '<span class="time">⏰ ' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
+                            '<span class="time">鈴?' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
                             (o.status === 'DELIVERING' ?
-                                '<button class="btn btn-deliver" onclick="confirmDelivered(' + o.id + ', this)">✅ 确认送达</button>' :
-                                '<span style="color:#ff8c00;font-size:13px;font-weight:bold;">⏳ 等待商家出餐</span>'
+                                '<button class="btn btn-deliver" onclick="confirmDelivered(' + o.id + ', this)">鉁?纭閫佽揪</button>' :
+                                '<span style="color:#ff8c00;font-size:13px;font-weight:bold;">鈴?绛夊緟鍟嗗鍑洪</span>'
                             ) +
                             '</div>' +
                             '</div>';
                     }).join('');
                 });
             }).catch(function () {
-                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败</p></div>';
+                el.innerHTML = '<div class="empty"><div class="icon">鈿狅笍</div><p>鍔犺浇澶辫触</p></div>';
             });
         }
 
-        // ===== 确认送达 =====
+        // ===== 纭閫佽揪 =====
         function confirmDelivered(orderId, btn) {
-            if (!confirm('确认该订单已送达？')) return;
+            if (!confirm('纭璇ヨ鍗曞凡閫佽揪锛?)) return;
             btn.disabled = true;
-            btn.textContent = '确认中...';
+            btn.textContent = '纭涓?..';
             fetch('/api/orders/' + orderId + '/status', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: 'DELIVERED' })
             }).then(function (r) { return r.json(); }).then(function (resp) {
                 if (resp.code === 200) {
-                    toast('✅ 已确认送达！', 'success');
+                    toast('鉁?宸茬‘璁ら€佽揪锛?, 'success');
                     loadDeliveringOrders();
                     loadHistoryOrders();
                 } else {
-                    toast(resp.message || '操作失败', 'error');
+                    toast(resp.message || '鎿嶄綔澶辫触', 'error');
                     btn.disabled = false;
-                    btn.textContent = '✅ 确认送达';
+                    btn.textContent = '鉁?纭閫佽揪';
                 }
             }).catch(function () {
-                toast('网络错误', 'error');
+                toast('缃戠粶閿欒', 'error');
                 btn.disabled = false;
-                btn.textContent = '✅ 确认送达';
+                btn.textContent = '鉁?纭閫佽揪';
             });
         }
 
-        // ===== 加载配送历史 =====
+        // ===== 鍔犺浇閰嶉€佸巻鍙?=====
         function loadHistoryOrders() {
             var user = getCurrentUser();
             var el = document.getElementById('historyList');
-            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">🔐</div><p>请先登录</p></div>'; return; }
-            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>加载中...</div>';
+            if (!user) { el.innerHTML = '<div class="empty"><div class="icon">馃攼</div><p>璇峰厛鐧诲綍</p></div>'; return; }
+            el.innerHTML = '<div class="loading" style="text-align:center;padding:40px;color:#999;"><div class="loading-spinner" style="margin:0 auto 12px;"></div><br>鍔犺浇涓?..</div>';
             fetch('/api/orders/delivery/' + user.id).then(function (r) { return r.json(); }).then(function (resp) {
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    el.innerHTML = '<div class="empty"><div class="icon">📦</div><p>暂无配送记录</p></div>';
+                    el.innerHTML = '<div class="empty"><div class="icon">馃摝</div><p>鏆傛棤閰嶉€佽褰?/p></div>';
                     return;
                 }
                 var history = resp.data.filter(function (o) {
                     return o.status === 'DELIVERED' || o.status === 'COMPLETED' || o.status === 'CANCELLED';
                 });
                 if (history.length === 0) {
-                    el.innerHTML = '<div class="empty"><div class="icon">📦</div><p>暂无配送记录</p></div>';
+                    el.innerHTML = '<div class="empty"><div class="icon">馃摝</div><p>鏆傛棤閰嶉€佽褰?/p></div>';
                     return;
                 }
                 var promises = history.map(function (order) {
@@ -384,26 +384,26 @@
                         var o = r.order;
                         return '<div class="order-card">' +
                             '<div class="header">' +
-                            '<span class="order-no">🆔 ' + o.orderNo + '</span>' +
+                            '<span class="order-no">馃啍 ' + o.orderNo + '</span>' +
                             '<span class="status ' + r.cls + '">' + r.text + '</span>' +
                             '</div>' +
                             '<div class="body">' +
-                            '<div class="info-row"><span class="label">🏪 餐厅</span><span class="value rest-name">' + r.restName + '</span></div>' +
-                            '<div class="address"><span class="icon">📍</span>' + (o.deliveryAddress || '未填写地址') + '</div>' +
-                            '<div class="amount">¥' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
+                            '<div class="info-row"><span class="label">馃彧 椁愬巺</span><span class="value rest-name">' + r.restName + '</span></div>' +
+                            '<div class="address"><span class="icon">馃搷</span>' + (o.deliveryAddress || '鏈～鍐欏湴鍧€') + '</div>' +
+                            '<div class="amount">楼' + (o.totalAmount ? o.totalAmount.toFixed(2) : '0.00') + '</div>' +
                             '</div>' +
                             '<div class="footer">' +
-                            '<span class="time">⏰ ' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
+                            '<span class="time">鈴?' + (o.createTime ? new Date(o.createTime).toLocaleString('zh-CN') : '') + '</span>' +
                             '</div>' +
                             '</div>';
                     }).join('');
                 });
             }).catch(function () {
-                el.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>加载失败</p></div>';
+                el.innerHTML = '<div class="empty"><div class="icon">鈿狅笍</div><p>鍔犺浇澶辫触</p></div>';
             });
         }
 
-        // ===== 初始化 =====
+        // ===== 鍒濆鍖?=====
         var rider = checkRider();
         if (rider) {
             loadAvailableOrders();

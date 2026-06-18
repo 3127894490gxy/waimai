@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注册 - 外卖配送系统</title>
+    <title>娉ㄥ唽 - 澶栧崠閰嶉€佺郴缁?/title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -13,53 +13,53 @@
         .register-box .subtitle { text-align: center; color: #999; font-size: 14px; margin-bottom: 24px; }
         .role-selector { display: flex; gap: 12px; margin-bottom: 20px; }
         .role-selector label { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 14px; }
-        .role-selector label:hover { border-color: #ff9a56; }
-        .role-selector input[type="radio"]:checked + span { color: #ff6b35; font-weight: bold; }
+        .role-selector label:hover { border-color: #5b9bd5; }
+        .role-selector input[type="radio"]:checked + span { color: #4a90d9; font-weight: bold; }
         .role-selector input[type="radio"]:checked ~ * { }
-        .role-selector label:has(input:checked) { border-color: #ff6b35; background: #fff8f5; }
+        .role-selector label:has(input:checked) { border-color: #4a90d9; background: #f5f8ff; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 14px; color: #666; margin-bottom: 6px; }
         .form-group input { width: 100%; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; }
-        .form-group input:focus { border-color: #ff6b35; }
-        .btn { width: 100%; padding: 12px; background: #ff6b35; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
-        .btn:hover { background: #e55a2b; }
+        .form-group input:focus { border-color: #4a90d9; }
+        .btn { width: 100%; padding: 12px; background: #4a90d9; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background: #3a7bc8; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .error { color: #e74c3c; font-size: 13px; margin-bottom: 12px; display: none; }
         .success { color: #27ae60; font-size: 13px; margin-bottom: 12px; display: none; }
         .footer { text-align: center; margin-top: 20px; font-size: 14px; color: #999; }
-        .footer a { color: #ff6b35; text-decoration: none; }
+        .footer a { color: #4a90d9; text-decoration: none; }
         .back { position: absolute; top: 20px; left: 20px; color: #666; text-decoration: none; font-size: 14px; }
     </style>
 </head>
 <body>
-    <a href="/" class="back">← 返回首页</a>
+    <a href="/" class="back">鈫?杩斿洖棣栭〉</a>
     <div class="register-box">
-        <h2>📝 注册</h2>
-        <div class="subtitle">创建账号开始点餐或配送</div>
+        <h2>馃摑 娉ㄥ唽</h2>
+        <div class="subtitle">鍒涘缓璐﹀彿寮€濮嬬偣椁愭垨閰嶉€?/div>
         <div class="error" id="errorMsg"></div>
         <div class="success" id="successMsg"></div>
         <div class="role-selector">
-            <label><input type="radio" name="role" value="CUSTOMER" checked> <span>🍜 我要点餐</span></label>
-            <label><input type="radio" name="role" value="DELIVERY"> <span>🏍️ 我要配送</span></label>
+            <label><input type="radio" name="role" value="CUSTOMER" checked> <span>馃崪 鎴戣鐐归</span></label>
+            <label><input type="radio" name="role" value="DELIVERY"> <span>馃弽锔?鎴戣閰嶉€?/span></label>
         </div>
         <div class="form-group">
-            <label>用户名</label>
-            <input type="text" id="username" placeholder="请设置用户名">
+            <label>鐢ㄦ埛鍚?/label>
+            <input type="text" id="username" placeholder="璇疯缃敤鎴峰悕">
         </div>
         <div class="form-group">
-            <label>昵称</label>
-            <input type="text" id="nickname" placeholder="请输入昵称">
+            <label>鏄电О</label>
+            <input type="text" id="nickname" placeholder="璇疯緭鍏ユ樀绉?>
         </div>
         <div class="form-group">
-            <label>手机号</label>
-            <input type="text" id="phone" placeholder="请输入手机号">
+            <label>鎵嬫満鍙?/label>
+            <input type="text" id="phone" placeholder="璇疯緭鍏ユ墜鏈哄彿">
         </div>
         <div class="form-group">
-            <label>密码</label>
-            <input type="password" id="password" placeholder="请设置密码">
+            <label>瀵嗙爜</label>
+            <input type="password" id="password" placeholder="璇疯缃瘑鐮?>
         </div>
-        <button class="btn" id="registerBtn" onclick="register()">注 册</button>
-        <div class="footer">已有账号？<a href="/login.html">立即登录</a></div>
+        <button class="btn" id="registerBtn" onclick="register()">娉?鍐?/button>
+        <div class="footer">宸叉湁璐﹀彿锛?a href="/login.html">绔嬪嵆鐧诲綍</a></div>
     </div>
     <script>
         function register() {
@@ -70,9 +70,9 @@
             const errEl = document.getElementById('errorMsg');
             const sucEl = document.getElementById('successMsg');
             const btn = document.getElementById('registerBtn');
-            if (!username || !password) { errEl.textContent = '用户名和密码为必填项'; errEl.style.display = 'block'; sucEl.style.display = 'none'; return; }
+            if (!username || !password) { errEl.textContent = '鐢ㄦ埛鍚嶅拰瀵嗙爜涓哄繀濉」'; errEl.style.display = 'block'; sucEl.style.display = 'none'; return; }
             errEl.style.display = 'none'; sucEl.style.display = 'none';
-            btn.disabled = true; btn.textContent = '注册中...';
+            btn.disabled = true; btn.textContent = '娉ㄥ唽涓?..';
             fetch('/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -82,18 +82,18 @@
                 })
             }).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
-                    sucEl.textContent = '🎉 注册成功！正在跳转到登录...';
+                    sucEl.textContent = '馃帀 娉ㄥ唽鎴愬姛锛佹鍦ㄨ烦杞埌鐧诲綍...';
                     sucEl.style.display = 'block';
                     setTimeout(() => location.href = '/login.html', 1500);
                 } else {
-                    errEl.textContent = resp.message || '注册失败，用户名可能已存在';
+                    errEl.textContent = resp.message || '娉ㄥ唽澶辫触锛岀敤鎴峰悕鍙兘宸插瓨鍦?;
                     errEl.style.display = 'block';
-                    btn.disabled = false; btn.textContent = '注 册';
+                    btn.disabled = false; btn.textContent = '娉?鍐?;
                 }
             }).catch(() => {
-                errEl.textContent = '网络错误，请确认后端已启动';
+                errEl.textContent = '缃戠粶閿欒锛岃纭鍚庣宸插惎鍔?;
                 errEl.style.display = 'block';
-                btn.disabled = false; btn.textContent = '注 册';
+                btn.disabled = false; btn.textContent = '娉?鍐?;
             });
         }
     </script>
