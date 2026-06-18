@@ -58,11 +58,11 @@
         </div>
         <div class="form-group">
             <label>用户名</label>
-            <input type="text" id="username" placeholder="请设置用户名">
+            <input type="text" id="username" placeholder="请设置用户名" oninput="syncNickname()">
         </div>
         <div class="form-group" id="nicknameGroup">
             <label id="nicknameLabel">昵称</label>
-            <input type="text" id="nickname" placeholder="请输入昵称">
+            <input type="text" id="nickname" placeholder="请输入昵称" oninput="nicknameEdited()">
         </div>
         <div class="form-group">
             <label>手机号</label>
@@ -77,11 +77,25 @@
     </div>
     <script>
         let selectedRole = 'CUSTOMER';
+        let nicknameSynced = true;
+
+        function syncNickname() {
+            if (!nicknameSynced) return;
+            const username = document.getElementById('username').value.trim();
+            document.getElementById('nickname').value = username;
+        }
+
+        function nicknameEdited() {
+            nicknameSynced = false;
+        }
 
         function selectRole(el) {
             document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
             el.classList.add('selected');
             selectedRole = el.dataset.role;
+            // 切换角色后重新同步昵称
+            nicknameSynced = true;
+            syncNickname();
             // 根据角色调整昵称字段
             const label = document.getElementById('nicknameLabel');
             const input = document.getElementById('nickname');
