@@ -1,18 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
-    <title>绠＄悊鍚庡彴 - 澶栧崠閰嶉€佺郴缁?/title>
+    <title>管理后台 - 外卖配送系统</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f5f5; }
         .navbar { background: #333; color: #fff; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; }
         .navbar .logo { color: #fff; text-decoration: none; font-size: 20px; font-weight: bold; }
-        .navbar .logo span { color: #4a90d9; }
+        .navbar .logo span { color: #ff6b35; }
         .navbar .nav-right a { color: #ccc; text-decoration: none; margin-left: 16px; font-size: 14px; }
         .navbar .nav-right a:hover { color: #fff; }
         .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
@@ -21,16 +21,16 @@
         .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #fff; border-radius: 10px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .tabs .tab { flex: 1; padding: 12px; text-align: center; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: 15px; color: #666; transition: all 0.2s; }
         .tabs .tab:hover { background: #f5f5f5; }
-        .tabs .tab.active { background: #4a90d9; color: #fff; font-weight: bold; }
+        .tabs .tab.active { background: #ff6b35; color: #fff; font-weight: bold; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
         .toolbar .left { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .toolbar select, .toolbar input { padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
-        .toolbar select:focus, .toolbar input:focus { border-color: #4a90d9; }
+        .toolbar select:focus, .toolbar input:focus { border-color: #ff6b35; }
         .btn { padding: 8px 20px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: background 0.2s; }
-        .btn-primary { background: #4a90d9; color: #fff; }
-        .btn-primary:hover { background: #3a7bc8; }
+        .btn-primary { background: #ff6b35; color: #fff; }
+        .btn-primary:hover { background: #e55a2b; }
         .btn-danger { background: #e74c3c; color: #fff; }
         .btn-danger:hover { background: #c0392b; }
         .btn-success { background: #27ae60; color: #fff; }
@@ -54,7 +54,7 @@
         .modal .form-group { margin-bottom: 14px; }
         .modal .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
         .modal .form-group input, .modal .form-group textarea, .modal .form-group select { width: 100%; padding: 9px 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
-        .modal .form-group input:focus, .modal .form-group textarea:focus, .modal .form-group select:focus { border-color: #4a90d9; }
+        .modal .form-group input:focus, .modal .form-group textarea:focus, .modal .form-group select:focus { border-color: #ff6b35; }
         .modal .form-row { display: flex; gap: 12px; }
         .modal .form-row .form-group { flex: 1; }
         .modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 16px; border-top: 1px solid #eee; }
@@ -68,111 +68,111 @@
 </head>
 <body>
     <div class="food-bg">
-        <span>馃崪</span><span>馃</span><span>馃崟</span><span>馃尞</span>
-        <span>馃崳</span><span>馃</span><span>馃崷</span><span>馃</span>
+        <span>🍜</span><span>🥟</span><span>🍕</span><span>🌮</span>
+        <span>🍣</span><span>🥘</span><span>🍦</span><span>🧋</span>
     </div>
     <nav class="navbar">
-        <a href="/" class="logo">鈫?<span>澶栧崠閰嶉€?/span> 绠＄悊鍚庡彴</a>
-        <div class="nav-right"><a href="/">杩斿洖鍓嶅彴</a></div>
+        <a href="/" class="logo">← <span>外卖配送</span> 管理后台</a>
+        <div class="nav-right"><a href="/">返回前台</a></div>
     </nav>
     <div class="container">
-        <div class="page-title">鈿欙笍 绯荤粺绠＄悊 <small id="adminInfo"></small></div>
+        <div class="page-title">⚙️ 系统管理 <small id="adminInfo"></small></div>
 
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('restaurants')">馃彧 椁愬巺绠＄悊</button>
-            <button class="tab" onclick="switchTab('dishes')">馃嵔锔?鑿滃搧绠＄悊</button>
-            <button class="tab" onclick="switchTab('categories')">馃搨 鍒嗙被绠＄悊</button>
-            <button class="tab" onclick="switchTab('delivery')">馃殮 澶栧崠鍛樼鐞?/button>
-            <button class="tab" onclick="switchTab('dispatch')">馃摝 閰嶉€佽皟搴?/button>
+            <button class="tab active" onclick="switchTab('restaurants')">🏪 餐厅管理</button>
+            <button class="tab" onclick="switchTab('dishes')">🍽️ 菜品管理</button>
+            <button class="tab" onclick="switchTab('categories')">📂 分类管理</button>
+            <button class="tab" onclick="switchTab('delivery')">🚚 外卖员管理</button>
+            <button class="tab" onclick="switchTab('dispatch')">📦 配送调度</button>
         </div>
 
-        <!-- ===== 椁愬巺绠＄悊 ===== -->
+        <!-- ===== 餐厅管理 ===== -->
         <div class="tab-content active" id="tab-restaurants">
             <div class="toolbar">
                 <div class="left">
-                    <input type="text" id="restSearch" placeholder="鎼滅储椁愬巺..." onkeyup="if(event.key==='Enter') loadRestaurants()">
-                    <button class="btn btn-primary" onclick="loadRestaurants()">馃攳 鎼滅储</button>
+                    <input type="text" id="restSearch" placeholder="搜索餐厅..." onkeyup="if(event.key==='Enter') loadRestaurants()">
+                    <button class="btn btn-primary" onclick="loadRestaurants()">🔍 搜索</button>
                 </div>
-                <button class="btn btn-success" onclick="showRestModal()">锛?鏂板椁愬巺</button>
+                <button class="btn btn-success" onclick="showRestModal()">＋ 新增餐厅</button>
             </div>
             <table>
                 <thead><tr>
-                    <th>ID</th><th>椁愬巺鍚嶇О</th><th>璇勫垎</th><th>閰嶉€佽垂</th><th>鐢佃瘽</th><th>鍦板潃</th><th>鐘舵€?/th><th>鎿嶄綔</th>
+                    <th>ID</th><th>餐厅名称</th><th>评分</th><th>配送费</th><th>电话</th><th>地址</th><th>状态</th><th>操作</th>
                 </tr></thead>
                 <tbody id="restTableBody"></tbody>
             </table>
         </div>
 
-        <!-- ===== 鑿滃搧绠＄悊 ===== -->
+        <!-- ===== 菜品管理 ===== -->
         <div class="tab-content" id="tab-dishes">
             <div class="toolbar">
                 <div class="left">
-                    <select id="dishRestFilter" onchange="loadDishes()"><option value="">鍏ㄩ儴椁愬巺</option></select>
+                    <select id="dishRestFilter" onchange="loadDishes()"><option value="">全部餐厅</option></select>
                 </div>
-                <button class="btn btn-success" onclick="showDishModal()">锛?鏂板鑿滃搧</button>
+                <button class="btn btn-success" onclick="showDishModal()">＋ 新增菜品</button>
             </div>
             <table>
                 <thead><tr>
-                    <th>ID</th><th>鑿滃搧鍚嶇О</th><th>鎵€灞為鍘?/th><th>鍒嗙被</th><th>浠锋牸</th><th>搴撳瓨</th><th>鐘舵€?/th><th>鎿嶄綔</th>
+                    <th>ID</th><th>菜品名称</th><th>所属餐厅</th><th>分类</th><th>价格</th><th>库存</th><th>状态</th><th>操作</th>
                 </tr></thead>
                 <tbody id="dishTableBody"></tbody>
             </table>
         </div>
 
-        <!-- ===== 鍒嗙被绠＄悊 ===== -->
+        <!-- ===== 分类管理 ===== -->
         <div class="tab-content" id="tab-categories">
             <div class="toolbar">
                 <div class="left">
-                    <select id="catRestFilter" onchange="loadCategories()"><option value="">閫夋嫨椁愬巺</option></select>
+                    <select id="catRestFilter" onchange="loadCategories()"><option value="">选择餐厅</option></select>
                 </div>
-                <button class="btn btn-success" onclick="showCatModal()">锛?鏂板鍒嗙被</button>
+                <button class="btn btn-success" onclick="showCatModal()">＋ 新增分类</button>
             </div>
             <table>
                 <thead><tr>
-                    <th>ID</th><th>鍒嗙被鍚嶇О</th><th>鎵€灞為鍘?/th><th>鎺掑簭</th><th>鎿嶄綔</th>
+                    <th>ID</th><th>分类名称</th><th>所属餐厅</th><th>排序</th><th>操作</th>
                 </tr></thead>
                 <tbody id="catTableBody"></tbody>
             </table>
         </div>
 
-        <!-- ===== 澶栧崠鍛樼鐞?===== -->
+        <!-- ===== 外卖员管理 ===== -->
         <div class="tab-content" id="tab-delivery">
             <div class="toolbar">
                 <div class="left">
-                    <h3 style="margin:0;font-size:16px;color:#333;">馃懁 閰嶉€佷汉鍛樺垪琛?/h3>
+                    <h3 style="margin:0;font-size:16px;color:#333;">👤 配送人员列表</h3>
                 </div>
-                <button class="btn btn-success" onclick="showDeliveryModal()">锛?鏂板澶栧崠鍛?/button>
+                <button class="btn btn-success" onclick="showDeliveryModal()">＋ 新增外卖员</button>
             </div>
             <table>
                 <thead><tr>
-                    <th>ID</th><th>鐢ㄦ埛鍚?/th><th>濮撳悕</th><th>鐢佃瘽</th><th>鍦板潃</th><th>鍒涘缓鏃堕棿</th><th>鎿嶄綔</th>
+                    <th>ID</th><th>用户名</th><th>姓名</th><th>电话</th><th>地址</th><th>创建时间</th><th>操作</th>
                 </tr></thead>
                 <tbody id="deliveryTableBody"></tbody>
             </table>
         </div>
 
-        <!-- ===== 閰嶉€佽皟搴?===== -->
+        <!-- ===== 配送调度 ===== -->
         <div class="tab-content" id="tab-dispatch">
             <div class="toolbar">
                 <div class="left">
-                    <h3 style="margin:0;font-size:16px;color:#333;">馃摝 寰呴厤閫佽鍗?/h3>
+                    <h3 style="margin:0;font-size:16px;color:#333;">📦 待配送订单</h3>
                 </div>
-                <button class="btn btn-primary" onclick="loadPendingOrders()">馃攧 鍒锋柊</button>
+                <button class="btn btn-primary" onclick="loadPendingOrders()">🔄 刷新</button>
             </div>
             <table>
                 <thead><tr>
-                    <th>璁㈠崟鍙?/th><th>鐢ㄦ埛ID</th><th>閲戦</th><th>鍦板潃</th><th>鐘舵€?/th><th>閰嶉€佸憳</th><th>鎿嶄綔</th>
+                    <th>订单号</th><th>用户ID</th><th>金额</th><th>地址</th><th>状态</th><th>配送员</th><th>操作</th>
                 </tr></thead>
                 <tbody id="pendingOrderBody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- ===== 寮圭獥 ===== -->
+    <!-- ===== 弹窗 ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
-            <h3 id="modalTitle">鏂板</h3>
+            <h3 id="modalTitle">新增</h3>
             <div id="modalBody"></div>
         </div>
     </div>
@@ -181,7 +181,7 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // ===== 宸ュ叿鍑芥暟 =====
+        // ===== 工具函数 =====
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
             return u ? JSON.parse(u) : null;
@@ -190,11 +190,11 @@
         function checkAdmin() {
             const user = getCurrentUser();
             if (!user || user.role !== 'ADMIN') {
-                alert('璇风敤绠＄悊鍛樿处鍙风櫥褰曪紒\n榛樿绠＄悊鍛? admin / admin123');
+                alert('请用管理员账号登录！\n默认管理员: admin / admin123');
                 location.href = '/login.html?redirect=/admin.html';
                 return null;
             }
-            document.getElementById('adminInfo').textContent = '绠＄悊鍛? ' + user.nickname;
+            document.getElementById('adminInfo').textContent = '管理员: ' + user.nickname;
             return user;
         }
 
@@ -222,28 +222,28 @@
             if (e.target === this) closeModal();
         });
 
-        // ===== 椁愬巺绠＄悊 =====
+        // ===== 餐厅管理 =====
         function loadRestaurants() {
             const kw = document.getElementById('restSearch').value.trim();
             const url = kw ? `/api/restaurants/search?name=${encodeURIComponent(kw)}` : '/api/restaurants?mode=all';
             fetch(url).then(r => r.json()).then(resp => {
                 const tbody = document.getElementById('restTableBody');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">鏆傛棤椁愬巺鏁版嵁</td></tr>'; return;
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">暂无餐厅数据</td></tr>'; return;
                 }
                 tbody.innerHTML = resp.data.map(r => `
                     <tr>
                         <td>${r.id}</td>
                         <td><strong>${r.name}</strong></td>
-                        <td>猸?${r.rating || '5.0'}</td>
-                        <td>楼${r.deliveryFee || '0'}</td>
+                        <td>⭐ ${r.rating || '5.0'}</td>
+                        <td>¥${r.deliveryFee || '0'}</td>
                         <td>${r.phone || '-'}</td>
                         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.address || '-'}</td>
-                        <td><span class="status-badge ${r.active ? 'active' : 'inactive'}">${r.active ? '钀ヤ笟涓? : '宸插叧闂?}</span></td>
+                        <td><span class="status-badge ${r.active ? 'active' : 'inactive'}">${r.active ? '营业中' : '已关闭'}</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-primary btn-sm" onclick="showRestModal(${r.id})">鉁忥笍 缂栬緫</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteRest(${r.id})">馃棏锔?鍒犻櫎</button>
+                                <button class="btn btn-primary btn-sm" onclick="showRestModal(${r.id})">✏️ 编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteRest(${r.id})">🗑️ 删除</button>
                             </div>
                         </td>
                     </tr>
@@ -256,17 +256,17 @@
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
             if (id) {
-                title.textContent = '鉁忥笍 缂栬緫椁愬巺';
+                title.textContent = '✏️ 编辑餐厅';
                 fetch(`/api/restaurants/${id}`).then(r => r.json()).then(resp => {
-                    if (resp.code !== 200) { toast('鍔犺浇澶辫触', 'error'); return; }
+                    if (resp.code !== 200) { toast('加载失败', 'error'); return; }
                     const r = resp.data;
                     body.innerHTML = restFormHtml(r);
                     overlay.classList.add('show');
                 });
             } else {
-                title.textContent = '锛?鏂板椁愬巺';
+                title.textContent = '＋ 新增餐厅';
                 body.innerHTML = restFormHtml(null);
-                // 浠庣櫥褰曠敤鎴疯幏鍙?merchantId
+                // 从登录用户获取 merchantId
                 const user = getCurrentUser();
                 if (user) document.getElementById('rest_merchantId').value = user.id;
                 overlay.classList.add('show');
@@ -275,25 +275,25 @@
 
         function restFormHtml(r) {
             return `
-                <div class="form-group"><label>椁愬巺鍚嶇О *</label><input type="text" id="rest_name" value="${r ? r.name : ''}"></div>
-                <div class="form-group"><label>鎻忚堪</label><textarea id="rest_desc" rows="2">${r ? (r.description || '') : ''}</textarea></div>
+                <div class="form-group"><label>餐厅名称 *</label><input type="text" id="rest_name" value="${r ? r.name : ''}"></div>
+                <div class="form-group"><label>描述</label><textarea id="rest_desc" rows="2">${r ? (r.description || '') : ''}</textarea></div>
                 <div class="form-row">
-                    <div class="form-group"><label>鐢佃瘽</label><input type="text" id="rest_phone" value="${r ? (r.phone || '') : ''}"></div>
-                    <div class="form-group"><label>閰嶉€佽垂 (楼)</label><input type="number" step="0.01" id="rest_fee" value="${r ? (r.deliveryFee || 0) : 0}"></div>
+                    <div class="form-group"><label>电话</label><input type="text" id="rest_phone" value="${r ? (r.phone || '') : ''}"></div>
+                    <div class="form-group"><label>配送费 (¥)</label><input type="number" step="0.01" id="rest_fee" value="${r ? (r.deliveryFee || 0) : 0}"></div>
                 </div>
-                <div class="form-group"><label>鍦板潃</label><input type="text" id="rest_addr" value="${r ? (r.address || '') : ''}"></div>
-                <div class="form-group"><label>璇勫垎</label><input type="number" step="0.1" id="rest_rating" value="${r ? (r.rating || 5.0) : 5.0}"></div>
-                <div class="form-group"><label>鍟嗗鐢ㄦ埛ID *</label><input type="number" id="rest_merchantId" value="${r ? r.merchantId : ''}"></div>
+                <div class="form-group"><label>地址</label><input type="text" id="rest_addr" value="${r ? (r.address || '') : ''}"></div>
+                <div class="form-group"><label>评分</label><input type="number" step="0.1" id="rest_rating" value="${r ? (r.rating || 5.0) : 5.0}"></div>
+                <div class="form-group"><label>商家用户ID *</label><input type="number" id="rest_merchantId" value="${r ? r.merchantId : ''}"></div>
                 <div class="form-group">
-                    <label>鐘舵€?/label>
+                    <label>状态</label>
                     <select id="rest_active">
-                        <option value="true" ${r && r.active ? 'selected' : ''}>钀ヤ笟涓?/option>
-                        <option value="false" ${r && !r.active ? 'selected' : ''}>宸插叧闂?/option>
+                        <option value="true" ${r && r.active ? 'selected' : ''}>营业中</option>
+                        <option value="false" ${r && !r.active ? 'selected' : ''}>已关闭</option>
                     </select>
                 </div>
                 <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">鍙栨秷</button>
-                    <button class="btn btn-primary" onclick="saveRest(${r ? r.id : ''})">淇濆瓨</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveRest(${r ? r.id : ''})">保存</button>
                 </div>
             `;
         }
@@ -309,30 +309,30 @@
                 merchantId: parseInt(document.getElementById('rest_merchantId').value),
                 active: document.getElementById('rest_active').value === 'true'
             };
-            if (!data.name) { toast('椁愬巺鍚嶇О涓嶈兘涓虹┖', 'error'); return; }
+            if (!data.name) { toast('餐厅名称不能为空', 'error'); return; }
             const url = id ? `/api/restaurants/${id}` : '/api/restaurants';
             const method = id ? 'PUT' : 'POST';
             fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
                 .then(r => r.json()).then(resp => {
-                    if (resp.code === 200) { toast(id ? '鏇存柊鎴愬姛' : '鍒涘缓鎴愬姛', 'success'); closeModal(); loadRestaurants(); }
-                    else { toast(resp.message || '鎿嶄綔澶辫触', 'error'); }
+                    if (resp.code === 200) { toast(id ? '更新成功' : '创建成功', 'success'); closeModal(); loadRestaurants(); }
+                    else { toast(resp.message || '操作失败', 'error'); }
                 });
         }
 
         function deleteRest(id) {
-            if (!confirm('纭畾瑕佸垹闄よ椁愬巺鍚楋紵')) return;
+            if (!confirm('确定要删除该餐厅吗？')) return;
             fetch(`/api/restaurants/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
-                if (resp.code === 200) { toast('鍒犻櫎鎴愬姛', 'success'); loadRestaurants(); }
-                else { toast('鍒犻櫎澶辫触', 'error'); }
+                if (resp.code === 200) { toast('删除成功', 'success'); loadRestaurants(); }
+                else { toast('删除失败', 'error'); }
             });
         }
 
-        // ===== 鑿滃搧绠＄悊 =====
+        // ===== 菜品管理 =====
         function loadRestFilter() {
             fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
                 const sel = document.getElementById('dishRestFilter');
                 if (resp.code === 200 && resp.data) {
-                    sel.innerHTML = '<option value="">鍏ㄩ儴椁愬巺</option>' + resp.data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                    sel.innerHTML = '<option value="">全部餐厅</option>' + resp.data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
                 }
             });
         }
@@ -348,7 +348,7 @@
                 const restMap = {};
                 if (restResp.code === 200 && restResp.data) restResp.data.forEach(r => restMap[r.id] = r.name);
                 if (dishResp.code !== 200 || !dishResp.data || dishResp.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">鏆傛棤鑿滃搧鏁版嵁</td></tr>'; return;
+                    tbody.innerHTML = '<tr><td colspan="8" class="empty-msg">暂无菜品数据</td></tr>'; return;
                 }
                 tbody.innerHTML = dishResp.data.map(d => `
                     <tr>
@@ -356,13 +356,13 @@
                         <td><strong>${d.name}</strong></td>
                         <td>${restMap[d.restaurantId] || '#' + d.restaurantId}</td>
                         <td>#${d.categoryId}</td>
-                        <td style="color:#4a90d9;font-weight:bold;">楼${d.price}</td>
+                        <td style="color:#ff6b35;font-weight:bold;">¥${d.price}</td>
                         <td>${d.stock}</td>
-                        <td><span class="status-badge ${d.active ? 'active' : 'inactive'}">${d.active ? '鍦ㄥ敭' : '涓嬫灦'}</span></td>
+                        <td><span class="status-badge ${d.active ? 'active' : 'inactive'}">${d.active ? '在售' : '下架'}</span></td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-primary btn-sm" onclick="showDishModal(${d.id})">鉁忥笍 缂栬緫</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteDish(${d.id})">馃棏锔?鍒犻櫎</button>
+                                <button class="btn btn-primary btn-sm" onclick="showDishModal(${d.id})">✏️ 编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteDish(${d.id})">🗑️ 删除</button>
                             </div>
                         </td>
                     </tr>
@@ -374,20 +374,20 @@
             const overlay = document.getElementById('modalOverlay');
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
-            // 鍏堝姞杞介鍘呭垪琛ㄤ緵閫夋嫨
+            // 先加载餐厅列表供选择
             fetch('/api/restaurants?mode=all').then(r => r.json()).then(restResp => {
                 const restOpts = (restResp.data || []).map(r => `<option value="${r.id}">${r.name}</option>`).join('');
                 if (id) {
-                    title.textContent = '鉁忥笍 缂栬緫鑿滃搧';
+                    title.textContent = '✏️ 编辑菜品';
                     fetch(`/api/dishes/${id}`).then(r => r.json()).then(resp => {
-                        if (resp.code !== 200) { toast('鍔犺浇澶辫触', 'error'); return; }
+                        if (resp.code !== 200) { toast('加载失败', 'error'); return; }
                         const d = resp.data;
                         body.innerHTML = dishFormHtml(d, restOpts);
                         overlay.classList.add('show');
                         loadCatOptionsForDish(d.restaurantId, d.categoryId);
                     });
                 } else {
-                    title.textContent = '锛?鏂板鑿滃搧';
+                    title.textContent = '＋ 新增菜品';
                     body.innerHTML = dishFormHtml(null, restOpts);
                     overlay.classList.add('show');
                 }
@@ -397,32 +397,32 @@
         function dishFormHtml(d, restOpts) {
             const restId = d ? d.restaurantId : '';
             return `
-                <div class="form-group"><label>鑿滃搧鍚嶇О *</label><input type="text" id="dish_name" value="${d ? d.name : ''}"></div>
-                <div class="form-group"><label>鎻忚堪</label><textarea id="dish_desc" rows="2">${d ? (d.description || '') : ''}</textarea></div>
+                <div class="form-group"><label>菜品名称 *</label><input type="text" id="dish_name" value="${d ? d.name : ''}"></div>
+                <div class="form-group"><label>描述</label><textarea id="dish_desc" rows="2">${d ? (d.description || '') : ''}</textarea></div>
                 <div class="form-row">
-                    <div class="form-group"><label>鎵€灞為鍘?*</label>
+                    <div class="form-group"><label>所属餐厅 *</label>
                         <select id="dish_restaurantId" onchange="loadCatOptionsForDish(this.value)">
-                            <option value="">璇烽€夋嫨</option>${restOpts.replace(`value="${restId}"`, `value="${restId}" selected`)}
+                            <option value="">请选择</option>${restOpts.replace(`value="${restId}"`, `value="${restId}" selected`)}
                         </select>
                     </div>
-                    <div class="form-group"><label>鍒嗙被</label>
-                        <select id="dish_categoryId"><option value="">鏃犲垎绫?/option></select>
+                    <div class="form-group"><label>分类</label>
+                        <select id="dish_categoryId"><option value="">无分类</option></select>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>浠锋牸 (楼) *</label><input type="number" step="0.01" id="dish_price" value="${d ? d.price : ''}"></div>
-                    <div class="form-group"><label>搴撳瓨</label><input type="number" id="dish_stock" value="${d ? d.stock : 999}"></div>
+                    <div class="form-group"><label>价格 (¥) *</label><input type="number" step="0.01" id="dish_price" value="${d ? d.price : ''}"></div>
+                    <div class="form-group"><label>库存</label><input type="number" id="dish_stock" value="${d ? d.stock : 999}"></div>
                 </div>
                 <div class="form-group">
-                    <label>鐘舵€?/label>
+                    <label>状态</label>
                     <select id="dish_active">
-                        <option value="true" ${d && d.active !== false ? 'selected' : ''}>鍦ㄥ敭</option>
-                        <option value="false" ${d && d.active === false ? 'selected' : ''}>涓嬫灦</option>
+                        <option value="true" ${d && d.active !== false ? 'selected' : ''}>在售</option>
+                        <option value="false" ${d && d.active === false ? 'selected' : ''}>下架</option>
                     </select>
                 </div>
                 <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">鍙栨秷</button>
-                    <button class="btn btn-primary" onclick="saveDish(${d ? d.id : ''})">淇濆瓨</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveDish(${d ? d.id : ''})">保存</button>
                 </div>
             `;
         }
@@ -432,7 +432,7 @@
             fetch(`/api/categories/restaurant/${restaurantId}`).then(r => r.json()).then(resp => {
                 const sel = document.getElementById('dish_categoryId');
                 if (resp.code === 200 && resp.data) {
-                    sel.innerHTML = '<option value="">鏃犲垎绫?/option>' + resp.data.map(c =>
+                    sel.innerHTML = '<option value="">无分类</option>' + resp.data.map(c =>
                         `<option value="${c.id}" ${c.id === selectedId ? 'selected' : ''}>${c.name}</option>`
                     ).join('');
                 }
@@ -442,9 +442,9 @@
         function saveDish(id) {
             const restId = parseInt(document.getElementById('dish_restaurantId').value);
             const price = parseFloat(document.getElementById('dish_price').value);
-            if (!document.getElementById('dish_name').value.trim()) { toast('鑿滃搧鍚嶇О涓嶈兘涓虹┖', 'error'); return; }
-            if (!restId) { toast('璇烽€夋嫨鎵€灞為鍘?, 'error'); return; }
-            if (!price || price <= 0) { toast('璇疯緭鍏ユ湁鏁堜环鏍?, 'error'); return; }
+            if (!document.getElementById('dish_name').value.trim()) { toast('菜品名称不能为空', 'error'); return; }
+            if (!restId) { toast('请选择所属餐厅', 'error'); return; }
+            if (!price || price <= 0) { toast('请输入有效价格', 'error'); return; }
             const data = {
                 name: document.getElementById('dish_name').value.trim(),
                 description: document.getElementById('dish_desc').value.trim(),
@@ -458,25 +458,25 @@
             const method = id ? 'PUT' : 'POST';
             fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
                 .then(r => r.json()).then(resp => {
-                    if (resp.code === 200) { toast(id ? '鏇存柊鎴愬姛' : '鍒涘缓鎴愬姛', 'success'); closeModal(); loadDishes(); }
-                    else { toast(resp.message || '鎿嶄綔澶辫触', 'error'); }
+                    if (resp.code === 200) { toast(id ? '更新成功' : '创建成功', 'success'); closeModal(); loadDishes(); }
+                    else { toast(resp.message || '操作失败', 'error'); }
                 });
         }
 
         function deleteDish(id) {
-            if (!confirm('纭畾瑕佸垹闄よ鑿滃搧鍚楋紵')) return;
+            if (!confirm('确定要删除该菜品吗？')) return;
             fetch(`/api/dishes/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
-                if (resp.code === 200) { toast('鍒犻櫎鎴愬姛', 'success'); loadDishes(); }
-                else { toast('鍒犻櫎澶辫触', 'error'); }
+                if (resp.code === 200) { toast('删除成功', 'success'); loadDishes(); }
+                else { toast('删除失败', 'error'); }
             });
         }
 
-        // ===== 鍒嗙被绠＄悊 =====
+        // ===== 分类管理 =====
         function loadCatFilter() {
             fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
                 const sel = document.getElementById('catRestFilter');
                 if (resp.code === 200 && resp.data) {
-                    sel.innerHTML = '<option value="">閫夋嫨椁愬巺</option>' + resp.data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+                    sel.innerHTML = '<option value="">选择餐厅</option>' + resp.data.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
                 }
             });
         }
@@ -484,7 +484,7 @@
         function loadCategories() {
             const restId = document.getElementById('catRestFilter').value;
             if (!restId) {
-                document.getElementById('catTableBody').innerHTML = '<tr><td colspan="5" class="empty-msg">璇峰厛閫夋嫨椁愬巺</td></tr>';
+                document.getElementById('catTableBody').innerHTML = '<tr><td colspan="5" class="empty-msg">请先选择餐厅</td></tr>';
                 return;
             }
             Promise.all([
@@ -495,7 +495,7 @@
                 const restMap = {};
                 if (restResp.code === 200 && restResp.data) restResp.data.forEach(r => restMap[r.id] = r.name);
                 if (catResp.code !== 200 || !catResp.data || catResp.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">鏆傛棤鍒嗙被锛岀偣鍑诲彸涓婅鏂板</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">暂无分类，点击右上角新增</td></tr>';
                     return;
                 }
                 tbody.innerHTML = catResp.data.map(c => `
@@ -506,8 +506,8 @@
                         <td>${c.sortOrder || 0}</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-primary btn-sm" onclick="showCatModal(${c.id}, ${restId})">鉁忥笍 缂栬緫</button>
-                                <button class="btn btn-danger btn-sm" onclick="deleteCat(${c.id})">馃棏锔?鍒犻櫎</button>
+                                <button class="btn btn-primary btn-sm" onclick="showCatModal(${c.id}, ${restId})">✏️ 编辑</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteCat(${c.id})">🗑️ 删除</button>
                             </div>
                         </td>
                     </tr>
@@ -520,15 +520,15 @@
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
             if (id) {
-                title.textContent = '鉁忥笍 缂栬緫鍒嗙被';
+                title.textContent = '✏️ 编辑分类';
                 fetch(`/api/categories/restaurant/${restId}`).then(r => r.json()).then(resp => {
                     const c = (resp.data || []).find(x => x.id === id);
-                    if (!c) { toast('鍒嗙被涓嶅瓨鍦?, 'error'); return; }
+                    if (!c) { toast('分类不存在', 'error'); return; }
                     body.innerHTML = catFormHtml(c, restId);
                     overlay.classList.add('show');
                 });
             } else {
-                title.textContent = '锛?鏂板鍒嗙被';
+                title.textContent = '＋ 新增分类';
                 const selectedRest = document.getElementById('catRestFilter').value;
                 body.innerHTML = catFormHtml(null, selectedRest);
                 overlay.classList.add('show');
@@ -537,8 +537,8 @@
 
         function catFormHtml(c, restId) {
             return `
-                <div class="form-group"><label>鍒嗙被鍚嶇О *</label><input type="text" id="cat_name" value="${c ? c.name : ''}"></div>
-                <div class="form-group"><label>鎵€灞為鍘?/label>
+                <div class="form-group"><label>分类名称 *</label><input type="text" id="cat_name" value="${c ? c.name : ''}"></div>
+                <div class="form-group"><label>所属餐厅</label>
                     <select id="cat_restaurantId">
                         ${document.getElementById('catRestFilter').innerHTML.replace(/<option value="(\d+)"(.*?)>/, (m, id, rest) => {
                             const sel = (id == (c ? c.restaurantId : restId)) ? 'selected' : '';
@@ -546,17 +546,17 @@
                         })}
                     </select>
                 </div>
-                <div class="form-group"><label>鎺掑簭 (鏁板瓧瓒婂皬瓒婇潬鍓?</label><input type="number" id="cat_sort" value="${c ? (c.sortOrder || 0) : 0}"></div>
+                <div class="form-group"><label>排序 (数字越小越靠前)</label><input type="number" id="cat_sort" value="${c ? (c.sortOrder || 0) : 0}"></div>
                 <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">鍙栨秷</button>
-                    <button class="btn btn-primary" onclick="saveCat(${c ? c.id : ''})">淇濆瓨</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveCat(${c ? c.id : ''})">保存</button>
                 </div>
             `;
         }
 
         function saveCat(id) {
             const name = document.getElementById('cat_name').value.trim();
-            if (!name) { toast('鍒嗙被鍚嶇О涓嶈兘涓虹┖', 'error'); return; }
+            if (!name) { toast('分类名称不能为空', 'error'); return; }
             const data = {
                 name: name,
                 restaurantId: parseInt(document.getElementById('cat_restaurantId').value),
@@ -566,25 +566,25 @@
             const method = id ? 'PUT' : 'POST';
             fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
                 .then(r => r.json()).then(resp => {
-                    if (resp.code === 200) { toast(id ? '鏇存柊鎴愬姛' : '鍒涘缓鎴愬姛', 'success'); closeModal(); loadCategories(); }
-                    else { toast(resp.message || '鎿嶄綔澶辫触', 'error'); }
+                    if (resp.code === 200) { toast(id ? '更新成功' : '创建成功', 'success'); closeModal(); loadCategories(); }
+                    else { toast(resp.message || '操作失败', 'error'); }
                 });
         }
 
         function deleteCat(id) {
-            if (!confirm('纭畾瑕佸垹闄よ鍒嗙被鍚楋紵')) return;
+            if (!confirm('确定要删除该分类吗？')) return;
             fetch(`/api/categories/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
-                if (resp.code === 200) { toast('鍒犻櫎鎴愬姛', 'success'); loadCategories(); }
-                else { toast('鍒犻櫎澶辫触', 'error'); }
+                if (resp.code === 200) { toast('删除成功', 'success'); loadCategories(); }
+                else { toast('删除失败', 'error'); }
             });
         }
 
-        // ===== 澶栧崠鍛樼鐞?=====
+        // ===== 外卖员管理 =====
         function loadDeliveryList() {
             fetch('/api/users/role/DELIVERY').then(r => r.json()).then(resp => {
                 const tbody = document.getElementById('deliveryTableBody');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">鏆傛棤澶栧崠鍛橈紝鐐瑰嚮鍙充笂瑙掓柊澧?/td></tr>'; return;
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">暂无外卖员，点击右上角新增</td></tr>'; return;
                 }
                 tbody.innerHTML = resp.data.map(d => `
                     <tr>
@@ -596,7 +596,7 @@
                         <td>${d.createTime ? new Date(d.createTime).toLocaleString('zh-CN') : '-'}</td>
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-danger btn-sm" onclick="deleteDelivery(${d.id})">馃棏锔?鍒犻櫎</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteDelivery(${d.id})">🗑️ 删除</button>
                             </div>
                         </td>
                     </tr>
@@ -606,16 +606,16 @@
 
         function showDeliveryModal() {
             const overlay = document.getElementById('modalOverlay');
-            document.getElementById('modalTitle').textContent = '锛?鏂板澶栧崠鍛?;
+            document.getElementById('modalTitle').textContent = '＋ 新增外卖员';
             document.getElementById('modalBody').innerHTML = `
-                <div class="form-group"><label>鐢ㄦ埛鍚?*</label><input type="text" id="del_username" placeholder="鐧诲綍鐢?></div>
-                <div class="form-group"><label>瀵嗙爜 *</label><input type="text" id="del_password" value="123456"></div>
-                <div class="form-group"><label>濮撳悕</label><input type="text" id="del_nickname" placeholder="澶栧崠鍛樺鍚?></div>
-                <div class="form-group"><label>鐢佃瘽</label><input type="text" id="del_phone" placeholder="鎵嬫満鍙?></div>
-                <div class="form-group"><label>鍦板潃</label><input type="text" id="del_address" placeholder="閰嶉€佺珯鍦板潃"></div>
+                <div class="form-group"><label>用户名 *</label><input type="text" id="del_username" placeholder="登录用"></div>
+                <div class="form-group"><label>密码 *</label><input type="password" id="del_password" value="123456"></div>
+                <div class="form-group"><label>姓名</label><input type="text" id="del_nickname" placeholder="外卖员姓名"></div>
+                <div class="form-group"><label>电话</label><input type="text" id="del_phone" placeholder="手机号"></div>
+                <div class="form-group"><label>地址</label><input type="text" id="del_address" placeholder="配送站地址"></div>
                 <div class="modal-actions">
-                    <button class="btn btn-secondary" onclick="closeModal()">鍙栨秷</button>
-                    <button class="btn btn-primary" onclick="saveDelivery()">淇濆瓨</button>
+                    <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button class="btn btn-primary" onclick="saveDelivery()">保存</button>
                 </div>
             `;
             overlay.classList.add('show');
@@ -624,7 +624,7 @@
         function saveDelivery() {
             const username = document.getElementById('del_username').value.trim();
             const password = document.getElementById('del_password').value.trim();
-            if (!username || !password) { toast('鐢ㄦ埛鍚嶅拰瀵嗙爜涓嶈兘涓虹┖', 'error'); return; }
+            if (!username || !password) { toast('用户名和密码不能为空', 'error'); return; }
             fetch('/api/users/admin/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -637,47 +637,47 @@
                     role: 'DELIVERY'
                 })
             }).then(r => r.json()).then(resp => {
-                if (resp.code === 200) { toast('鍒涘缓鎴愬姛', 'success'); closeModal(); loadDeliveryList(); }
-                else { toast(resp.message || '鍒涘缓澶辫触', 'error'); }
+                if (resp.code === 200) { toast('创建成功', 'success'); closeModal(); loadDeliveryList(); }
+                else { toast(resp.message || '创建失败', 'error'); }
             });
         }
 
         function deleteDelivery(id) {
-            if (!confirm('纭畾瑕佸垹闄よ澶栧崠鍛樺悧锛?)) return;
+            if (!confirm('确定要删除该外卖员吗？')) return;
             fetch(`/api/users/${id}`, { method: 'DELETE' }).then(r => r.json()).then(resp => {
-                if (resp.code === 200) { toast('鍒犻櫎鎴愬姛', 'success'); loadDeliveryList(); }
-                else { toast('鍒犻櫎澶辫触', 'error'); }
+                if (resp.code === 200) { toast('删除成功', 'success'); loadDeliveryList(); }
+                else { toast('删除失败', 'error'); }
             });
         }
 
-        // ===== 閰嶉€佽皟搴?=====
+        // ===== 配送调度 =====
         let deliveryUserList = [];
 
         function loadPendingOrders() {
-            // 鍔犺浇閰嶉€佸憳鍒楄〃渚涢€夋嫨
+            // 加载配送员列表供选择
             fetch('/api/users/role/DELIVERY').then(r => r.json()).then(resp => {
                 if (resp.code === 200) deliveryUserList = resp.data || [];
             });
-            // 鍔犺浇寰呴厤閫佽鍗?
+            // 加载待配送订单
             fetch('/api/orders/delivery/pending').then(r => r.json()).then(resp => {
                 const tbody = document.getElementById('pendingOrderBody');
                 if (resp.code !== 200 || !resp.data || resp.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">鏆傛棤寰呴厤閫佽鍗?/td></tr>'; return;
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">暂无待配送订单</td></tr>'; return;
                 }
                 tbody.innerHTML = resp.data.map(o => `
                     <tr>
                         <td style="font-size:12px;">${o.orderNo}</td>
                         <td>${o.userId}</td>
-                        <td style="color:#4a90d9;font-weight:bold;">楼${o.totalAmount ? o.totalAmount.toFixed(2) : '0.00'}</td>
+                        <td style="color:#ff6b35;font-weight:bold;">¥${o.totalAmount ? o.totalAmount.toFixed(2) : '0.00'}</td>
                         <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${o.deliveryAddress || '-'}</td>
-                        <td><span class="status-badge active">寰呴厤閫?/span></td>
-                        <td id="delInfo_${o.id}">${o.deliveryName ? '馃懁 ' + o.deliveryName : '<span style="color:#999;">鏈垎閰?/span>'}</td>
+                        <td><span class="status-badge active">待配送</span></td>
+                        <td id="delInfo_${o.id}">${o.deliveryName ? '👤 ' + o.deliveryName : '<span style="color:#999;">未分配</span>'}</td>
                         <td>
                             <select id="assignDel_${o.id}" style="padding:4px 8px;border:1px solid #ddd;border-radius:4px;">
-                                <option value="">閫夋嫨閰嶉€佸憳</option>
+                                <option value="">选择配送员</option>
                                 ${deliveryUserList.map(d => `<option value="${d.id}|${d.nickname||d.username}">${d.nickname||d.username}</option>`).join('')}
                             </select>
-                            <button class="btn btn-primary btn-sm" onclick="assignDelivery(${o.id})" style="margin-left:4px;">鍒嗛厤</button>
+                            <button class="btn btn-primary btn-sm" onclick="assignDelivery(${o.id})" style="margin-left:4px;">分配</button>
                         </td>
                     </tr>
                 `).join('');
@@ -687,19 +687,19 @@
         function assignDelivery(orderId) {
             const sel = document.getElementById('assignDel_' + orderId);
             const val = sel.value;
-            if (!val) { toast('璇烽€夋嫨閰嶉€佸憳', 'error'); return; }
+            if (!val) { toast('请选择配送员', 'error'); return; }
             const [deliveryId, deliveryName] = val.split('|');
             fetch(`/api/orders/${orderId}/assign-delivery`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ deliveryId: parseInt(deliveryId), deliveryName: deliveryName })
             }).then(r => r.json()).then(resp => {
-                if (resp.code === 200) { toast('鉁?宸插垎閰?' + deliveryName, 'success'); loadPendingOrders(); }
-                else { toast('鍒嗛厤澶辫触', 'error'); }
+                if (resp.code === 200) { toast('✅ 已分配 ' + deliveryName, 'success'); loadPendingOrders(); }
+                else { toast('分配失败', 'error'); }
             });
         }
 
-        // ===== 鍒濆鍖?=====
+        // ===== 初始化 =====
         const user = checkAdmin();
         if (user) { loadRestaurants(); loadRestFilter(); loadCatFilter(); }
     </script>
