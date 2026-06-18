@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +68,9 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("订单不存在"));
         order.setStatus(status);
+        if (status == OrderStatus.DELIVERED) {
+            order.setDeliveredTime(LocalDateTime.now());
+        }
         return orderRepository.save(order);
     }
 
@@ -77,6 +81,9 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("订单不存在"));
         order.setDeliveryId(deliveryId);
         order.setDeliveryName(deliveryName);
+        if (order.getPickupTime() == null) {
+            order.setPickupTime(LocalDateTime.now());
+        }
         // 分配配送员时，将状态更新为"配送中"
         if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.ACCEPTED) {
             order.setStatus(OrderStatus.DELIVERING);

@@ -239,6 +239,7 @@
                         <div class="info-row"><strong>👤 联系人</strong><span>${order.contactName || '未填写'} ${order.contactPhone ? '📞' + order.contactPhone : ''}</span></div>
                         <div class="info-row"><strong>📝 备注</strong><span>${order.remark || '无'}</span></div>
                         <div class="info-row"><strong>📊 状态</strong>${statusBadge}</div>
+                        ${!isPending ? '<div class="info-row"><strong>⏱ 配送耗时</strong><span>' + calcDuration(order.pickupTime, order.deliveredTime) + '</span></div>' : ''}
                         <div class="items" id="items_${order.id}">⏳ 加载菜品...</div>
                     </div>
                     <div class="footer">
@@ -314,6 +315,21 @@
 
         // ===== 初始化加载 =====
         loadPendingOrders();
+
+        // 配送耗时计算
+        function calcDuration(pickupTime, deliveredTime) {
+            if (!pickupTime) return '⌛ 等待接单';
+            const start = new Date(pickupTime).getTime();
+            const end = deliveredTime ? new Date(deliveredTime).getTime() : Date.now();
+            const diff = Math.floor((end - start) / 1000);
+            if (diff < 0) return '--';
+            if (diff < 60) return diff + '秒';
+            const mins = Math.floor(diff / 60);
+            const secs = diff % 60;
+            if (mins < 60) return mins + '分' + secs + '秒';
+            const hours = Math.floor(mins / 60);
+            return hours + '时' + (mins % 60) + '分';
+        }
     </script>
 </body>
 </html>

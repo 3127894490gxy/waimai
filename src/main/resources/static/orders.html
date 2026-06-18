@@ -165,6 +165,7 @@
                                     </div>
                                     <div style="margin-top:4px;display:flex;align-items:center;gap:10px;">
                                         <span style="color:#333;" id="delName_${order.id}">${order.deliveryName || '配送员'}</span>
+                                        <span style="color:#ff6b35;font-size:12px;" id="delDuration_${order.id}">⏱ ${calcDuration(order.pickupTime, order.deliveredTime)}</span>
                                         <a id="delCallBtn_${order.id}" style="display:none;padding:4px 14px;background:#4a90d9;color:#fff;border-radius:20px;text-decoration:none;font-size:12px;" href="tel:">📞 联系配送员</a>
                                     </div>
                                 </div>
@@ -291,6 +292,7 @@
                     <div id="detailDelivery_${order.id}">
                         <div class="info-row"><span class="label">姓名</span><span class="value" id="dd_name_${order.id}">${order.deliveryName || '配送员'}</span></div>
                         <div class="info-row"><span class="label">电话</span><span class="value" id="dd_phone_${order.id}">加载中...</span></div>
+                        <div class="info-row"><span class="label">⏱ 配送耗时</span><span class="value" id="dd_duration_${order.id}" style="color:#ff6b35;font-weight:bold;">${calcDuration(order.pickupTime, order.deliveredTime)}</span></div>
                         <div class="delivery-stats" id="dd_stats_${order.id}">
                             <div class="stat-item"><div class="num">-</div><div class="lbl">总配送</div></div>
                             <div class="stat-item"><div class="num">-</div><div class="lbl">已完成</div></div>
@@ -330,6 +332,21 @@
 
         function closeDetail() {
             document.getElementById('detailOverlay').classList.remove('show');
+        }
+
+        // 配送耗时计算
+        function calcDuration(pickupTime, deliveredTime) {
+            if (!pickupTime) return '⌛ 配送中';
+            const start = new Date(pickupTime).getTime();
+            const end = deliveredTime ? new Date(deliveredTime).getTime() : Date.now();
+            const diff = Math.floor((end - start) / 1000);
+            if (diff < 0) return '--';
+            if (diff < 60) return diff + '秒';
+            const mins = Math.floor(diff / 60);
+            const secs = diff % 60;
+            if (mins < 60) return mins + '分' + secs + '秒';
+            const hours = Math.floor(mins / 60);
+            return hours + '时' + (mins % 60) + '分';
         }
 
         loadOrders();
