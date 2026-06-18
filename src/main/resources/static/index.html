@@ -216,6 +216,38 @@
                 return;
             }
 
+            // 配送员直接显示配送工作台入口
+            if (user && user.role === 'DELIVERY') {
+                const list = document.getElementById('restaurantList');
+                const searchBar = document.querySelector('.search-bar');
+                if (searchBar) searchBar.style.display = 'none';
+                const title = document.querySelector('.page-title');
+                if (title) title.textContent = '🚚 配送工作台';
+
+                list.innerHTML = `
+                    <div style="max-width:500px;margin:0 auto;text-align:center;">
+                        <div class="restaurant-card card-enter" onclick="location.href='/delivery.html'" style="cursor:pointer;">
+                            <div class="banner" style="background:linear-gradient(135deg,#4a90d9,#357abd);font-size:64px;">🚚</div>
+                            <div class="info">
+                                <h3>配送工作台</h3>
+                                <div style="color:#999;font-size:13px;margin-bottom:12px;">管理你的配送任务</div>
+                                <div style="display:flex;gap:16px;justify-content:center;font-size:14px;color:#888;">
+                                    <span>📋 待接单</span>
+                                    <span>🚚 配送中</span>
+                                    <span>✅ 已送达</span>
+                                </div>
+                                <div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;text-align:center;color:#4a90d9;font-weight:bold;">👆 点击进入 →</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;">
+                            <a href="/orders.html" class="btn" style="padding:10px 24px;background:#4a90d9;color:#fff;text-decoration:none;border-radius:8px;">📋 我的订单</a>
+                            <a href="#" onclick="showPwdModal();return false;" class="btn" style="padding:10px 24px;background:#95a5a6;color:#fff;text-decoration:none;border-radius:8px;">🔑 修改密码</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
             const url = keyword ? `/api/restaurants/search?name=${encodeURIComponent(keyword)}` : '/api/restaurants';
             fetch(url).then(r => r.json()).then(resp => {
                 const list = document.getElementById('restaurantList');
