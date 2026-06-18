@@ -53,16 +53,21 @@
     </div>
     <nav class="navbar">
         <a href="/" class="logo">← 返回首页</a>
-        <a href="/cart.html" style="color:#fff;">🛒 购物车</a>
+        <a href="/cart.html" id="navCartLink" style="color:#fff;">🛒 购物车</a>
+        <a href="/rider.html" id="navRiderLink" style="color:#fff;display:none;">🏍️ 骑手工作台</a>
     </nav>
     <div class="container">
         <div id="restaurantHeader" class="restaurant-header"></div>
+        <div id="riderBanner" style="display:none;background:#e3f2fd;border:1px solid #90caf9;border-radius:8px;padding:12px 16px;margin-bottom:16px;text-align:center;font-size:14px;">
+            🏍️ 您当前为骑手模式，无需点餐。
+            <a href="/rider.html" style="color:#1976d2;font-weight:bold;">前往骑手工作台 →</a>
+        </div>
         <div class="menu-layout">
             <div class="category-side" id="categorySide"></div>
             <div class="dish-area" id="dishArea"></div>
         </div>
     </div>
-    <button class="cart-float" onclick="location.href='/cart.html'">
+    <button class="cart-float" id="cartFloatBtn" onclick="location.href='/cart.html'">
         🛒 购物车 <span class="badge" id="cartBadge">0</span>
     </button>
 
@@ -207,6 +212,17 @@
         loadRestaurant();
         loadCategories();
         updateCartBadge();
+
+        // 骑手隐藏购物车相关元素
+        const user = getCurrentUser();
+        if (user && user.role === 'DELIVERY') {
+            document.getElementById('navCartLink').style.display = 'none';
+            document.getElementById('cartFloatBtn').style.display = 'none';
+            document.getElementById('navRiderLink').style.display = 'inline';
+            document.getElementById('riderBanner').style.display = 'block';
+            document.getElementById('dishArea').innerHTML = '<div class="empty" style="text-align:center;padding:60px 20px;color:#999;"><div class="icon" style="font-size:56px;">🏍️</div><p style="font-size:15px;">骑手无需浏览菜品，请前往骑手工作台接单配送</p></div>';
+            document.getElementById('categorySide').innerHTML = '';
+        }
     </script>
 </body>
 </html>

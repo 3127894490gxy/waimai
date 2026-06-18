@@ -45,6 +45,7 @@
     </div>
     <nav class="navbar">
         <a href="/cart.html">← 返回购物车</a>
+        <a href="/rider.html" id="checkoutRiderLink" style="display:none;">🏍️ 骑手工作台</a>
     </nav>
     <div class="container">
         <div class="page-title">📋 确认订单</div>
@@ -59,6 +60,12 @@
         function loadCheckout() {
             const user = getCurrentUser();
             if (!user) { location.href = '/login.html?redirect=/checkout.html'; return; }
+            // 骑手拦截
+            if (user.role === 'DELIVERY') {
+                document.getElementById('checkoutContent').innerHTML = '<div class="section"><div style="text-align:center;padding:40px 20px;"><div style="font-size:56px;margin-bottom:12px;">🏍️</div><p style="font-size:16px;color:#333;font-weight:bold;">骑手无需下单</p><p style="color:#999;margin-top:8px;">请前往骑手工作台管理配送订单</p><a href="/rider.html" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#ff6b35;color:#fff;text-decoration:none;border-radius:6px;">前往工作台 →</a></div></div>';
+                document.getElementById('checkoutRiderLink').style.display = 'inline';
+                return;
+            }
 
             const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
             if (cart.length === 0) { document.getElementById('checkoutContent').innerHTML = '<div class="section"><p style="text-align:center;color:#999;">购物车是空的</p></div>'; return; }

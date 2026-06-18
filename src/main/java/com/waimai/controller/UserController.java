@@ -22,7 +22,10 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse<User> register(@RequestBody User user) {
-        user.setRole(UserRole.CUSTOMER);
+        // 只允许注册 CUSTOMER 和 DELIVERY 角色
+        if (user.getRole() != UserRole.DELIVERY) {
+            user.setRole(UserRole.CUSTOMER);
+        }
         return ApiResponse.success(userService.register(user));
     }
 

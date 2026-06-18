@@ -131,7 +131,8 @@
         <a href="javascript:history.back()">← 返回</a>
         <span class="title">🛒 购物车</span>
         <div class="right-actions">
-            <a href="/orders.html">📋 订单</a>
+            <a href="/orders.html" id="cartOrderLink">📋 订单</a>
+            <a href="/rider.html" id="cartRiderLink" style="display:none;">🏍️ 工作台</a>
         </div>
     </nav>
 
@@ -189,6 +190,20 @@
                         <a class="go-shop" href="/login.html?redirect=/cart.html">去登录</a>
                     </div>`;
                 document.getElementById('bottomBar').style.display = 'none';
+                return;
+            }
+            // 骑手拦截
+            if (user.role === 'DELIVERY') {
+                document.getElementById('cartContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="illustration">🏍️</div>
+                        <div class="msg">骑手无需使用购物车</div>
+                        <div class="sub-msg">请前往骑手工作台管理配送订单</div>
+                        <a class="go-shop" href="/rider.html">前往工作台</a>
+                    </div>`;
+                document.getElementById('bottomBar').style.display = 'none';
+                document.getElementById('cartOrderLink').style.display = 'none';
+                document.getElementById('cartRiderLink').style.display = 'inline';
                 return;
             }
             loadCart();

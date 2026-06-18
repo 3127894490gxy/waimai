@@ -57,17 +57,15 @@
             }).then(r => r.json()).then(resp => {
                 if (resp.code === 200 && resp.data) {
                     localStorage.setItem('waimai_user', JSON.stringify(resp.data));
-                    // 根据角色跳转不同页面
+                    // 根据角色跳转不同页面（骑手优先）
                     const role = resp.data.role;
-                    const redirectParam = new URLSearchParams(location.search).get('redirect');
-                    if (redirectParam && !redirectParam.startsWith('/rider.html')) {
-                        location.href = redirectParam;
-                    } else if (role === 'DELIVERY') {
+                    if (role === 'DELIVERY') {
                         location.href = '/rider.html';
                     } else if (role === 'ADMIN') {
                         location.href = '/admin.html';
                     } else {
-                        location.href = '/';
+                        const redirectParam = new URLSearchParams(location.search).get('redirect');
+                        location.href = redirectParam || '/';
                     }
                 } else {
                     errEl.textContent = resp.message || '用户名或密码错误';

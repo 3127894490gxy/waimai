@@ -128,6 +128,12 @@
 
         renderUser();
         loadRestaurants();
+
+        // 骑手访问首页时重定向到骑手工作台
+        const currentUser = getCurrentUser();
+        if (currentUser && currentUser.role === 'DELIVERY') {
+            location.href = '/rider.html';
+        }
     </script>
 </body>
 </html>
