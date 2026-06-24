@@ -132,9 +132,9 @@
                             ).join('');
                             return { order, restName, itemsHtml, st };
                         });
+                    }).catch(() => {
+                        return { order, restName: '餐厅#' + order.restaurantId, itemsHtml: '<div class="item-row" style="color:#999;">加载失败</div>', st };
                     });
-                }).catch(() => {
-                    return { order, restName: '餐厅#' + order.restaurantId, itemsHtml: '<div class="item-row" style="color:#999;">加载失败</div>', st };
                 });
 
                 Promise.all(promises).then(results => {
