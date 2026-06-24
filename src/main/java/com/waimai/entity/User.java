@@ -1,10 +1,14 @@
 package com.waimai.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waimai.common.BaseEntity;
 import com.waimai.common.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,4 +37,12 @@ public class User extends BaseEntity {
     //地址
     @Column(length = 500)
     private String address;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ShoppingCart> cartItems = new ArrayList<>();
 }

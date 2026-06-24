@@ -46,9 +46,7 @@ public class OrderService {
     }
 
     public Optional<Order> findByOrderNo(String orderNo) {
-        return orderRepository.findAll().stream()
-                .filter(o -> o.getOrderNo().equals(orderNo))
-                .findFirst();
+        return orderRepository.findByOrderNo(orderNo);
     }
 
     public List<Order> findByUserId(Long userId) {

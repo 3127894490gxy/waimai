@@ -1,5 +1,6 @@
 package com.waimai.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waimai.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,4 +31,19 @@ public class ShoppingCart extends BaseEntity {
     //数量
     @Column(nullable = false)
     private Integer quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
+    @JsonIgnore
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dishId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Dish dish;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurantId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Restaurant restaurant;
 }

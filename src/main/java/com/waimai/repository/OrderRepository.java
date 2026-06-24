@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    Optional<Order> findByOrderNo(String orderNo);
     List<Order> findByUserIdOrderByCreateTimeDesc(Long userId);
     List<Order> findByRestaurantIdOrderByCreateTimeDesc(Long restaurantId);
     List<Order> findByUserIdAndStatusOrderByCreateTimeDesc(Long userId, OrderStatus status);
@@ -18,4 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByDeliveryIdAndStatusOrderByCreateTimeDesc(Long deliveryId, OrderStatus status);
     long countByDeliveryIdAndStatus(Long deliveryId, OrderStatus status);
     long countByDeliveryId(Long deliveryId);
+    long countByUserIdAndStatus(Long userId, OrderStatus status);
+    long countByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
+    long countByStatus(OrderStatus status);
 }

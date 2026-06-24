@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByRestaurantIdOrderBySortOrder(Long restaurantId);
+    boolean existsByNameAndRestaurantId(String name, Long restaurantId);
+    List<Category> findByNameContaining(String name);
+    long countByRestaurantId(Long restaurantId);
+    void deleteByRestaurantId(Long restaurantId);
 }

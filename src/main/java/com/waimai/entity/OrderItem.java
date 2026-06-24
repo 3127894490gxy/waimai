@@ -1,5 +1,6 @@
 package com.waimai.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waimai.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,4 +31,14 @@ public class OrderItem extends BaseEntity {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orderId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dishId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Dish dish;
 }

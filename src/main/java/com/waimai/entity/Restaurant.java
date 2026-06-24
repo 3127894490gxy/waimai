@@ -1,11 +1,14 @@
 package com.waimai.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waimai.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,4 +42,16 @@ public class Restaurant extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Category> categories = new ArrayList<>();
+
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Dish> dishes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Order> orders = new ArrayList<>();
 }

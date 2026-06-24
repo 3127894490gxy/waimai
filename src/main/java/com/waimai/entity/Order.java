@@ -1,5 +1,6 @@
 package com.waimai.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waimai.common.BaseEntity;
 import com.waimai.common.OrderStatus;
 import jakarta.persistence.*;
@@ -8,6 +9,8 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -61,4 +64,18 @@ public class Order extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean deleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
+    @JsonIgnore
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurantId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Restaurant restaurant;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<OrderItem> items = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package com.waimai.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.waimai.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,4 +37,14 @@ public class Dish extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurantId", insertable = false, updatable = false)
+    @JsonIgnore
+    private Restaurant restaurant;
 }
