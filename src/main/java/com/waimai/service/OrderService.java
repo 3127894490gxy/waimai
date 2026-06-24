@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -104,6 +104,33 @@ public class OrderService {
     /** 查询待配送的订单（已支付待接单+已接单） */
     public List<Order> findPendingDelivery() {
         return orderRepository.findByStatusOrderByCreateTimeDesc(OrderStatus.PAID);
+    }
+
+    /** 按状态查询订单 */
+    public List<Order> findByStatus(OrderStatus status) {
+        return orderRepository.findByStatusOrderByCreateTimeDesc(status);
+    }
+
+    /** 按用户和状态查询订单 */
+    public List<Order> findByUserIdAndStatus(Long userId, OrderStatus status) {
+        return orderRepository.findByUserIdAndStatusOrderByCreateTimeDesc(userId, status);
+    }
+
+    /** 按餐厅和状态查询订单 */
+    public List<Order> findByRestaurantIdAndStatus(Long restaurantId, OrderStatus status) {
+        return orderRepository.findByRestaurantIdAndStatusOrderByCreateTimeDesc(restaurantId, status);
+    }
+
+    /** 配送员统计信息 */
+    public Map<String, Object> getDeliveryStats(Long deliveryId) {
+        long total = orderRepository.countByDeliveryId(deliveryId);
+        long completed = orderRepository.countByDeliveryIdAndStatus(deliveryId, OrderStatus.DELIVERED);
+        long delivering = orderRepository.countByDeliveryIdAndStatus(deliveryId, OrderStatus.DELIVERING);
+        Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("totalDeliveries", total);
+        stats.put("completedDeliveries", completed);
+        stats.put("deliveringCount", delivering);
+        return stats;
     }
 
     private String generateOrderNo() {

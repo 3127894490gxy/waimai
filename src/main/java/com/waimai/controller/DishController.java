@@ -1,15 +1,22 @@
 package com.waimai.controller;
 
 import com.waimai.dto.ApiResponse;
+import com.waimai.dto.DishRequest;
 import com.waimai.entity.Dish;
 import com.waimai.service.DishService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/dishes")
 public class DishController {
+
+    private static final Logger log = LoggerFactory.getLogger(DishController.class);
 
     private final DishService dishService;
 
@@ -18,19 +25,33 @@ public class DishController {
     }
 
     @PostMapping
-    public ApiResponse<Dish> create(@RequestBody Dish dish) {
-        return ApiResponse.success(dishService.create(dish));
+    public ApiResponse<Dish> create(@Valid @RequestBody DishRequest request) {
+        Dish dish = new Dish();
+        dish.setName(request.getName());
+        dish.setDescription(request.getDescription());
+        dish.setImage(request.getImage());
+        dish.setPrice(request.getPrice());
+        dish.setCategoryId(request.getCategoryId());
+        dish.setRestaurantId(request.getRestaurantId());
+        dish.setStock(request.getStock() != null ? request.getStock() : 999);
+        dish.setActive(request.getActive() != null ? request.getActive() : true);
+        Dish saved = dishService.create(dish);
+        log.info("菜品创建成功: name={}, restaurantId={}", saved.getName(), request.getRestaurantId());
+        return ApiResponse.success(saved);
     }
 
     @GetMapping("/restaurant/{restaurantId}")
     public ApiResponse<List<Dish>> listByRestaurant(@PathVariable Long restaurantId,
                                                      @RequestParam(required = false) String mode) {
+        List<Dish> dishes;
         if ("all".equals(mode)) {
-            return ApiResponse.success(dishService.findAll().stream()
+            dishes = dishService.findAll().stream()
                     .filter(d -> d.getRestaurantId().equals(restaurantId))
-                    .collect(java.util.stream.Collectors.toList()));
+                    .collect(Collectors.toList());
+        } else {
+            dishes = dishService.findByRestaurantId(restaurantId);
         }
-        return ApiResponse.success(dishService.findByRestaurantId(restaurantId));
+        return ApiResponse.success(dishes);
     }
 
     @GetMapping("/admin/all")
@@ -56,14 +77,30 @@ public class DishController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Dish> update(@PathVariable Long id, @RequestBody Dish dish) {
+    public ApiResponse<Dish> update(@PathVariable Long id, @Valid @RequestBody DishRequest request) {
+        Dish dish = dishService.findById(id)
+                .orElse(null);
+        if (dish == null) {
+            return ApiResponse.error(404, "菜品不存在");
+        }
+        dish.setName(request.getName());
+        dish.setDescription(request.getDescription());
+        dish.setImage(request.getImage());
+        dish.setPrice(request.getPrice());
+        dish.setCategoryId(request.getCategoryId());
+        dish.setRestaurantId(request.getRestaurantId());
+        dish.setStock(request.getStock() != null ? request.getStock() : 999);
+        dish.setActive(request.getActive() != null ? request.getActive() : true);
         dish.setId(id);
-        return ApiResponse.success(dishService.update(dish));
+        Dish updated = dishService.update(dish);
+        log.info("菜品更新成功: dishId={}", id);
+        return ApiResponse.success(updated);
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(@PathVariable Long id) {
         dishService.deleteById(id);
+        log.info("菜品删除: dishId={}", id);
         return ApiResponse.success(null);
     }
 }

@@ -1,8 +1,12 @@
 package com.waimai.controller;
 
 import com.waimai.dto.ApiResponse;
+import com.waimai.dto.CategoryRequest;
 import com.waimai.entity.Category;
 import com.waimai.service.CategoryService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +15,8 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
+    private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
+
     private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
@@ -18,8 +24,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ApiResponse<Category> create(@RequestBody Category category) {
-        return ApiResponse.success(categoryService.create(category));
+    public ApiResponse<Category> create(@Valid @RequestBody CategoryRequest request) {
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setRestaurantId(request.getRestaurantId());
+        category.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0);
+        Category saved = categoryService.create(category);
+        log.info("分类创建成功: name={}, restaurantId={}", saved.getName(), request.getRestaurantId());
+        return ApiResponse.success(saved);
     }
 
     @GetMapping("/restaurant/{restaurantId}")
@@ -28,14 +40,24 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<Category> update(@PathVariable Long id, @RequestBody Category category) {
+    public ApiResponse<Category> update(@PathVariable Long id, @Valid @RequestBody CategoryRequest request) {
+        Category category = categoryService.findById(id).orElse(null);
+        if (category == null) {
+            return ApiResponse.error(404, "分类不存在");
+        }
+        category.setName(request.getName());
+        category.setRestaurantId(request.getRestaurantId());
+        category.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0);
         category.setId(id);
-        return ApiResponse.success(categoryService.update(category));
+        Category updated = categoryService.update(category);
+        log.info("分类更新成功: categoryId={}", id);
+        return ApiResponse.success(updated);
     }
 
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(@PathVariable Long id) {
         categoryService.deleteById(id);
+        log.info("分类删除: categoryId={}", id);
         return ApiResponse.success(null);
     }
 }
