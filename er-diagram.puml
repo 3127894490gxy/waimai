@@ -1,0 +1,122 @@
+@startuml
+' 外卖配送系统 E-R 图 (PlantUML 格式)
+
+' 在 IDEA 中安装 PlantUML 插件后可直接预览
+' 或访问 https://www.plantuml.com/ 粘贴渲染
+
+entity "用户 User" as user {
+  * id : bigint <<generated>>
+  --
+  * username : varchar <<unique>>
+  * password : varchar
+  * nickname : varchar
+  phone : varchar
+  * role : enum(CUSTOMER|MERCHANT|DELIVERY|ADMIN)
+  address : varchar
+  create_time : datetime
+  update_time : datetime
+}
+
+entity "餐厅 Restaurant" as restaurant {
+  * id : bigint <<generated>>
+  --
+  * name : varchar
+  description : varchar
+  address : varchar
+  phone : varchar
+  delivery_fee : decimal
+  rating : decimal
+  * merchant_id : bigint <<FK>>
+  * active : boolean
+  create_time : datetime
+  update_time : datetime
+}
+
+entity "分类 Category" as category {
+  * id : bigint <<generated>>
+  --
+  * name : varchar
+  * restaurant_id : bigint <<FK>>
+  sort_order : int
+  create_time : datetime
+  update_time : datetime
+}
+
+entity "菜品 Dish" as dish {
+  * id : bigint <<generated>>
+  --
+  * name : varchar
+  description : varchar
+  * price : decimal
+  category_id : bigint <<FK>>
+  * restaurant_id : bigint <<FK>>
+  stock : int
+  * active : boolean
+  create_time : datetime
+  update_time : datetime
+}
+
+entity "订单 Order" as order {
+  * id : bigint <<generated>>
+  --
+  * order_no : varchar <<unique>>
+  * user_id : bigint <<FK>>
+  * restaurant_id : bigint <<FK>>
+  * total_amount : decimal
+  delivery_fee : decimal
+  * status : enum
+  delivery_address : varchar
+  contact_phone : varchar
+  contact_name : varchar
+  remark : varchar
+  delivery_id : bigint <<FK>>
+  delivery_name : varchar
+  pickup_time : datetime
+  delivered_time : datetime
+  * deleted : boolean
+  create_time : datetime
+  update_time : datetime
+}
+
+entity "订单项 OrderItem" as orderitem {
+  * id : bigint <<generated>>
+  --
+  * order_id : bigint <<FK>>
+  * dish_id : bigint <<FK>>
+  * dish_name : varchar
+  * quantity : int
+  * price : decimal
+  * subtotal : decimal
+  create_time : datetime
+  update_time : datetime
+}
+
+entity "购物车 ShoppingCart" as cart {
+  * id : bigint <<generated>>
+  --
+  * user_id : bigint <<FK>>
+  * dish_id : bigint <<FK>>
+  * restaurant_id : bigint
+  dish_name : varchar
+  dish_price : decimal
+  * quantity : int
+  create_time : datetime
+  update_time : datetime
+}
+
+'===== 关系 =====
+
+user ||--o{ restaurant : "商家拥有"
+user ||--o{ order : "顾客下单"
+user ||--o{ order : "配送员接单"
+user ||--o{ cart : "拥有购物车"
+
+restaurant ||--o{ category : "包含"
+restaurant ||--o{ dish : "提供"
+category ||--o{ dish : "归类"
+
+order ||--|{ orderitem : "包含"
+dish ||--o{ orderitem : "被购买"
+dish ||--o{ cart : "加入"
+
+@enduml
