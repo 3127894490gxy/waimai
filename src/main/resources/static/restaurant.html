@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>餐厅菜单 - 外卖配送系统</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <link rel="stylesheet" href="/css/style.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -73,7 +74,7 @@
 
     <script>
         const params = new URLSearchParams(location.search);
-        const restaurantId = params.get('id');
+        const restaurantId = parseInt(params.get('id'));
         if (!restaurantId) { alert('餐厅ID不存在'); location.href = '/'; }
 
         let currentCategoryId = null;
@@ -101,9 +102,11 @@
             }
             const existing = cart.find(i => i.dishId === dish.id);
             if (existing) { existing.quantity++; }
-            else { cart.push({ dishId: dish.id, dishName: dish.name, price: dish.price, quantity: 1, restaurantId: parseInt(restaurantId), userId: user.id }); }
+            else { cart.push({ dishId: dish.id, dishName: dish.name, price: dish.price, quantity: 1, restaurantId: restaurantId, userId: user.id }); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
+            // 立即更新当前菜品的按钮，然后刷新列表
+            refreshDishDisplay(dish.id);
             loadDishes(currentCategoryId);
         }
 
@@ -115,7 +118,35 @@
             if (item) { item.quantity += delta; if (item.quantity <= 0) cart = cart.filter(i => i.dishId !== dishId); }
             localStorage.setItem('waimai_cart', JSON.stringify(cart));
             updateCartBadge();
+            refreshDishDisplay(dishId);
             loadDishes(currentCategoryId);
+        }
+
+        // 直接更新单个菜品的显示
+        function refreshDishDisplay(dishId) {
+            const cart = JSON.parse(localStorage.getItem('waimai_cart') || '[]');
+            const item = cart.find(i => i.dishId === dishId);
+            const qty = item ? item.quantity : 0;
+            
+            if (qty === 0) {
+                // 减到0：刷新让 − 0 + 变回 加入
+                loadDishes(currentCategoryId);
+                return;
+            }
+            
+            // 找这个菜品卡片上的数量文字，如果能找到就直接更新
+            let updated = false;
+            document.querySelectorAll('.dish-card').forEach(card => {
+                if (card.querySelector('[onclick*="changeQty(' + dishId + ',"]')) {
+                    const span = card.querySelector('.qty');
+                    if (span) { span.textContent = qty; updated = true; }
+                }
+            });
+            
+            if (!updated) {
+                // 没找到数量控件（卡片还是"加入"按钮）→ 刷新列表切换为 "− qty +"
+                loadDishes(currentCategoryId);
+            }
         }
 
         function getCartQty(dishId) {

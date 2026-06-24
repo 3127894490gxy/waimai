@@ -18,6 +18,13 @@
         .user-info span { font-size: 14px; }
         .user-info a { color: #fff; text-decoration: none; font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; }
         .user-info a:hover { background: rgba(255,255,255,0.2); }
+        .user-info .dropdown { position: relative; display: inline-block; }
+        .user-info .dropbtn { color: #fff; text-decoration: none; font-size: 13px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer; background: none; }
+        .user-info .dropbtn:hover { background: rgba(255,255,255,0.2); }
+        .user-info .dropdown-content { display: none; position: absolute; right: 0; top: 100%; background: #fff; min-width: 120px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 200; overflow: hidden; }
+        .user-info .dropdown-content a { display: block; padding: 10px 16px; color: #333 !important; border: none !important; border-radius: 0 !important; font-size: 13px; }
+        .user-info .dropdown-content a:hover { background: #f5f5f5; }
+        .user-info .dropdown:hover .dropdown-content { display: block; }
         .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
         .page-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; }
         .search-bar { display: flex; gap: 12px; margin-bottom: 24px; }
@@ -40,6 +47,15 @@
         .empty { text-align: center; padding: 80px 20px; color: #999; }
         .empty .icon { font-size: 64px; margin-bottom: 16px; }
         .loading { text-align: center; padding: 40px; color: #999; }
+        /* 弹窗样式 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: #fff; border-radius: 12px; padding: 24px; width: 480px; max-width: 90vw; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .modal .form-group { margin-bottom: 14px; }
+        .modal .form-group label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+        .modal .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 14px; outline: none; }
+        .modal .form-group input:focus { border-color: #ff6b35; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -52,8 +68,10 @@
         <a href="/" class="logo"><span>🍜</span>外卖配送</a>
         <div class="nav-links">
             <a href="/" class="active">首页</a>
-            <a href="/orders.html">我的订单</a>
-            <a href="/cart.html" id="navCart">🛒 购物车 <span class="badge" id="cartBadge" style="display:none;background:#ff6b35;color:#fff;font-size:11px;padding:1px 6px;border-radius:8px;margin-left:2px;">0</span></a>
+            <a href="/orders.html" id="ordersLink">我的订单</a>
+            <a href="/cart.html" id="cartLink">🛒 购物车 <span class="badge" id="cartBadge" style="display:none;background:#ff6b35;color:#fff;font-size:11px;padding:1px 6px;border-radius:8px;margin-left:2px;">0</span></a>
+            <a href="/delivery.html" id="deliveryLink" style="display:none;background:rgba(74,144,217,0.3);">🚚 配送</a>
+            <a href="/merchant.html" id="merchantLink" style="display:none;background:rgba(39,174,96,0.3);">🏪 商家</a>
             <a href="/admin.html" id="adminLink" style="display:none;background:rgba(255,255,255,0.15);">⚙️ 管理</a>
             <div class="user-info" id="userInfo"></div>
         </div>
@@ -69,6 +87,52 @@
         </div>
     </div>
     <script>
+        // ===== 修改密码弹窗 =====
+        const pwdModalHtml = `
+            <div class="modal-overlay" id="pwdModal" onclick="if(event.target===this)closePwdModal()">
+                <div class="modal" style="max-width:380px;">
+                    <h3>🔑 修改密码</h3>
+                    <div class="form-group"><label>原密码</label><input type="password" id="pwd_old" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:6px;font-size:14px;outline:none;"></div>
+                    <div class="form-group" style="margin-top:12px;"><label>新密码</label><input type="password" id="pwd_new" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:6px;font-size:14px;outline:none;"></div>
+                    <div class="modal-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+                        <button class="btn btn-secondary" onclick="closePwdModal()" style="padding:8px 20px;border:none;border-radius:6px;background:#95a5a6;color:#fff;cursor:pointer;">取消</button>
+                        <button class="btn btn-primary" onclick="changePwd()" style="padding:8px 20px;border:none;border-radius:6px;background:#ff6b35;color:#fff;cursor:pointer;">确认修改</button>
+                    </div>
+                    <div id="pwdMsg" style="margin-top:10px;font-size:13px;color:#e74c3c;display:none;"></div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', pwdModalHtml);
+
+        function showPwdModal() {
+            document.getElementById('pwdModal').classList.add('show');
+            document.getElementById('pwd_old').value = '';
+            document.getElementById('pwd_new').value = '';
+            document.getElementById('pwdMsg').style.display = 'none';
+        }
+        function closePwdModal() { document.getElementById('pwdModal').classList.remove('show'); }
+        function changePwd() {
+            const user = getCurrentUser();
+            const oldPwd = document.getElementById('pwd_old').value.trim();
+            const newPwd = document.getElementById('pwd_new').value.trim();
+            const msg = document.getElementById('pwdMsg');
+            if (!oldPwd || !newPwd) { msg.textContent = '请填写完整'; msg.style.display = 'block'; return; }
+            if (newPwd.length < 4) { msg.textContent = '新密码至少4位'; msg.style.display = 'block'; return; }
+            fetch('/api/users/password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, oldPassword: oldPwd, newPassword: newPwd })
+            }).then(r => r.json()).then(resp => {
+                if (resp.code === 200) {
+                    alert('✅ 密码修改成功，请重新登录');
+                    logout();
+                } else {
+                    msg.textContent = resp.message || '修改失败';
+                    msg.style.display = 'block';
+                }
+            }).catch(() => { msg.textContent = '网络错误'; msg.style.display = 'block'; });
+        }
+
         function getCurrentUser() {
             const u = localStorage.getItem('waimai_user');
             return u ? JSON.parse(u) : null;
@@ -78,22 +142,31 @@
             const user = getCurrentUser();
             const el = document.getElementById('userInfo');
             const adminLink = document.getElementById('adminLink');
-            const riderLink = document.getElementById('riderLink');
-            const navHome = document.getElementById('navHome');
-            const navOrders = document.getElementById('navOrders');
-            const navCart = document.getElementById('navCart');
+            const deliveryLink = document.getElementById('deliveryLink');
+            const merchantLink = document.getElementById('merchantLink');
+            const ordersLink = document.getElementById('ordersLink');
+            const cartLink = document.getElementById('cartLink');
             if (user) {
-                el.innerHTML = `<span>👋 ${user.nickname || user.username}</span><a href="#" onclick="logout()">退出</a>`;
-                if (user.role === 'ADMIN' && adminLink) adminLink.style.display = 'inline-block';
-                if (user.role === 'DELIVERY') {
-                    if (riderLink) riderLink.style.display = 'inline-block';
-                    if (navOrders) navOrders.style.display = 'none';
-                    if (navCart) navCart.style.display = 'none';
-                }
+                el.innerHTML = `<span>👋 ${user.nickname || user.username}</span>
+                    <div class="dropdown">
+                        <button class="dropbtn">👤 个人 ▾</button>
+                        <div class="dropdown-content">
+                            <a href="#" onclick="showPwdModal();return false;">🔑 修改密码</a>
+                            <a href="#" onclick="logout();return false;">🚪 退出</a>
+                        </div>
+                    </div>`;
+                if (adminLink) adminLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
+                if (deliveryLink) deliveryLink.style.display = user.role === 'DELIVERY' ? 'inline-block' : 'none';
+                if (merchantLink) merchantLink.style.display = user.role === 'MERCHANT' ? 'inline-block' : 'none';
+                if (ordersLink) ordersLink.style.display = (user.role === 'MERCHANT' || user.role === 'DELIVERY') ? 'none' : 'inline-block';
+                if (cartLink) cartLink.style.display = (user.role === 'MERCHANT' || user.role === 'DELIVERY') ? 'none' : 'inline-block';
             } else {
                 el.innerHTML = `<a href="/login.html">登录</a><a href="/register.html">注册</a>`;
                 if (adminLink) adminLink.style.display = 'none';
-                if (riderLink) riderLink.style.display = 'none';
+                if (deliveryLink) deliveryLink.style.display = 'none';
+                if (merchantLink) merchantLink.style.display = 'none';
+                if (ordersLink) ordersLink.style.display = 'inline-block';
+                if (cartLink) cartLink.style.display = 'inline-block';
             }
             updateCartBadge();
         }
@@ -114,6 +187,81 @@
         }
 
         function loadRestaurants(keyword) {
+            const user = getCurrentUser();
+            // 商家直接显示自己的餐厅信息
+            if (user && user.role === 'MERCHANT') {
+                const navbar = document.querySelector('.navbar');
+                if (navbar) navbar.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+                fetch('/api/restaurants?mode=all').then(r => r.json()).then(resp => {
+                    const list = document.getElementById('restaurantList');
+                    const searchBar = document.querySelector('.search-bar');
+                    if (searchBar) searchBar.style.display = 'none';
+                    const title = document.querySelector('.page-title');
+                    if (title) title.textContent = '🏪 我的餐厅';
+
+                    const myRest = (resp.data || []).filter(r => r.merchantId === user.id);
+                    if (myRest.length === 0) {
+                        list.innerHTML = '<div class="empty"><div class="icon">🏪</div><p>你还没有餐厅，请联系管理员创建</p></div>';
+                        return;
+                    }
+                    const r = myRest[0];
+                    const colors = ['', 'green', 'blue', 'purple'];
+                    list.innerHTML = `
+                        <div style="max-width:500px;margin:0 auto;">
+                            <div class="restaurant-card card-enter" onclick="location.href='/merchant.html'" style="cursor:pointer;">
+                                <div class="banner green" style="font-size:64px;">${r.name.charAt(0)}</div>
+                                <div class="info">
+                                    <h3>${r.name}</h3>
+                                    <div class="desc">${r.description || '暂无介绍'}</div>
+                                    <div class="meta">
+                                        <span class="rating">⭐ ${r.rating || '5.0'}</span>
+                                        <span>配送费 ¥${r.deliveryFee || '0'}</span>
+                                        <span>📞 ${r.phone || '-'}</span>
+                                    </div>
+                                    <div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;text-align:center;color:#27ae60;font-weight:bold;">👆 点击进入商家管理 →</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                return;
+            }
+
+            // 配送员直接显示配送工作台入口
+            if (user && user.role === 'DELIVERY') {
+                const list = document.getElementById('restaurantList');
+                const searchBar = document.querySelector('.search-bar');
+                if (searchBar) searchBar.style.display = 'none';
+                const title = document.querySelector('.page-title');
+                if (title) title.textContent = '🚚 配送工作台';
+                // 导航栏变蓝色
+                const navbar = document.querySelector('.navbar');
+                if (navbar) navbar.style.background = 'linear-gradient(135deg, #4a90d9, #357abd)';
+
+                list.innerHTML = `
+                    <div style="max-width:500px;margin:0 auto;text-align:center;">
+                        <div class="restaurant-card card-enter" onclick="location.href='/delivery.html'" style="cursor:pointer;">
+                            <div class="banner" style="background:linear-gradient(135deg,#4a90d9,#357abd);font-size:64px;">🚚</div>
+                            <div class="info">
+                                <h3>配送工作台</h3>
+                                <div style="color:#999;font-size:13px;margin-bottom:12px;">管理你的配送任务</div>
+                                <div style="display:flex;gap:16px;justify-content:center;font-size:14px;color:#888;">
+                                    <span>📋 待接单</span>
+                                    <span>🚚 配送中</span>
+                                    <span>✅ 已送达</span>
+                                </div>
+                                <div style="margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;text-align:center;color:#4a90d9;font-weight:bold;">👆 点击进入 →</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;">
+                            <a href="/orders.html" class="btn" style="padding:10px 24px;background:#4a90d9;color:#fff;text-decoration:none;border-radius:8px;">📋 我的订单</a>
+                            <a href="#" onclick="showPwdModal();return false;" class="btn" style="padding:10px 24px;background:#95a5a6;color:#fff;text-decoration:none;border-radius:8px;">🔑 修改密码</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
             const url = keyword ? `/api/restaurants/search?name=${encodeURIComponent(keyword)}` : '/api/restaurants';
             fetch(url).then(r => r.json()).then(resp => {
                 const list = document.getElementById('restaurantList');

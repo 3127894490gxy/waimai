@@ -2,6 +2,7 @@ package com.waimai.controller;
 
 import com.waimai.common.UserRole;
 import com.waimai.dto.ApiResponse;
+import com.waimai.dto.ChangePasswordRequest;
 import com.waimai.dto.LoginRequest;
 import com.waimai.entity.User;
 import com.waimai.service.UserService;
@@ -22,8 +23,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse<User> register(@RequestBody User user) {
-        // 只允许注册 CUSTOMER 和 DELIVERY 角色
-        if (user.getRole() != UserRole.DELIVERY) {
+        // 允许用户选择角色，但不能注册为管理员
+        if (user.getRole() == null || user.getRole() == UserRole.ADMIN) {
             user.setRole(UserRole.CUSTOMER);
         }
         return ApiResponse.success(userService.register(user));
@@ -76,5 +77,20 @@ public class UserController {
     public ApiResponse<Void> deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
         return ApiResponse.success(null);
+    }
+
+    /** 修改密码 */
+    @PutMapping("/password")
+    public ApiResponse<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+        boolean success = userService.changePassword(
+                request.getUserId(),
+                request.getOldPassword(),
+                request.getNewPassword()
+        );
+        if (success) {
+            return ApiResponse.success(null);
+        } else {
+            return ApiResponse.error(400, "原密码错误或用户不存在");
+        }
     }
 }
