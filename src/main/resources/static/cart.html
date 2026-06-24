@@ -317,7 +317,7 @@
             let html = '';
             cart.forEach((item, idx) => {
                 const isChecked = selectedIds.has(item.dishId);
-                const subTotal = (item.price * item.quantity).toFixed(2);
+                const subTotal = item.price * item.quantity;
 
                 html += `
                     <div class="cart-item" id="cartItem${idx}" data-index="${idx}"
@@ -329,7 +329,7 @@
                             <div class="price"><span class="unit">¥</span>${item.price.toFixed(2)}</div>
                         </div>
                         <div class="qty-stepper">
-                            <button class="btn ${item.quantity <= 1 ? 'subtle' : ''}" onclick="changeQty(${idx}, -1)" ${item.quantity <= 1 ? '' : ''}>−</button>
+                            <button class="btn ${item.quantity <= 1 ? 'subtle' : ''}" onclick="changeQty(${idx}, -1)">−</button>
                             <span class="qty">${item.quantity}</span>
                             <button class="btn" onclick="changeQty(${idx}, 1)">+</button>
                         </div>

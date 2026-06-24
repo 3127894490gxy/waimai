@@ -294,19 +294,19 @@
             loadRestaurants(kw || null);
         }
 
-        renderUser();
-        loadRestaurants();
+        // 骑手访问首页时直接重定向，跳过页面渲染
+        const currentUser = getCurrentUser();
+        if (currentUser && currentUser.role === 'DELIVERY') {
+            location.href = '/rider.html';
+        } else {
+            renderUser();
+            loadRestaurants();
+        }
 
         // 跨标签同步购物车
         window.addEventListener('storage', function(e) {
             if (e.key === 'waimai_cart') updateCartBadge();
         });
-
-        // 骑手访问首页时重定向到骑手工作台
-        const currentUser = getCurrentUser();
-        if (currentUser && currentUser.role === 'DELIVERY') {
-            location.href = '/rider.html';
-        }
     </script>
 </body>
 </html>
