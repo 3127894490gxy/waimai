@@ -1,0 +1,42 @@
+name: Bidirectional Sync with Gitcode
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add Gitcode remote
+        run: |
+          git remote add gitcode https://oauth2:${{ secrets.GITCODE_TOKEN }}@gitcode.com/2503_93926506/waimai.git
+
+      - name: Sync Gitcode -> GitHub
+        run: |
+          echo "=== Fetching from Gitcode ==="
+          git fetch gitcode
+          echo ""
+          echo "=== Pushing Gitcode branches to GitHub ==="
+          for branch in $(git branch -r | grep 'gitcode/' | sed 's|gitcode/||'); do
+            echo "  -> Syncing branch: $branch"
+            git push origin "gitcode/$branch:refs/heads/$branch" --force-with-lease 2>&1 || echo "  !! Failed to push $branch (may need manual merge)"
+          done
+          echo "=== Gitcode -> GitHub sync complete ==="
+
+      - name: Sync GitHub -> Gitcode
+        run: |
+          echo "=== Fetching from GitHub ==="
+          git fetch origin
+          echo ""
+          echo "=== Pushing GitHub branches to Gitcode ==="
+          for branch in $(git branch -r | grep 'origin/' | grep -v 'origin/HEAD' | sed 's|origin/||' | sort -u); do
+            echo "  -> Syncing branch: $branch"
+            git push gitcode "origin/$branch:refs/heads/$branch" --force-with-lease 2>&1 || echo "  !! Failed to push $branch (may need manual merge)"
+          done
+          echo "=== GitHub -> Gitcode sync complete ==="
